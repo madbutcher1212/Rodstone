@@ -1,1 +1,757 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
 
+body {
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a40 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+.game {
+    max-width: 400px;
+    width: 100%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: relative;
+}
+
+.top-bar-fixed {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 12px 16px 8px;
+    border-bottom: 2px solid #f0f0f0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-info {
+    flex: 1;
+    min-width: 0;
+    max-width: 140px;
+}
+
+.name-level {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.user-name {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+}
+
+.level-badge {
+    background: #ffd700;
+    color: #333;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.user-login {
+    font-size: 12px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.resources-compact {
+    display: flex;
+    gap: 8px;
+    background: #f0f0f0;
+    border-radius: 16px;
+    padding: 4px 8px;
+    flex-shrink: 0;
+}
+
+.resource-block {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 8px;
+}
+
+.resource-block:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.resource-income {
+    font-size: 10px;
+    color: #4CAF50;
+    margin-left: 2px;
+}
+
+.resource-income-negative {
+    font-size: 10px;
+    color: #ff4444;
+    margin-left: 2px;
+}
+
+.income-timer {
+    background: #f0f0f0;
+    border-radius: 12px;
+    padding: 8px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 12px;
+    color: #666;
+}
+
+.timer-progress {
+    width: 100%;
+    height: 4px;
+    background: #ddd;
+    border-radius: 2px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.timer-progress-bar {
+    height: 100%;
+    background: #4CAF50;
+    width: 0%;
+    transition: width 1s linear;
+}
+
+.content-scrollable {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 16px 16px;
+}
+
+.city-resources {
+    display: flex;
+    justify-content: space-between;
+    background: #f0f0f0;
+    border-radius: 12px;
+    padding: 8px 12px;
+    margin: 10px 0;
+}
+
+.city-resource-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 8px;
+}
+
+.city-resource-item:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.town-hall {
+    background: linear-gradient(135deg, #f5e6d3, #e6d5b8);
+    border: 3px solid #b5946e;
+    border-radius: 16px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.town-hall:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.town-hall-icon {
+    font-size: 48px;
+}
+
+.town-hall-info {
+    flex: 1;
+}
+
+.town-hall-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #5d3a1a;
+    margin-bottom: 4px;
+}
+
+.town-hall-income {
+    font-size: 14px;
+    color: #4CAF50;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.town-hall-level-badge {
+    width: 40px;
+    height: 40px;
+    background: #b5946e;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.town-hall-upgrade-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 8px;
+    transition: background 0.2s;
+}
+
+.town-hall-upgrade-btn.unavailable {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.buildings-section {
+    background: #f8f8f8;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.buildings-section.collapsed .buildings-grid {
+    display: none;
+}
+
+.section-header {
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f0f0f0;
+    font-weight: bold;
+}
+
+.section-header:hover {
+    background: #e8e8e8;
+}
+
+.section-arrow {
+    font-size: 14px;
+    transition: transform 0.2s;
+}
+
+.buildings-section:not(.collapsed) .section-arrow {
+    transform: rotate(90deg);
+}
+
+.section-title {
+    font-size: 14px;
+    color: #333;
+}
+
+.buildings-grid {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.building-card {
+    background: white;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    padding: 12px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.building-card.available {
+    border-color: #4CAF50;
+    background: #e8f5e8;
+}
+
+.building-card.unavailable {
+    opacity: 0.7;
+    border-color: #999;
+    background: #f5f5f5;
+}
+
+.building-card.locked {
+    border-color: #ff9800;
+    background: #fff3e0;
+}
+
+.building-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.building-icon {
+    font-size: 40px;
+    min-width: 50px;
+    text-align: center;
+}
+
+.building-title {
+    flex: 1;
+}
+
+.building-name {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+}
+
+.building-level-badge {
+    width: 30px;
+    height: 30px;
+    background: #4CAF50;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.building-income {
+    font-size: 12px;
+    color: #4CAF50;
+    margin-left: 62px;
+}
+
+.building-bonus {
+    font-size: 12px;
+    color: #ff9800;
+    margin-left: 62px;
+}
+
+.building-upgrade-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    transition: background 0.2s;
+}
+
+.building-upgrade-btn.unavailable {
+    background: #ccc;
+    cursor: not-allowed;
+}
+
+.building-lock-text {
+    font-size: 12px;
+    color: #ff9800;
+    text-align: center;
+    margin-top: 4px;
+}
+
+.tabs {
+    display: flex;
+    justify-content: space-around;
+    background: #f8f8f8;
+    border-radius: 30px;
+    padding: 4px;
+    margin: 16px;
+    position: sticky;
+    bottom: 0;
+    z-index: 99;
+}
+
+.tab {
+    flex: 1;
+    text-align: center;
+    padding: 8px 4px;
+    border-radius: 30px;
+    font-size: 12px;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab.active {
+    background: #667eea;
+    color: white;
+}
+
+.tab-icon {
+    font-size: 16px;
+    display: block;
+    margin-bottom: 2px;
+}
+
+.settings-section {
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.settings-section h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.settings-block {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.settings-block h4 {
+    margin-bottom: 10px;
+    color: #666;
+}
+
+.avatar-block {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.settings-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #667eea;
+    object-fit: cover;
+}
+
+.name-change {
+    display: flex;
+    gap: 10px;
+}
+
+.name-change input {
+    flex: 1;
+}
+
+.user-id-block {
+    text-align: center;
+    padding: 10px;
+    color: #666;
+    font-size: 13px;
+}
+
+.user-id-label {
+    color: #999;
+    margin-right: 5px;
+}
+
+.user-id-value {
+    font-weight: bold;
+    color: #333;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    width: 90%;
+    max-width: 350px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.upgrade-modal {
+    max-width: 320px;
+}
+
+.avatar-modal {
+    max-width: 400px;
+}
+
+.avatar-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 36px;
+    overflow: hidden;
+}
+
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.avatar-option {
+    text-align: center;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.avatar-option.selected {
+    border-color: #4CAF50;
+    background: #e8f5e8;
+    transform: scale(1.02);
+}
+
+.avatar-option-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 5px;
+    object-fit: cover;
+}
+
+.avatar-option-name {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.avatar-option-price {
+    font-size: 12px;
+    color: #ff9800;
+    margin-bottom: 5px;
+}
+
+.avatar-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.avatar-actions .btn {
+    flex: 1;
+}
+
+.btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn:hover {
+    background: #45a049;
+}
+
+.btn-secondary {
+    background: #999;
+}
+
+.btn-secondary:hover {
+    background: #777;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    display: none;
+    z-index: 3000;
+}
+
+.empty-message {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    background: white;
+    border-radius: 12px;
+}
+
+.upgrade-info {
+    text-align: center;
+}
+
+.upgrade-info h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.upgrade-levels {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.upgrade-level-current, .upgrade-level-next {
+    text-align: center;
+}
+
+.upgrade-level-current span, .upgrade-level-next span {
+    display: block;
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.upgrade-level-current small, .upgrade-level-next small {
+    font-size: 12px;
+    color: #666;
+}
+
+.upgrade-arrow {
+    font-size: 20px;
+    color: #999;
+}
+
+.upgrade-income {
+    background: #e8f5e8;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: left;
+}
+
+.upgrade-income h4 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.upgrade-income-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.upgrade-cost {
+    background: #f0f0f0;
+    border-radius: 12px;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: left;
+}
+
+.upgrade-cost h4 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.upgrade-cost-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.upgrade-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.upgrade-actions .btn {
+    flex: 1;
+}
