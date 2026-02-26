@@ -13,7 +13,7 @@ from models.building_config import (
 
 actions_bp = Blueprint('actions', __name__)
 
-# Константы ратуши (можно позже вынести в отдельный конфиг)
+# Константы ратуши
 TOWN_HALL_INCOME = {1:5, 2:10, 3:20, 4:45, 5:100}
 TOWN_HALL_UPGRADE_COST = {
     2: {"gold": 50, "wood": 100, "stone": 0},
@@ -80,18 +80,24 @@ def game_action(telegram_user):
     # Вспомогательная функция для формирования ответа
     def build_response(additional_state=None):
         state = {
-            'gold': gold, 'wood': wood, 'food': food, 'stone': stone,
-            'level': level, 'population_current': population_current,
+            'gold': gold,
+            'wood': wood,
+            'food': food,
+            'stone': stone,
+            'level': level,
+            'population_current': population_current,
             'population_max': population_max,
-            'game_login': game_login, 'avatar': avatar,
+            'game_login': game_login,
+            'avatar': avatar,
             'owned_avatars': owned_avatars,
-            'buildings': buildings, 'lastCollection': last_collection
+            'buildings': buildings,
+            'lastCollection': last_collection
         }
         if additional_state:
             state.update(additional_state)
         return jsonify({'success': True, 'state': state})
 
-    # ========== СБОР РЕСУРСОВ ==========
+    # ===== СБОР РЕСУРСОВ =====
     if action == 'collect':
         now = int(time.time() * 1000)
         time_passed = now - last_collection
@@ -128,13 +134,12 @@ def game_action(telegram_user):
 
         return build_response()
 
-    # ========== ПОСТРОЙКА ==========
+    # ===== ПОСТРОЙКА =====
     if action == 'build':
         building_id = action_data.get('building_id')
         if building_id not in BUILDINGS_CONFIG:
             return jsonify({'success': False, 'error': 'Unknown building'}), 400
 
-        # Проверяем, не построено ли уже
         if any(b['id'] == building_id for b in buildings):
             return jsonify({'success': False, 'error': 'Building already exists'}), 400
 
@@ -166,7 +171,7 @@ def game_action(telegram_user):
 
         return build_response()
 
-    # ========== УЛУЧШЕНИЕ ==========
+    # ===== УЛУЧШЕНИЕ =====
     if action == 'upgrade':
         building_id = action_data.get('building_id')
         building = next((b for b in buildings if b['id'] == building_id), None)
@@ -204,7 +209,7 @@ def game_action(telegram_user):
 
         return build_response()
 
-    # ========== УЛУЧШЕНИЕ РАТУШИ ==========
+    # ===== УЛУЧШЕНИЕ РАТУШИ =====
     if action == 'upgrade_level':
         if level >= 5:
             return jsonify({'success': False, 'error': 'Max level reached'}), 400
@@ -224,7 +229,7 @@ def game_action(telegram_user):
 
         return build_response()
 
-    # ========== СМЕНА ИМЕНИ (ПРИ РЕГИСТРАЦИИ) ==========
+    # ===== СМЕНА ИМЕНИ (ПРИ РЕГИСТРАЦИИ) =====
     if action == 'set_login':
         new_login = action_data.get('game_login', '').strip()
         if not new_login:
@@ -235,7 +240,7 @@ def game_action(telegram_user):
         Player.update(player_id, game_login=new_login)
         return build_response({'game_login': new_login})
 
-    # ========== ПЛАТНАЯ СМЕНА ИМЕНИ ==========
+    # ===== ПЛАТНАЯ СМЕНА ИМЕНИ =====
     if action == 'change_name_paid':
         new_name = action_data.get('game_login', '').strip()
         price = 5000
@@ -250,7 +255,7 @@ def game_action(telegram_user):
         Player.update(player_id, game_login=new_name, gold=gold)
         return build_response({'game_login': new_name})
 
-    # ========== ПОКУПКА АВАТАРА ==========
+    # ===== ПОКУПКА АВАТАРА =====
     if action == 'buy_avatar':
         new_avatar = action_data.get('avatar', '')
         price = action_data.get('price', 0)
@@ -268,7 +273,7 @@ def game_action(telegram_user):
 
         return build_response()
 
-    # ========== ВЫБОР АВАТАРА ==========
+    # ===== ВЫБОР АВАТАРА =====
     if action == 'select_avatar':
         new_avatar = action_data.get('avatar', '')
         if new_avatar not in owned_avatars:
