@@ -6,9 +6,9 @@ cmds = [
     "cd backend && python -m venv venv && . venv/bin/activate && pip install -r requirements.txt"
 ]
 
-# build phase можно удалить или оставить пустой
-# [phases.build]
-# cmds = []
+# Убираем build phase полностью
+[phases.build]
+cmds = []
 
 [start]
 cmd = "cd backend && . venv/bin/activate && gunicorn app:app"
