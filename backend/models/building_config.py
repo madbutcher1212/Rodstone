@@ -1,7 +1,10 @@
-# Конфигурация зданий (такая же, как в старом проекте)
+# Конфигурация всех зданий в игре
 BUILDINGS_CONFIG = {
     "house": {
-        "name": "Жилой район", "icon": "🏘️", "section": "social", "max_level": 5,
+        "name": "Жилой район",
+        "icon": "🏘️",
+        "section": "social",
+        "max_level": 5,
         "base_cost": {"gold": 50, "wood": 20, "stone": 0},
         "upgrade_costs": [
             {"gold": 50, "wood": 100, "stone": 50},
@@ -9,10 +12,14 @@ BUILDINGS_CONFIG = {
             {"gold": 1500, "wood": 1000, "stone": 400},
             {"gold": 7200, "wood": 5300, "stone": 2450}
         ],
-        "population_bonus": [20, 20, 40, 100, 250]
+        "population_bonus": [20, 20, 40, 100, 250],
+        "income": [{}, {}, {}, {}, {}]  # Нет дохода, только лимит
     },
     "tavern": {
-        "name": "Корчма", "icon": "🍺", "section": "social", "max_level": 5,
+        "name": "Корчма",
+        "icon": "🍺",
+        "section": "social",
+        "max_level": 5,
         "base_cost": {"gold": 100, "wood": 100, "stone": 25},
         "upgrade_costs": [
             {"gold": 250, "wood": 250, "stone": 100},
@@ -30,7 +37,10 @@ BUILDINGS_CONFIG = {
         "requiredTownHall": [2, 3, 4, 5, 5]
     },
     "bath": {
-        "name": "Купели", "icon": "💧", "section": "social", "max_level": 5,
+        "name": "Купели",
+        "icon": "💧",
+        "section": "social",
+        "max_level": 5,
         "base_cost": {"gold": 100, "wood": 100, "stone": 25},
         "upgrade_costs": [
             {"gold": 250, "wood": 250, "stone": 100},
@@ -48,7 +58,10 @@ BUILDINGS_CONFIG = {
         "requiredTownHall": [3, 4, 4, 5, 5]
     },
     "farm": {
-        "name": "Ферма", "icon": "🌾", "section": "economic", "max_level": 5,
+        "name": "Ферма",
+        "icon": "🌾",
+        "section": "economic",
+        "max_level": 5,
         "base_cost": {"gold": 30, "wood": 40, "stone": 0},
         "upgrade_costs": [
             {"gold": 50, "wood": 100, "stone": 0},
@@ -57,11 +70,18 @@ BUILDINGS_CONFIG = {
             {"gold": 5200, "wood": 6300, "stone": 2450}
         ],
         "income": [
-            {"food": 10}, {"food": 25}, {"food": 60}, {"food": 120}, {"food": 260}
+            {"food": 10},
+            {"food": 25},
+            {"food": 60},
+            {"food": 120},
+            {"food": 260}
         ]
     },
     "lumber": {
-        "name": "Лесопилка", "icon": "🪵", "section": "economic", "max_level": 5,
+        "name": "Лесопилка",
+        "icon": "🪵",
+        "section": "economic",
+        "max_level": 5,
         "base_cost": {"gold": 40, "wood": 30, "stone": 0},
         "upgrade_costs": [
             {"gold": 50, "wood": 100, "stone": 0},
@@ -70,11 +90,18 @@ BUILDINGS_CONFIG = {
             {"gold": 7000, "wood": 4500, "stone": 3500}
         ],
         "income": [
-            {"wood": 10}, {"wood": 20}, {"wood": 40}, {"wood": 100}, {"wood": 200}
+            {"wood": 10},
+            {"wood": 20},
+            {"wood": 40},
+            {"wood": 100},
+            {"wood": 200}
         ]
     },
     "quarry": {
-        "name": "Каменоломня", "icon": "⛰️", "section": "economic", "max_level": 5,
+        "name": "Каменоломня",
+        "icon": "⛰️",
+        "section": "economic",
+        "max_level": 5,
         "base_cost": {"gold": 20, "wood": 80, "stone": 0},
         "upgrade_costs": [
             {"gold": 50, "wood": 150, "stone": 0},
@@ -83,18 +110,29 @@ BUILDINGS_CONFIG = {
             {"gold": 6200, "wood": 7300, "stone": 1450}
         ],
         "income": [
-            {"stone": 5}, {"stone": 15}, {"stone": 35}, {"stone": 80}, {"stone": 160}
+            {"stone": 5},
+            {"stone": 15},
+            {"stone": 35},
+            {"stone": 80},
+            {"stone": 160}
         ]
     }
 }
 
 def calculate_building_upgrade_cost(building_id, current_level):
+    """
+    Возвращает стоимость улучшения здания на следующем уровне.
+    """
     config = BUILDINGS_CONFIG.get(building_id)
     if not config or current_level >= config["max_level"]:
         return {"gold": 0, "wood": 0, "stone": 0}
     return config["upgrade_costs"][current_level - 1]
 
 def calculate_population_max(buildings):
+    """
+    Рассчитывает максимальное население на основе построек.
+    База 10 + бонусы от жилых районов.
+    """
     max_pop = 10
     for b in buildings:
         if b["id"] == "house":
@@ -104,8 +142,49 @@ def calculate_population_max(buildings):
             break
     return max_pop
 
-def calculate_hourly_income_and_growth(buildings, town_hall_level, current_pop, max_pop, current_food):
-    from .player import get_supabase  # избегаем циклических импортов
-    # (копируем функцию из старого app.py)
-    # ... (позже можно вынести в отдельную функцию, но пока оставим)
-    # Я перенесу её позже, чтобы не перегружать сообщение
+def calculate_hourly_income_and_growth(buildings, town_hall_level, current_population, max_population, current_food):
+    """
+    Рассчитывает доход в час и рост населения.
+    Возвращает (income, population_growth)
+    """
+    # Базовый доход от ратуши
+    TOWN_HALL_INCOME = {1:5, 2:10, 3:20, 4:45, 5:100}
+    income = {
+        "gold": TOWN_HALL_INCOME.get(town_hall_level, 0),
+        "wood": 0,
+        "food": 0,
+        "stone": 0
+    }
+
+    # Доход от построек
+    for b in buildings:
+        config = BUILDINGS_CONFIG.get(b["id"])
+        if not config or b["level"] == 0 or not config.get("income"):
+            continue
+        inc = config["income"][b["level"] - 1]
+        for resource, value in inc.items():
+            if resource in income:
+                income[resource] += value
+
+    food_prod = income["food"]
+    food_needed = current_population
+    food_left = food_prod - food_needed
+    pop_growth = 0
+
+    if food_left >= 0:
+        # Еды хватает - население растет
+        income["food"] = food_left
+        potential = 3
+        if current_population + potential <= max_population:
+            pop_growth = potential
+        else:
+            pop_growth = max_population - current_population
+    else:
+        # Еды не хватает - используем запасы
+        total_food = current_food + food_prod
+        if total_food >= food_needed:
+            income["food"] = total_food - food_needed
+        else:
+            income["food"] = 0
+
+    return income, pop_growth
