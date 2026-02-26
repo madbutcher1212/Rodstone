@@ -6,9 +6,5 @@ cmds = [
     "cd backend && python -m venv venv && . venv/bin/activate && pip install -r requirements.txt"
 ]
 
-# Убираем build phase полностью
-[phases.build]
-cmds = []
-
 [start]
 cmd = "cd backend && . venv/bin/activate && gunicorn app:app"
