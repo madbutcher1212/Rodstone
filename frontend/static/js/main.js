@@ -69,12 +69,17 @@ async function login() {
             
             // Показываем окно выбора имени, если нужно
             const overlay = document.getElementById('loginOverlay');
-            if (!userData.game_login) {
-                overlay.style.display = 'flex';
-                document.getElementById('confirmLogin').disabled = false;
-                document.getElementById('confirmLogin').textContent = 'Начать игру';
-            } else {
-                overlay.style.display = 'none';
+            if (overlay) {
+                if (!userData.game_login) {
+                    overlay.style.display = 'flex';
+                    const btn = document.getElementById('confirmLogin');
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.textContent = 'Начать игру';
+                    }
+                } else {
+                    overlay.style.display = 'none';
+                }
             }
         } else {
             showToast('⚠️ Ошибка загрузки: ' + (result.error || 'Неизвестная ошибка'));
@@ -87,7 +92,14 @@ async function login() {
 
 // Сохранение имени (первый вход)
 async function saveGameLogin() {
+    console.log('🖱️ Кнопка нажата!');
+    
     const loginInput = document.getElementById('newLogin');
+    if (!loginInput) {
+        console.error('❌ Поле ввода не найдено!');
+        return;
+    }
+    
     let newLogin = loginInput.value.trim();
     
     if (!newLogin) {
@@ -99,25 +111,35 @@ async function saveGameLogin() {
         newLogin = newLogin.substring(0, 12);
     }
     
+    console.log('📝 Введено имя:', newLogin);
+    
     // Блокируем кнопку чтобы не нажали дважды
     const btn = document.getElementById('confirmLogin');
-    btn.disabled = true;
-    btn.textContent = 'Сохранение...';
+    if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Сохранение...';
+    }
     
     const success = await performAction('set_login', { game_login: newLogin });
+    console.log('✅ Результат сохранения:', success);
     
     if (success) {
-        document.getElementById('loginOverlay').style.display = 'none';
+        const overlay = document.getElementById('loginOverlay');
+        if (overlay) overlay.style.display = 'none';
         showToast(`✅ Добро пожаловать, ${newLogin}!`);
     } else {
-        btn.disabled = false;
-        btn.textContent = 'Начать игру';
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = 'Начать игру';
+        }
     }
 }
 
 // Изменение имени (в настройках)
 async function changeName() {
     const nameInput = document.getElementById('changeNameInput');
+    if (!nameInput) return;
+    
     let newName = nameInput.value.trim();
     
     if (!newName) {
@@ -140,6 +162,8 @@ async function changeName() {
 // Платная смена имени
 async function changeNamePaid() {
     const nameInput = document.getElementById('newNameInput');
+    if (!nameInput) return;
+    
     let newName = nameInput.value.trim();
     
     if (!newName) {
@@ -173,8 +197,12 @@ function switchTab(tab) {
         p.classList.toggle('hidden', !p.id.includes(tab.charAt(0).toUpperCase() + tab.slice(1))));
     
     if (tab === 'settings') {
-        document.getElementById('settingsAvatarImg').src = AVATARS[userData.avatar]?.url || '';
-        document.getElementById('settingsAvatarName').textContent = AVATARS[userData.avatar]?.name || 'Мужской';
+        const img = document.getElementById('settingsAvatarImg');
+        const name = document.getElementById('settingsAvatarName');
+        if (img && name && AVATARS[userData.avatar]) {
+            img.src = AVATARS[userData.avatar].url;
+            name.textContent = AVATARS[userData.avatar].name;
+        }
     }
 }
 
@@ -196,24 +224,45 @@ async function showTopClans() {
                 </div>`;
             });
         }
-        document.getElementById('topClans').innerHTML = html;
+        const topClans = document.getElementById('topClans');
+        if (topClans) topClans.innerHTML = html;
     } catch { showToast('❌ Ошибка'); }
 }
 
 // Запуск
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('✅ main.js загружен');
+    
     login();
     
     document.querySelectorAll('.tab').forEach(t => 
         t.addEventListener('click', () => switchTab(t.dataset.tab)));
     
-    document.getElementById('townHall')?.addEventListener('click', upgradeTownHall);
-    document.getElementById('createClanBtn')?.addEventListener('click', createClan);
-    document.getElementById('topClansBtn')?.addEventListener('click', showTopClans);
-    document.getElementById('confirmLogin')?.addEventListener('click', saveGameLogin);
-    document.getElementById('changeNameBtn')?.addEventListener('click', changeName);
-    document.getElementById('changeNameWithPriceBtn')?.addEventListener('click', changeNamePaid);
-    document.getElementById('confirmAvatarBtn')?.addEventListener('click', confirmAvatarSelection);
+    const townHall = document.getElementById('townHall');
+    if (townHall) townHall.addEventListener('click', upgradeTownHall);
+    
+    const createBtn = document.getElementById('createClanBtn');
+    if (createBtn) createBtn.addEventListener('click', createClan);
+    
+    const topBtn = document.getElementById('topClansBtn');
+    if (topBtn) topBtn.addEventListener('click', showTopClans);
+    
+    const confirmBtn = document.getElementById('confirmLogin');
+    if (confirmBtn) {
+        console.log('🔘 Кнопка найдена, добавляю обработчик');
+        confirmBtn.addEventListener('click', saveGameLogin);
+    } else {
+        console.error('❌ Кнопка confirmLogin не найдена!');
+    }
+    
+    const changeBtn = document.getElementById('changeNameBtn');
+    if (changeBtn) changeBtn.addEventListener('click', changeName);
+    
+    const paidBtn = document.getElementById('changeNameWithPriceBtn');
+    if (paidBtn) paidBtn.addEventListener('click', changeNamePaid);
+    
+    const avatarBtn = document.getElementById('confirmAvatarBtn');
+    if (avatarBtn) avatarBtn.addEventListener('click', confirmAvatarSelection);
     
     setInterval(() => {
         updateTimer();
