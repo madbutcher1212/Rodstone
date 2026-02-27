@@ -1,7 +1,8 @@
-from flask import Flask, jsonify, render_template  # добавил render_template
+from flask import Flask, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import os
 
 # Импорт blueprint'ов
 from blueprints.auth import auth_bp
@@ -10,9 +11,7 @@ from blueprints.clans import clans_bp
 from blueprints.admin import admin_bp
 
 def create_app():
-    app = Flask(__name__, 
-                template_folder='../frontend/templates',  # путь к шаблонам
-                static_folder='../frontend/static')       # путь к статике
+    app = Flask(__name__)
 
     # Конфигурация
     app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
@@ -37,10 +36,15 @@ def create_app():
     app.register_blueprint(clans_bp, url_prefix='/api/clan')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
 
-    # Главная страница - отдаём игру
+    # Главная страница
     @app.route('/')
     def index():
         return render_template('index.html')
+
+    # Раздача статических файлов
+    @app.route('/static/<path:filename>')
+    def serve_static(filename):
+        return send_from_directory('../frontend/static', filename)
 
     return app
 
