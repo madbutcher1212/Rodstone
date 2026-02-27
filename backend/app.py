@@ -1,32 +1,23 @@
-import sys
-import os
-# Добавляем путь к корневой папке
-sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
-
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-# Импорт blueprint'ов (обрати внимание на путь)
-from backend.blueprints.auth import auth_bp
-from backend.blueprints.actions import actions_bp
-from backend.blueprints.clans import clans_bp
-from backend.blueprints.admin import admin_bp
+# Импорт blueprint'ов
+from blueprints.auth import auth_bp
+from blueprints.actions import actions_bp
+from blueprints.clans import clans_bp
+from blueprints.admin import admin_bp
 
 def create_app():
     app = Flask(__name__)
 
-# Инициализация Supabase клиента
-from models.player import init_supabase
-init_supabase(app.config['SUPABASE_URL'], app.config['SUPABASE_KEY'])
-
-    # Конфигурация (позже можно вынести в .env)
+    # Конфигурация
     app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
     app.config['SUPABASE_URL'] = 'https://xevwktdwyioyantuqntb.supabase.co'
     app.config['SUPABASE_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhldndrdGR3eWlveWFudHVxbnRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4ODI2NTAsImV4cCI6MjA4NzQ1ODY1MH0.jC8jqGBv_yrbYg_x4XQradxxbkDtsXsQ9EBT0Iabed4'
     app.config['BOT_TOKEN'] = '8596066162:AAEm2DSAFhKemedKC8rT4RfFY4fjUhVBCvI'
-    
+
     # CORS
     CORS(app)
 
