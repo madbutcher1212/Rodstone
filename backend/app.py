@@ -1,16 +1,18 @@
 import sys
 import os
+# Добавляем путь к корневой папке
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
 from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 
-# Импорт blueprint'ов
-from blueprints.auth import auth_bp
-from blueprints.actions import actions_bp
-from blueprints.clans import clans_bp
-from blueprints.admin import admin_bp
+# Импорт blueprint'ов (обрати внимание на путь)
+from backend.blueprints.auth import auth_bp
+from backend.blueprints.actions import actions_bp
+from backend.blueprints.clans import clans_bp
+from backend.blueprints.admin import admin_bp
 
 def create_app():
     app = Flask(__name__)
