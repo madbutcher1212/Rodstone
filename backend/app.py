@@ -17,12 +17,16 @@ from backend.blueprints.admin import admin_bp
 def create_app():
     app = Flask(__name__)
 
+# Инициализация Supabase клиента
+from models.player import init_supabase
+init_supabase(app.config['SUPABASE_URL'], app.config['SUPABASE_KEY'])
+
     # Конфигурация (позже можно вынести в .env)
     app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
     app.config['SUPABASE_URL'] = 'https://xevwktdwyioyantuqntb.supabase.co'
     app.config['SUPABASE_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhldndrdGR3eWlveWFudHVxbnRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4ODI2NTAsImV4cCI6MjA4NzQ1ODY1MH0.jC8jqGBv_yrbYg_x4XQradxxbkDtsXsQ9EBT0Iabed4'
     app.config['BOT_TOKEN'] = '8596066162:AAEm2DSAFhKemedKC8rT4RfFY4fjUhVBCvI'
-
+    
     # CORS
     CORS(app)
 
