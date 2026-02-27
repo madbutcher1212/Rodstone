@@ -91,19 +91,20 @@ async function login() {
 }
 
 // Сохранение имени (первый вход)
+// Сохранение имени (первый вход)
 async function saveGameLogin() {
     console.log('🖱️ Кнопка нажата!');
     
     const loginInput = document.getElementById('newLogin');
     if (!loginInput) {
-        console.error('❌ Поле ввода не найдено!');
+        alert('Ошибка: поле ввода не найдено');
         return;
     }
     
-    let newLogin = loginInput.value.trim();
+    const newLogin = loginInput.value.trim();
     
     if (!newLogin) {
-        showToast('❌ Введите имя');
+        alert('Введите имя');
         return;
     }
     
@@ -111,7 +112,16 @@ async function saveGameLogin() {
         newLogin = newLogin.substring(0, 12);
     }
     
-    console.log('📝 Введено имя:', newLogin);
+    userData.game_login = newLogin;
+    updateUserInfo();
+    
+    document.getElementById('loginOverlay').style.display = 'none';
+    
+    alert(`Добро пожаловать, ${newLogin}!`);
+    
+    // Сохраняем в базу
+    await performAction('set_login', { game_login: newLogin });
+}
     
     // Блокируем кнопку чтобы не нажали дважды
     const btn = document.getElementById('confirmLogin');
