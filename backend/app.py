@@ -11,7 +11,13 @@ from blueprints.clans import clans_bp
 from blueprints.admin import admin_bp
 
 def create_app():
-    app = Flask(__name__)
+    # Указываем правильные пути к шаблонам и статике
+    template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend/templates'))
+    static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend/static'))
+    
+    app = Flask(__name__, 
+                template_folder=template_dir,
+                static_folder=static_dir)
 
     # Конфигурация
     app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
@@ -40,11 +46,6 @@ def create_app():
     @app.route('/')
     def index():
         return render_template('index.html')
-
-    # Раздача статических файлов
-    @app.route('/static/<path:filename>')
-    def serve_static(filename):
-        return send_from_directory('../frontend/static', filename)
 
     return app
 
