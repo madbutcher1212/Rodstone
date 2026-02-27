@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template  # добавил render_template
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -10,7 +10,9 @@ from blueprints.clans import clans_bp
 from blueprints.admin import admin_bp
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, 
+                template_folder='../frontend/templates',  # путь к шаблонам
+                static_folder='../frontend/static')       # путь к статике
 
     # Конфигурация
     app.config['SECRET_KEY'] = 'dev-secret-key-change-in-production'
@@ -35,13 +37,13 @@ def create_app():
     app.register_blueprint(clans_bp, url_prefix='/api/clan')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
 
+    # Главная страница - отдаём игру
     @app.route('/')
     def index():
-        return jsonify({"message": "Rodstone API is running", "status": "ok"})
+        return render_template('index.html')
 
     return app
 
-# СОЗДАЁМ ПРИЛОЖЕНИЕ ДЛЯ GUNICORN
 app = create_app()
 
 if __name__ == '__main__':
