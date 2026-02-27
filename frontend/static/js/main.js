@@ -12,19 +12,21 @@ let userData = {
     food: 50,
     stone: 0,
     level: 1,
+    townHallLevel: 1,
     population_current: 10,
     population_max: 20,
     lastCollection: Date.now()
 };
 
 let buildings = [
-    { id: 'house', level: 1 },
-    { id: 'farm', level: 1 },
-    { id: 'lumber', level: 1 }
+    { id: 'house', count: 1, level: 1 },
+    { id: 'farm', count: 1, level: 1 },
+    { id: 'lumber', count: 1, level: 1 }
 ];
 
 let currentTab = 'city';
 let selectedBuildingForUpgrade = null;
+let selectedAvatar = null;
 
 // Инициализация Telegram Web App
 const tg = window.Telegram.WebApp;
@@ -33,78 +35,190 @@ tg.ready();
 
 // Авторизация при загрузке
 async function login() {
-    const result = await authRequest();
-    
-    if (result.success) {
-        Object.assign(userData, result.user);
-        buildings = result.buildings || buildings;
-        updateUserInfo();
-        updateCityUI();
-
-        // Показываем окно регистрации, если нет имени
-        if (!userData.game_login || userData.game_login === '' || userData.game_login === 'EMPTY') {
-            document.getElementById('loginOverlay').style.display = 'flex';
+    try {
+        console.log('🔍 Авторизация...');
+        const result = await authRequest();
+        console.log('📦 Ответ сервера:', result);
+        
+        if (result.success) {
+            // Загружаем данные пользователя
+            userData.id = result.user.id;
+            userData.username = result.user.username || '';
+            userData.game_login = result.user.game_login || '';
+            userData.avatar = result.user.avatar || 'male_free';
+            userData.owned_avatars = result.user.owned_avatars || ['male_free', 'female_free'];
+            userData.gold = result.user.gold || 100;
+            userData.wood = result.user.wood || 50;
+            userData.food = result.user.food || 50;
+            userData.stone = result.user.stone || 0;
+            userData.level = result.user.level || 1;
+            userData.townHallLevel = result.user.townHallLevel || 1;
+            userData.population_current = result.user.population_current || 10;
+            userData.population_max = result.user.population_max || 20;
+            userData.lastCollection = result.user.lastCollection || Date.now();
+            
+            buildings = result.buildings || [
+                { id: 'house', count: 1, level: 1 },
+                { id: 'farm', count: 1, level: 1 },
+                { id: 'lumber', count: 1, level: 1 }
+            ];
+            
+            // Обновляем интерфейс
+            updateUserInfo();
+            updateCityUI();
+            
+            // Показываем окно выбора имени, если нужно
+            const overlay = document.getElementById('loginOverlay');
+            if (!userData.game_login) {
+                overlay.style.display = 'flex';
+                document.getElementById('confirmLogin').disabled = false;
+                document.getElementById('confirmLogin').textContent = 'Начать игру';
+            } else {
+                overlay.style.display = 'none';
+            }
         } else {
-            document.getElementById('loginOverlay').style.display = 'none';
+            showToast('⚠️ Ошибка загрузки: ' + (result.error || 'Неизвестная ошибка'));
         }
-    } else {
-        showToast('⚠️ Ошибка загрузки');
+    } catch (error) {
+        console.error('❌ Ошибка входа:', error);
+        showToast('⚠️ Ошибка соединения с сервером');
     }
 }
 
-// Сохранение имени при первом входе
+// Сохранение имени (первый вход)
 async function saveGameLogin() {
-    const input = document.getElementById('newLogin');
-    let name = input.value.trim();
-    if (!name) {
+    const loginInput = document.getElementById('newLogin');
+    let newLogin = loginInput.value.trim();
+    
+    if (!newLogin) {
         showToast('❌ Введите имя');
         return;
     }
-    if (name.length > 12) name = name.substring(0, 12);
-
-    const result = await apiRequest('set_login', { game_login: name });
-    if (result.success) {
-        Object.assign(userData, result.state);
+    
+    if (newLogin.length > 12) {
+        newLogin = newLogin.substring(0, 12);
+    }
+    
+    // Блокируем кнопку чтобы не нажали дважды
+    const btn = document.getElementById('confirmLogin');
+    btn.disabled = true;
+    btn.textContent = 'Сохранение...';
+    
+    const success = await performAction('set_login', { game_login: newLogin });
+    
+    if (success) {
         document.getElementById('loginOverlay').style.display = 'none';
-        showToast(`✅ Добро пожаловать, ${name}!`);
-        updateUserInfo();
+        showToast(`✅ Добро пожаловать, ${newLogin}!`);
+    } else {
+        btn.disabled = false;
+        btn.textContent = 'Начать игру';
+    }
+}
+
+// Изменение имени (в настройках)
+async function changeName() {
+    const nameInput = document.getElementById('changeNameInput');
+    let newName = nameInput.value.trim();
+    
+    if (!newName) {
+        showToast('❌ Введите имя');
+        return;
+    }
+    
+    if (newName.length > 12) {
+        newName = newName.substring(0, 12);
+    }
+    
+    const success = await performAction('set_login', { game_login: newName });
+    
+    if (success) {
+        nameInput.value = '';
+        showToast(`✅ Имя изменено на ${newName}`);
     }
 }
 
 // Платная смена имени
 async function changeNamePaid() {
-    const input = document.getElementById('newNameInput');
-    let name = input.value.trim();
-    if (!name) {
+    const nameInput = document.getElementById('newNameInput');
+    let newName = nameInput.value.trim();
+    
+    if (!newName) {
         showToast('❌ Введите имя');
         return;
     }
-    if (name.length > 12) name = name.substring(0, 12);
+    
+    if (newName.length > 12) {
+        newName = newName.substring(0, 12);
+    }
+    
     if (userData.gold < 5000) {
         showToast('❌ Не хватает монет');
         return;
     }
-
-    const result = await apiRequest('change_name_paid', { game_login: name });
-    if (result.success) {
-        Object.assign(userData, result.state);
-        showToast(`✅ Имя изменено на ${name}`);
-        updateUserInfo();
-        input.value = '';
+    
+    const success = await performAction('change_name_paid', { game_login: newName });
+    
+    if (success) {
+        nameInput.value = '';
+        showToast(`✅ Имя изменено на ${newName}`);
     }
 }
 
-// Запуск при загрузке страницы
+// Переключение вкладок
+function switchTab(tab) {
+    currentTab = tab;
+    document.querySelectorAll('.tab').forEach(t => 
+        t.classList.toggle('active', t.dataset.tab === tab));
+    document.querySelectorAll('.tab-pane').forEach(p => 
+        p.classList.toggle('hidden', !p.id.includes(tab.charAt(0).toUpperCase() + tab.slice(1))));
+    
+    if (tab === 'settings') {
+        document.getElementById('settingsAvatarImg').src = AVATARS[userData.avatar]?.url || '';
+        document.getElementById('settingsAvatarName').textContent = AVATARS[userData.avatar]?.name || 'Мужской';
+    }
+}
+
+// Кланы (заглушки)
+async function createClan() { showToast('🚧 В разработке'); }
+
+async function showTopClans() {
+    try {
+        const response = await fetch(`${API_URL}/api/clans/top`);
+        const data = await response.json();
+        let html = '<h4 style="margin-bottom:10px;">🏆 Топ игроков</h4>';
+        if (!data.players?.length) {
+            html += '<p style="color:#666;">Пока нет игроков</p>';
+        } else {
+            data.players.forEach((p, i) => {
+                html += `<div style="padding:8px; margin:5px 0; background:white; border-radius:8px; display:flex; justify-content:space-between;">
+                    <span><b>${i+1}.</b> ${p.game_login || 'Без имени'}</span>
+                    <span>🪙${p.gold}</span>
+                </div>`;
+            });
+        }
+        document.getElementById('topClans').innerHTML = html;
+    } catch { showToast('❌ Ошибка'); }
+}
+
+// Запуск
 document.addEventListener('DOMContentLoaded', () => {
     login();
-    initEventListeners();
-
-    // Запускаем таймер и проверку автосбора каждую секунду
+    
+    document.querySelectorAll('.tab').forEach(t => 
+        t.addEventListener('click', () => switchTab(t.dataset.tab)));
+    
+    document.getElementById('townHall')?.addEventListener('click', upgradeTownHall);
+    document.getElementById('createClanBtn')?.addEventListener('click', createClan);
+    document.getElementById('topClansBtn')?.addEventListener('click', showTopClans);
+    document.getElementById('confirmLogin')?.addEventListener('click', saveGameLogin);
+    document.getElementById('changeNameBtn')?.addEventListener('click', changeName);
+    document.getElementById('changeNameWithPriceBtn')?.addEventListener('click', changeNamePaid);
+    document.getElementById('confirmAvatarBtn')?.addEventListener('click', confirmAvatarSelection);
+    
     setInterval(() => {
         updateTimer();
         checkAutoCollection();
     }, 1000);
-
-    // По умолчанию открыта вкладка города
+    
     switchTab('city');
 });
