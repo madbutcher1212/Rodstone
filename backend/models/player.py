@@ -1,14 +1,20 @@
 import json
 import time
 from supabase import create_client
-from flask import current_app
+
+# Создадим клиент один раз (будет инициализирован позже)
+_supabase_client = None
+
+def init_supabase(url, key):
+    """Инициализирует клиент Supabase (вызывается при создании app)"""
+    global _supabase_client
+    _supabase_client = create_client(url, key)
 
 def get_supabase():
-    """Возвращает клиент Supabase с настройками из конфига приложения."""
-    return create_client(
-        current_app.config['SUPABASE_URL'],
-        current_app.config['SUPABASE_KEY']
-    )
+    """Возвращает клиент Supabase"""
+    if _supabase_client is None:
+        raise RuntimeError("Supabase client not initialized. Call init_supabase first.")
+    return _supabase_client
 
 class Player:
     """Класс для работы с таблицей players в базе данных."""
@@ -31,7 +37,6 @@ class Player:
         supabase = get_supabase()
         now = int(time.time() * 1000)
 
-        # Начальные данные
         player_data = {
             'telegram_id': telegram_id,
             'username': username,
@@ -44,15 +49,12 @@ class Player:
             'stone': 0,
             'level': 1,
             'population_current': 10,
-            'population_max': 10,  # будет пересчитано
+            'population_max': 10,
             'buildings': json.dumps(initial_buildings),
             'last_collection': now
         }
 
-        # Вставка
         supabase.table("players").insert(player_data).execute()
-
-        # Возвращаем созданного игрока
         return Player.find_by_telegram_id(telegram_id)
 
     @staticmethod
