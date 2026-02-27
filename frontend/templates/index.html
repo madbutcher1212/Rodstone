@@ -9,15 +9,16 @@
 </head>
 <body>
     <!-- Окно регистрации -->
-    <div id="loginOverlay" class="overlay">
-        <div class="modal">
-            <div class="avatar-preview" id="avatarPreview">👤</div>
-            <h3>Добро пожаловать!</h3>
-            <p>Придумайте имя в игре (до 12 символов):</p>
-            <input type="text" id="newLogin" placeholder="Ваше игровое имя" maxlength="12">
-            <button class="btn" id="confirmLogin">Начать игру</button>
-        </div>
+    <div id="loginOverlay" class="login-overlay">
+    <div class="login-box">
+        <div class="avatar-preview" id="avatarPreview">👤</div>
+        <h3>Добро пожаловать!</h3>
+        <p>Придумайте имя в игре (до 12 символов):</p>
+        <input type="text" id="newLogin" placeholder="Ваше игровое имя" maxlength="12">
+        <button class="btn" id="confirmLogin">Начать игру</button>
     </div>
+</div>
+    
 
     <!-- Окно улучшения здания -->
     <div id="upgradeOverlay" class="overlay" style="display: none;">
