@@ -1,6 +1,10 @@
 from flask import Blueprint, request, jsonify
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import time
 import json
+import hashlib
+import hmac
 
 from utils.telegram import verify_telegram_data
 from models.player import Player
@@ -12,6 +16,13 @@ from models.building_config import (
 )
 
 actions_bp = Blueprint('actions', __name__)
+
+# Rate Limiter
+limiter = Limiter(
+    get_remote_address,
+    app=current_app,
+    default_limits=["200 per day", "50 per hour"]
+)
 
 # Константы ратуши
 TOWN_HALL_INCOME = {1:5, 2:10, 3:20, 4:45, 5:100}
@@ -36,7 +47,19 @@ def require_telegram(f):
     wrapper.__name__ = f.__name__
     return wrapper
 
+def generate_nonce(telegram_id, timestamp):
+    """Генерирует уникальный nonce для защиты от повторов"""
+    data = f"{telegram_id}:{timestamp}:{current_app.config['SECRET_KEY']}"
+    return hashlib.sha256(data.encode()).hexdigest()
+
+def verify_nonce(telegram_id, nonce, timestamp):
+    """Проверяет nonce (временная заглушка, потом добавим Redis)"""
+    # TODO: добавить Redis для хранения использованных nonce
+    expected = generate_nonce(telegram_id, timestamp)
+    return hmac.compare_digest(expected, nonce)
+
 @actions_bp.route('/action', methods=['POST'])
+@limiter.limit("10 per minute")  # Не больше 10 действий в минуту
 @require_telegram
 def game_action(telegram_user):
     data = request.get_json()
@@ -44,7 +67,22 @@ def game_action(telegram_user):
     action_data = data.get('data', {})
 
     telegram_id = str(telegram_user['id'])
-    player = Player.find_by_telegram_id(telegram_id)
+
+    # Защита от повторной отправки (проверка nonce)
+    nonce = action_data.get('nonce')
+    timestamp = action_data.get('timestamp')
+    
+    if not nonce or not timestamp:
+        return jsonify({'success': False, 'error': 'Missing security params'}), 400
+    
+    if abs(time.time() * 1000 - timestamp) > 30000:  # 30 секунд
+        return jsonify({'success': False, 'error': 'Request expired'}), 400
+    
+    if not verify_nonce(telegram_id, nonce, timestamp):
+        return jsonify({'success': False, 'error': 'Invalid nonce'}), 400
+
+    # Получаем игрока с блокировкой для защиты от race condition
+    player = Player.find_by_telegram_id(telegram_id, lock=True)  # нужно добавить lock=True
     if not player:
         return jsonify({'success': False, 'error': 'Player not found'}), 404
 
@@ -56,6 +94,7 @@ def game_action(telegram_user):
     food = player['food']
     stone = player['stone']
     level = player['level']
+    town_hall_level = player.get('town_hall_level', 1)
     population_current = player.get('population_current', 10)
     population_max = player.get('population_max', 20)
     game_login = player.get('game_login', '')
@@ -77,7 +116,6 @@ def game_action(telegram_user):
 
     last_collection = player.get('last_collection', int(time.time() * 1000))
 
-    # Вспомогательная функция для формирования ответа
     def build_response(additional_state=None):
         state = {
             'gold': gold,
@@ -85,6 +123,7 @@ def game_action(telegram_user):
             'food': food,
             'stone': stone,
             'level': level,
+            'townHallLevel': town_hall_level,
             'population_current': population_current,
             'population_max': population_max,
             'game_login': game_login,
@@ -97,7 +136,12 @@ def game_action(telegram_user):
             state.update(additional_state)
         return jsonify({'success': True, 'state': state})
 
-    # ===== СБОР РЕСУРСОВ =====
+    # Валидация входных данных
+    allowed_actions = ['collect', 'build', 'upgrade', 'upgrade_level', 'set_login', 'change_name_paid', 'buy_avatar', 'select_avatar']
+    if action not in allowed_actions:
+        return jsonify({'success': False, 'error': 'Unknown action'}), 400
+
+    # Обработка действий
     if action == 'collect':
         now = int(time.time() * 1000)
         time_passed = now - last_collection
@@ -110,7 +154,7 @@ def game_action(telegram_user):
 
             for _ in range(int(hours_passed)):
                 inc, growth = calculate_hourly_income_and_growth(
-                    buildings, level, current_pop, population_max, current_food
+                    buildings, town_hall_level, current_pop, population_max, current_food
                 )
                 total_gold += inc["gold"]
                 total_wood += inc["wood"]
@@ -134,12 +178,14 @@ def game_action(telegram_user):
 
         return build_response()
 
-    # ===== ПОСТРОЙКА =====
     if action == 'build':
         building_id = action_data.get('building_id')
+        
+        # Валидация building_id
         if building_id not in BUILDINGS_CONFIG:
             return jsonify({'success': False, 'error': 'Unknown building'}), 400
 
+        # Проверяем, не построено ли уже
         if any(b['id'] == building_id for b in buildings):
             return jsonify({'success': False, 'error': 'Building already exists'}), 400
 
@@ -152,7 +198,7 @@ def game_action(telegram_user):
 
         # Проверка требований к ратуше
         required = config.get('requiredTownHall', [1])[0]
-        if level < required:
+        if town_hall_level < required:
             return jsonify({'success': False, 'error': f'Требуется ратуша {required}'}), 400
 
         # Списываем ресурсы
@@ -161,7 +207,7 @@ def game_action(telegram_user):
         stone -= cost['stone']
 
         # Добавляем здание
-        buildings.append({"id": building_id, "level": 1})
+        buildings.append({"id": building_id, "level": 1, "count": 1})
         population_max = calculate_population_max(buildings)
 
         Player.update(player_id,
@@ -171,9 +217,13 @@ def game_action(telegram_user):
 
         return build_response()
 
-    # ===== УЛУЧШЕНИЕ =====
     if action == 'upgrade':
         building_id = action_data.get('building_id')
+        
+        # Валидация
+        if building_id not in BUILDINGS_CONFIG:
+            return jsonify({'success': False, 'error': 'Unknown building'}), 400
+
         building = next((b for b in buildings if b['id'] == building_id), None)
         if not building:
             return jsonify({'success': False, 'error': 'Building not found'}), 400
@@ -185,8 +235,8 @@ def game_action(telegram_user):
             return jsonify({'success': False, 'error': 'Max level reached'}), 400
 
         # Проверка требований к ратуше для следующего уровня
-        required = config.get('requiredTownHall', [current_level+1])[current_level]
-        if level < required:
+        required = config.get('requiredTownHall', [current_level + 1])[current_level]
+        if town_hall_level < required:
             return jsonify({'success': False, 'error': f'Требуется ратуша {required}'}), 400
 
         cost = calculate_building_upgrade_cost(building_id, current_level)
@@ -209,45 +259,51 @@ def game_action(telegram_user):
 
         return build_response()
 
-    # ===== УЛУЧШЕНИЕ РАТУШИ =====
     if action == 'upgrade_level':
-        if level >= 5:
+        if town_hall_level >= 5:
             return jsonify({'success': False, 'error': 'Max level reached'}), 400
 
-        cost = TOWN_HALL_UPGRADE_COST.get(level + 1, {})
+        cost = TOWN_HALL_UPGRADE_COST.get(town_hall_level + 1, {})
         if gold < cost.get('gold', 0) or wood < cost.get('wood', 0) or stone < cost.get('stone', 0):
             return jsonify({'success': False, 'error': 'Not enough resources'}), 400
 
         gold -= cost.get('gold', 0)
         wood -= cost.get('wood', 0)
         stone -= cost.get('stone', 0)
-        level += 1
+        town_hall_level += 1
 
         Player.update(player_id,
                       gold=gold, wood=wood, stone=stone,
-                      level=level)
+                      town_hall_level=town_hall_level)
 
         return build_response()
 
-    # ===== СМЕНА ИМЕНИ (ПРИ РЕГИСТРАЦИИ) =====
     if action == 'set_login':
         new_login = action_data.get('game_login', '').strip()
+        
+        # Валидация
         if not new_login:
             return jsonify({'success': False, 'error': 'Login cannot be empty'}), 400
         if len(new_login) > 12:
             new_login = new_login[:12]
+        # Запрещаем спецсимволы
+        if not new_login.replace('_', '').isalnum():
+            return jsonify({'success': False, 'error': 'Only letters, numbers and underscores'}), 400
 
         Player.update(player_id, game_login=new_login)
         return build_response({'game_login': new_login})
 
-    # ===== ПЛАТНАЯ СМЕНА ИМЕНИ =====
     if action == 'change_name_paid':
         new_name = action_data.get('game_login', '').strip()
         price = 5000
+        
+        # Валидация
         if not new_name:
             return jsonify({'success': False, 'error': 'Name cannot be empty'}), 400
         if len(new_name) > 12:
             new_name = new_name[:12]
+        if not new_name.replace('_', '').isalnum():
+            return jsonify({'success': False, 'error': 'Only letters, numbers and underscores'}), 400
         if gold < price:
             return jsonify({'success': False, 'error': 'Not enough gold'}), 400
 
@@ -255,11 +311,14 @@ def game_action(telegram_user):
         Player.update(player_id, game_login=new_name, gold=gold)
         return build_response({'game_login': new_name})
 
-    # ===== ПОКУПКА АВАТАРА =====
     if action == 'buy_avatar':
         new_avatar = action_data.get('avatar', '')
         price = action_data.get('price', 0)
 
+        # Валидация
+        allowed_avatars = ['male_free', 'female_free', 'male_premium', 'female_premium']
+        if new_avatar not in allowed_avatars:
+            return jsonify({'success': False, 'error': 'Invalid avatar'}), 400
         if new_avatar in owned_avatars:
             return jsonify({'success': False, 'error': 'Already owned'}), 400
         if gold < price:
@@ -273,14 +332,18 @@ def game_action(telegram_user):
 
         return build_response()
 
-    # ===== ВЫБОР АВАТАРА =====
     if action == 'select_avatar':
         new_avatar = action_data.get('avatar', '')
+        
+        # Валидация
+        allowed_avatars = ['male_free', 'female_free', 'male_premium', 'female_premium']
+        if new_avatar not in allowed_avatars:
+            return jsonify({'success': False, 'error': 'Invalid avatar'}), 400
         if new_avatar not in owned_avatars:
             return jsonify({'success': False, 'error': 'Avatar not owned'}), 400
 
         Player.update(player_id, avatar=new_avatar)
         return build_response({'avatar': new_avatar})
 
-    # Если действие неизвестно
+    # Сюда не должны доходить
     return jsonify({'success': False, 'error': 'Unknown action'}), 400
