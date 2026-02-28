@@ -64,7 +64,7 @@ def auth():
                 'user': {
                     'id': player_data.get('telegram_id'),
                     'username': player_data.get('username', ''),
-                    'game_login': player_data.get('game_login', ''),
+                    'game_login': player_data.get('game_login', ''),  # ВАЖНО!
                     'avatar': player_data.get('avatar', 'male_free'),
                     'owned_avatars': owned_avatars,
                     'gold': player_data.get('gold', 100),
@@ -72,6 +72,7 @@ def auth():
                     'food': player_data.get('food', 50),
                     'stone': player_data.get('stone', 0),
                     'level': player_data.get('level', 1),
+                    'townHallLevel': player_data.get('town_hall_level', 1),
                     'population_current': player_data.get('population_current', 10),
                     'population_max': max_pop,
                     'lastCollection': now
@@ -98,7 +99,7 @@ def auth():
                 'user': {
                     'id': player_data['telegram_id'],
                     'username': player_data['username'],
-                    'game_login': player_data['game_login'],
+                    'game_login': player_data['game_login'],  # ВАЖНО! (будет пусто)
                     'avatar': player_data['avatar'],
                     'owned_avatars': json.loads(player_data['owned_avatars']),
                     'gold': player_data['gold'],
@@ -106,6 +107,7 @@ def auth():
                     'food': player_data['food'],
                     'stone': player_data['stone'],
                     'level': player_data['level'],
+                    'townHallLevel': player_data.get('town_hall_level', 1),
                     'population_current': player_data['population_current'],
                     'population_max': max_pop,
                     'lastCollection': player_data['last_collection']
