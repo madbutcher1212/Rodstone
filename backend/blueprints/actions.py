@@ -249,7 +249,7 @@ def game_action(telegram_user):
         print(f"✅ Ратуша улучшена до уровня {town_hall_level}")
         return build_response()
 
-    # ===== УСТАНОВКА ИМЕНИ (ПРИ РЕГИСТРАЦИИ) =====
+       # ===== УСТАНОВКА ИМЕНИ (ПРИ РЕГИСТРАЦИИ) =====
     if action == 'set_login':
         print(f"🔥 set_login вызван для {telegram_id}")
         print(f"📦 action_data: {action_data}")
@@ -266,11 +266,17 @@ def game_action(telegram_user):
             new_login = new_login[:12]
             print(f"📏 Имя обрезано до 12: '{new_login}'")
 
-        # Разрешаем буквы, цифры, пробелы и подчёркивания
+        # Проверяем каждый символ отдельно
         allowed_chars = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_ ')
-        if not all(c in allowed_chars for c in new_login):
-            print(f"❌ Недопустимые символы: '{new_login}'")
-            return jsonify({'success': False, 'error': 'Only letters, numbers, spaces and underscores'}), 400
+        for i, c in enumerate(new_login):
+            if c not in allowed_chars:
+                print(f"❌ Недопустимый символ '{c}' на позиции {i}")
+                return jsonify({
+                    'success': False,
+                    'error': f'Недопустимый символ "{c}"'
+                }), 400
+
+        print(f"✅ Все символы допустимы")
 
         # Обновляем в БД
         try:
