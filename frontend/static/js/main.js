@@ -39,21 +39,25 @@ async function login() {
         console.log('🔍 Авторизация...');
         const result = await authRequest();
         
-        if (result.success) {
-            userData.id = result.user.id;
-            userData.username = result.user.username || '';
-            userData.game_login = result.user.game_login || '';
-            userData.avatar = result.user.avatar || 'male_free';
-            userData.owned_avatars = result.user.owned_avatars || ['male_free', 'female_free'];
-            userData.gold = result.user.gold || 100;
-            userData.wood = result.user.wood || 50;
-            userData.food = result.user.food || 50;
-            userData.stone = result.user.stone || 0;
-            userData.level = result.user.level || 1;
-            userData.townHallLevel = result.user.townHallLevel || 1;
-            userData.population_current = result.user.population_current || 10;
-            userData.population_max = result.user.population_max || 20;
-            userData.lastCollection = result.user.lastCollection || Date.now();
+        // ОТЛАДКА: показываем что пришло от сервера
+        alert('Ответ сервера: ' + JSON.stringify(result).substring(0, 200));
+        
+        if (result && result.success) {
+            // Загружаем данные пользователя
+            userData.id = result.user?.id || null;
+            userData.username = result.user?.username || '';
+            userData.game_login = result.user?.game_login || '';
+            userData.avatar = result.user?.avatar || 'male_free';
+            userData.owned_avatars = result.user?.owned_avatars || ['male_free', 'female_free'];
+            userData.gold = result.user?.gold || 100;
+            userData.wood = result.user?.wood || 50;
+            userData.food = result.user?.food || 50;
+            userData.stone = result.user?.stone || 0;
+            userData.level = result.user?.level || 1;
+            userData.townHallLevel = result.user?.townHallLevel || 1;
+            userData.population_current = result.user?.population_current || 10;
+            userData.population_max = result.user?.population_max || 20;
+            userData.lastCollection = result.user?.lastCollection || Date.now();
             
             buildings = result.buildings || [
                 { id: 'house', count: 1, level: 1 },
@@ -61,22 +65,26 @@ async function login() {
                 { id: 'lumber', count: 1, level: 1 }
             ];
             
+            // Обновляем интерфейс
             updateUserInfo();
             updateCityUI();
             
             // ВАЖНО: Показываем окно если нет имени
-            const overlay = document.getElementById('loginOverlay');
+            const overlay = document.getElementById('overlay');
             if (overlay) {
                 if (!userData.game_login) {
+                    alert('Нет имени, показываем окно'); // ОТЛАДКА
                     overlay.style.display = 'flex';
                 } else {
+                    alert('Имя есть: ' + userData.game_login); // ОТЛАДКА
                     overlay.style.display = 'none';
                 }
             }
+        } else {
+            alert('Ошибка авторизации: ' + (result?.error || 'Неизвестная ошибка'));
         }
     } catch (error) {
-        console.error('Ошибка авторизации:', error);
-        showToast('⚠️ Ошибка загрузки');
+        alert('Ошибка: ' + error.message);
     }
 }
 
