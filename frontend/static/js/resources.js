@@ -1,5 +1,44 @@
 // resources.js - логика ресурсов, форматирование, таймер
-
+// Показать точное значение ресурса рядом с элементом
+function showExactValue(resource, event) {
+    if (event) {
+        event.stopPropagation();
+    }
+    
+    const target = event ? event.currentTarget : document.body;
+    
+    const values = {
+        gold: userData.gold,
+        wood: userData.wood,
+        stone: userData.stone,
+        food: userData.food,
+        population: `${userData.population_current}/${userData.population_max}`
+    };
+    
+    const names = {
+        gold: 'Золото',
+        wood: 'Древесина',
+        stone: 'Камень',
+        food: 'Еда',
+        population: 'Население'
+    };
+    
+    const popup = document.createElement('div');
+    popup.className = 'resource-popup';
+    popup.textContent = `${names[resource]}: ${values[resource]}`;
+    
+    const rect = target.getBoundingClientRect();
+    popup.style.left = rect.left + 'px';
+    popup.style.top = (rect.bottom + 5) + 'px';
+    
+    document.body.appendChild(popup);
+    
+    setTimeout(() => {
+        if (popup.parentNode) {
+            popup.parentNode.removeChild(popup);
+        }
+    }, 2000);
+}
 // Форматирование чисел (1000 -> 1к, 1000000 -> 1м)
 function formatNumber(num) {
     if (num >= 1000000) {
