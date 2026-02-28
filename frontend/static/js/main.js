@@ -108,17 +108,24 @@ async function saveGameLogin() {
         newLogin = newLogin.substring(0, 12);
     }
     
-    console.log('Отправляем имя:', newLogin);
+    console.log('📤 Отправляем имя:', newLogin);
     
     const result = await apiRequest('set_login', { game_login: newLogin });
+    console.log('📥 Результат сохранения:', result);
     
-    if (result.success) {
+    if (result && result.success) {
         userData.game_login = newLogin;
         updateUserInfo();
-        document.getElementById('loginOverlay').style.display = 'none';
+        
+        // Закрываем окно
+        const overlay = document.getElementById('overlay');
+        if (overlay) {
+            overlay.style.display = 'none';
+        }
+        
         showToast(`✅ Добро пожаловать, ${newLogin}!`);
     } else {
-        showToast(`❌ ${result.error || 'Ошибка сохранения'}`);
+        showToast(`❌ ${result?.error || 'Ошибка сохранения'}`);
     }
 }
 
