@@ -215,7 +215,7 @@ function updateTownHallDisplay() {
     document.getElementById('townHallLevel').textContent = userData.townHallLevel;
     document.getElementById('townHallLevelBadge').textContent = userData.townHallLevel;
     
-    // Обновляем текст кнопки (опционально)
+    // Обновляем кнопку
     const btn = document.getElementById('townHallUpgradeBtn');
     if (btn) {
         if (userData.townHallLevel >= 5) {
@@ -289,22 +289,10 @@ async function upgradeBuilding(id) {
         showToast(`❌ ${result.error || 'Ошибка'}`);
     }
 }
-
 async function upgradeTownHall() {
     if (userData.townHallLevel >= 5) {
         showToast('🏛️ Максимальный уровень');
         return;
     }
-    
-    const result = await apiRequest('upgrade_level', {});
-    
-    if (result.success) {
-        if (result.state) {
-            Object.assign(userData, result.state);
-        }
-        updateCityUI();
-        showToast('🏛️ Ратуша улучшена!');
-    } else {
-        showToast(`❌ ${result.error || 'Ошибка'}`);
-    }
+    showUpgradeModal('townhall');
 }
