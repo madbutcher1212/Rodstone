@@ -2,223 +2,93 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rodstone War</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #1e1e2f 0%, #2a2a40 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            padding: 16px;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .game {
+            max-width: 400px;
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+        }
+        .login-box input {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+        }
+        .user-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .user-login {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
-    <!-- Окно регистрации -->
-    <div id="loginOverlay" class="overlay">
-        <div class="modal">
-            <div class="avatar-preview" id="avatarPreview">👤</div>
+    <div id="loginOverlay" class="overlay" style="display: flex;">
+        <div class="login-box">
             <h3>Добро пожаловать!</h3>
-            <p>Придумайте имя в игре (до 12 символов):</p>
+            <p>Придумайте имя в игре:</p>
             <input type="text" id="newLogin" placeholder="Ваше игровое имя" maxlength="12">
             <button class="btn" id="confirmLogin">Начать игру</button>
         </div>
     </div>
 
-    <!-- Окно улучшения здания -->
-    <div id="upgradeOverlay" class="overlay" style="display: none;">
-        <div class="modal upgrade-modal" id="upgradeModal"></div>
-    </div>
-
-    <!-- Окно выбора аватара -->
-    <div id="avatarOverlay" class="overlay" style="display: none;">
-        <div class="modal avatar-modal">
-            <h3>Выберите аватар</h3>
-            <div class="avatar-grid" id="avatarGrid"></div>
-            <div class="avatar-actions">
-                <button class="btn" id="confirmAvatarBtn">Подтвердить</button>
-                <button class="btn btn-secondary" onclick="closeAvatarSelector()">Отмена</button>
-            </div>
-        </div>
-    </div>
-
     <div class="game">
-        <!-- Верхний бар -->
-        <div class="top-bar-fixed">
-            <div class="top-bar">
-                <div class="avatar" id="avatar">
-                    <img id="avatarImg" class="avatar-img" src="" style="display: none;">
-                    <span id="avatarPlaceholder">👤</span>
-                </div>
-                <div class="user-info">
-                    <div class="name-level">
-                        <div class="user-name" id="userName">Загрузка...</div>
-                        <div class="level-badge" id="levelBadge">1</div>
-                    </div>
-                    <div class="user-login" id="userLogin">@username</div>
-                </div>
-                <div class="resources-bar">
-                    <div class="resource-item">
-                        <span class="resource-value">🪙<span id="goldBar">100</span></span>
-                        <span class="resource-income" id="goldIncome">+0/ч</span>
-                    </div>
-                    <div class="resource-item">
-                        <span class="resource-value">🪵<span id="woodBar">50</span></span>
-                        <span class="resource-income" id="woodIncome">+0/ч</span>
-                    </div>
-                    <div class="resource-item">
-                        <span class="resource-value">🌾<span id="foodBar">50</span></span>
-                        <span class="resource-income" id="foodIncome">+0/ч</span>
-                    </div>
-                    <div class="resource-item">
-                        <span class="resource-value">⛰️<span id="stoneBar">0</span></span>
-                        <span class="resource-income" id="stoneIncome">+0/ч</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Таймер -->
-            <div class="income-timer" id="incomeTimer">
-                <div>⏳ Следующий сбор через: <span id="timerDisplay">59:59</span></div>
-                <div class="timer-progress">
-                    <div class="timer-progress-bar" id="timerProgress" style="width: 100%;"></div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Контент -->
-        <div class="content-scrollable">
-            <div class="tab-content">
-                <!-- Город -->
-                <div id="tabCity" class="tab-pane active">
-                    <div class="city-resources">
-                        <div class="city-resource-item" onclick="showExactValue('wood')">
-                            <span>🪵</span>
-                            <span id="woodDisplay">50</span>
-                            <span class="resource-income" id="woodIncome2">+0/ч</span>
-                        </div>
-                        <div class="city-resource-item" onclick="showExactValue('stone')">
-                            <span>⛰️</span>
-                            <span id="stoneDisplay">0</span>
-                            <span class="resource-income" id="stoneIncome2">+0/ч</span>
-                        </div>
-                        <div class="city-resource-item" onclick="showExactValue('food')">
-                            <span>🌾</span>
-                            <span id="foodDisplay">50</span>
-                            <span class="resource-income" id="foodIncome2">0/ч</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Ратуша -->
-                    <div class="town-hall" id="townHall">
-                        <div class="town-hall-icon">🏛️</div>
-                        <div class="town-hall-info">
-                            <div class="town-hall-name">Ратуша</div>
-                            <div class="town-hall-income" id="townHallIncome">+5 🪙/ч</div>
-                            <div class="town-hall-level">Уровень <span id="townHallLevel">1</span>/5</div>
-                        </div>
-                        <div class="town-hall-level-badge" id="townHallLevelBadge">1</div>
-                    </div>
-                    <button class="town-hall-upgrade-btn" id="townHallUpgradeBtn">Улучшить</button>
-                    
-                    <!-- Социальные постройки -->
-                    <div class="buildings-section collapsed" id="socialSection">
-                        <div class="section-header" onclick="toggleSection('social')">
-                            <span class="section-arrow">▶</span>
-                            <span class="section-title">🏘️ Социальные постройки</span>
-                        </div>
-                        <div class="buildings-grid" id="socialBuildings"></div>
-                    </div>
-                    
-                    <!-- Экономические постройки -->
-                    <div class="buildings-section collapsed" id="economicSection">
-                        <div class="section-header" onclick="toggleSection('economic')">
-                            <span class="section-arrow">▶</span>
-                            <span class="section-title">⚒️ Экономические постройки</span>
-                        </div>
-                        <div class="buildings-grid" id="economicBuildings"></div>
-                    </div>
-                    
-                    <!-- Военные постройки -->
-                    <div class="buildings-section collapsed" id="militarySection">
-                        <div class="section-header" onclick="toggleSection('military')">
-                            <span class="section-arrow">▶</span>
-                            <span class="section-title">⚔️ Военные постройки</span>
-                        </div>
-                        <div class="buildings-grid" id="militaryBuildings">
-                            <div class="empty-message">Скоро будут доступны</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Армия -->
-                <div id="tabArmy" class="tab-pane hidden">
-                    <div class="empty-tab">⚔️ Армия в разработке</div>
-                </div>
-                
-                <!-- Походы -->
-                <div id="tabCampaign" class="tab-pane hidden">
-                    <div class="empty-tab">🗺️ Походы в разработке</div>
-                </div>
-                
-                <!-- Кланы -->
-                <div id="tabClans" class="tab-pane hidden">
-                    <div class="clan-section">
-                        <h3>👥 Управление кланом</h3>
-                        <input type="text" id="clanName" placeholder="Название клана">
-                        <input type="text" id="clanTag" placeholder="Тег (до 5 букв)">
-                        <button class="btn" id="createClanBtn">✨ Создать клан</button>
-                        <button class="btn" id="topClansBtn" style="background: #9C27B0;">🏆 Топ кланов</button>
-                        <div id="topClans"></div>
-                    </div>
-                </div>
-                
-                <!-- Настройки -->
-                <div id="tabSettings" class="tab-pane hidden">
-                    <div class="settings-section">
-                        <h3>⚙️ Настройки</h3>
-                        
-                        <div class="settings-block">
-                            <h4>🖼️ Аватар</h4>
-                            <div class="avatar-block">
-                                <img id="settingsAvatarImg" class="settings-avatar" src="">
-                                <div>
-                                    <div id="settingsAvatarName">Мужской</div>
-                                    <button class="btn" onclick="openAvatarSelector()">Сменить аватар</button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="settings-block">
-                            <h4>📝 Сменить имя</h4>
-                            <div class="name-change">
-                                <input type="text" id="changeNameInput" placeholder="Новое имя" maxlength="12">
-                                <button class="btn" id="changeNameBtn">5000 🪙</button>
-                            </div>
-                        </div>
-                        
-                        <div class="user-id-block">
-                            <span class="user-id-label">ID:</span>
-                            <span class="user-id-value" id="userTelegramId"></span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Нижние вкладки -->
-        <div class="tabs">
-            <div class="tab active" data-tab="city"><span class="tab-icon">🏠</span><span>Город</span></div>
-            <div class="tab" data-tab="army"><span class="tab-icon">⚔️</span><span>Армия</span></div>
-            <div class="tab" data-tab="campaign"><span class="tab-icon">🗺️</span><span>Походы</span></div>
-            <div class="tab" data-tab="clans"><span class="tab-icon">👥</span><span>Кланы</span></div>
-            <div class="tab" data-tab="settings"><span class="tab-icon">⚙️</span><span>Настройки</span></div>
-        </div>
+        <div class="user-name" id="userName">Загрузка...</div>
+        <div class="user-login" id="userLogin">@username</div>
     </div>
     
-    <div class="toast" id="toast"></div>
-    
-    <!-- JavaScript -->
     <script src="/static/js/config.js"></script>
     <script src="/static/js/api.js"></script>
-    <script src="/static/js/resources.js"></script>
-    <script src="/static/js/buildings.js"></script>
-    <script src="/static/js/avatar.js"></script>
-    <script src="/static/js/ui.js"></script>
     <script src="/static/js/main.js"></script>
 </body>
 </html>
