@@ -1,39 +1,114 @@
-console.log("🔥 main.js загружен и запущен");
+console.log("🔥 main.js загружен");
 
-// Простейшая проверка кнопки
-function setupButton() {
-    console.log("🔄 Ищем кнопку...");
-    const btn = document.getElementById('confirmLogin');
-    if (btn) {
-        console.log("✅ Кнопка найдена, настраиваю...");
-        // Делаем её ОЧЕНЬ заметной
-        btn.style.backgroundColor = 'purple';
-        btn.style.color = 'white';
-        btn.style.fontSize = '30px';
-        btn.style.padding = '20px';
-        btn.style.border = '10px solid lime';
+// Глобальные переменные (минимум)
+let userData = {
+    id: null,
+    username: '',
+    game_login: '',
+    gold: 100,
+    wood: 50,
+    food: 50,
+    stone: 0,
+    level: 1
+};
 
-        // Навешиваем обработчик самым примитивным способом
-        btn.onclick = function() {
-            console.log("🖱️ КЛИК ПО КНОПКЕ!");
-            alert("Кнопка работает!");
+// Telegram Web App
+const tg = window.Telegram.WebApp;
+tg.expand();
+tg.ready();
+
+// Авторизация
+async function login() {
+    try {
+        const result = await authRequest();
+        if (result.success) {
+            userData.id = result.user.id;
+            userData.username = result.user.username || '';
+            userData.game_login = result.user.game_login || '';
+            userData.gold = result.user.gold || 100;
+            userData.wood = result.user.wood || 50;
+            userData.food = result.user.food || 50;
+            userData.stone = result.user.stone || 0;
+            userData.level = result.user.level || 1;
             
-            // Тут может быть твоя логика сохранения
-            const playerName = document.getElementById('newLogin').value;
-            if(playerName) {
-                alert("Привет, " + playerName);
-                document.getElementById('loginOverlay').style.display = 'none';
+            updateUserInfo();
+            
+            // Показываем окно если нет имени
+            const overlay = document.getElementById('loginOverlay');
+            if (!userData.game_login) {
+                overlay.style.display = 'flex';
             } else {
-                alert("Введи имя");
+                overlay.style.display = 'none';
             }
-        };
-    } else {
-        console.error("❌ Кнопка НЕ найдена!");
+        }
+    } catch (error) {
+        console.error('Ошибка авторизации:', error);
     }
 }
 
-// Пробуем найти кнопку разными способами
-setupButton();
+// Обновление информации
+function updateUserInfo() {
+    const nameElement = document.getElementById('userName');
+    const loginElement = document.getElementById('userLogin');
+    if (nameElement) {
+        nameElement.textContent = userData.game_login || 'Игрок';
+    }
+    if (loginElement) {
+        loginElement.textContent = '@' + (userData.username || 'username');
+    }
+}
 
-// Пробуем ещё раз через секунду, на всякий случай
-setTimeout(setupButton, 1000);
+// Сохранение имени
+async function saveGameLogin() {
+    console.log('🖱️ Кнопка нажата');
+    
+    const loginInput = document.getElementById('newLogin');
+    if (!loginInput) {
+        alert('Ошибка: поле ввода не найдено');
+        return;
+    }
+    
+    const newLogin = loginInput.value.trim();
+    if (!newLogin) {
+        alert('Введите имя');
+        return;
+    }
+    
+    if (newLogin.length > 12) {
+        newLogin = newLogin.substring(0, 12);
+    }
+    
+    console.log('Отправляем имя:', newLogin);
+    
+    // Отправляем на сервер
+    const result = await apiRequest('set_login', { game_login: newLogin });
+    
+    if (result.success) {
+        userData.game_login = newLogin;
+        updateUserInfo();
+        document.getElementById('loginOverlay').style.display = 'none';
+        alert(`✅ Добро пожаловать, ${newLogin}!`);
+    } else {
+        alert('❌ Ошибка сохранения: ' + (result.error || 'Неизвестная ошибка'));
+    }
+}
+
+// Настройка кнопки
+function setupButton() {
+    const btn = document.getElementById('confirmLogin');
+    if (btn) {
+        console.log('✅ Кнопка найдена');
+        btn.onclick = saveGameLogin;
+        btn.style.backgroundColor = '#4CAF50';
+        btn.style.color = 'white';
+    } else {
+        console.error('❌ Кнопка не найдена');
+    }
+}
+
+// Запуск
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('✅ DOM загружен');
+    login();
+    setupButton();
+});
