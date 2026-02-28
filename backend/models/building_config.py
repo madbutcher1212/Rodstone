@@ -13,7 +13,8 @@ BUILDINGS_CONFIG = {
             {"gold": 7200, "wood": 5300, "stone": 2450}
         ],
         "population_bonus": [20, 20, 40, 100, 250],
-        "income": [{}, {}, {}, {}, {}]  # Нет дохода, только лимит
+        "income": [{}, {}, {}, {}, {}],
+        "requiredTownHall": [1, 2, 3, 4, 5]
     },
     "tavern": {
         "name": "Корчма",
@@ -75,7 +76,8 @@ BUILDINGS_CONFIG = {
             {"food": 60},
             {"food": 120},
             {"food": 260}
-        ]
+        ],
+        "requiredTownHall": [1, 2, 3, 4, 5]
     },
     "lumber": {
         "name": "Лесопилка",
@@ -95,7 +97,8 @@ BUILDINGS_CONFIG = {
             {"wood": 40},
             {"wood": 100},
             {"wood": 200}
-        ]
+        ],
+        "requiredTownHall": [1, 2, 3, 4, 5]
     },
     "quarry": {
         "name": "Каменоломня",
@@ -115,7 +118,8 @@ BUILDINGS_CONFIG = {
             {"stone": 35},
             {"stone": 80},
             {"stone": 160}
-        ]
+        ],
+        "requiredTownHall": [2, 3, 4, 5, 5]
     }
 }
 
