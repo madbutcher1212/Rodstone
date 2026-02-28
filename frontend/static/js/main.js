@@ -105,7 +105,6 @@ async function saveGameLogin() {
     
     console.log('📤 Отправляем имя:', newLogin);
     
-    // ВАЖНО: используем apiRequest, а не прямой fetch
     const result = await apiRequest('set_login', { game_login: newLogin });
     console.log('📥 Результат сохранения:', result);
     
@@ -118,7 +117,20 @@ async function saveGameLogin() {
         
         showToast(`✅ Добро пожаловать, ${newLogin}!`);
     } else {
-        showToast(`❌ ${result?.error || 'Ошибка сохранения'}`);
+        // Понятные сообщения об ошибках
+        if (result.error === 'Only letters, numbers, spaces and underscores') {
+            showToast('❌ Только буквы, цифры, пробелы и _');
+        } else if (result.error === 'Login cannot be empty') {
+            showToast('❌ Имя не может быть пустым');
+        } else if (result.error?.includes('Database error')) {
+            showToast('❌ Ошибка базы данных');
+        } else if (result.error === 'Unauthorized') {
+            showToast('❌ Ошибка авторизации');
+        } else if (result.error === 'Connection error') {
+            showToast('❌ Нет связи с сервером');
+        } else {
+            showToast(`❌ ${result.error || 'Ошибка сохранения'}`);
+        }
     }
 }
 
