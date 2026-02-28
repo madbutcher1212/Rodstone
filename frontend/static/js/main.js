@@ -1,6 +1,6 @@
 console.log("🔥 main.js загружен");
 
-// Глобальные переменные (минимум)
+// Глобальные переменные
 let userData = {
     id: null,
     username: '',
@@ -60,13 +60,8 @@ function updateUserInfo() {
 
 // Сохранение имени
 async function saveGameLogin() {
-    console.log('🖱️ Кнопка нажата');
-    
     const loginInput = document.getElementById('newLogin');
-    if (!loginInput) {
-        alert('Ошибка: поле ввода не найдено');
-        return;
-    }
+    if (!loginInput) return;
     
     const newLogin = loginInput.value.trim();
     if (!newLogin) {
@@ -78,9 +73,6 @@ async function saveGameLogin() {
         newLogin = newLogin.substring(0, 12);
     }
     
-    console.log('Отправляем имя:', newLogin);
-    
-    // Отправляем на сервер
     const result = await apiRequest('set_login', { game_login: newLogin });
     
     if (result.success) {
@@ -89,7 +81,7 @@ async function saveGameLogin() {
         document.getElementById('loginOverlay').style.display = 'none';
         alert(`✅ Добро пожаловать, ${newLogin}!`);
     } else {
-        alert('❌ Ошибка сохранения: ' + (result.error || 'Неизвестная ошибка'));
+        alert('❌ Ошибка: ' + (result.error || 'Неизвестная ошибка'));
     }
 }
 
@@ -97,18 +89,12 @@ async function saveGameLogin() {
 function setupButton() {
     const btn = document.getElementById('confirmLogin');
     if (btn) {
-        console.log('✅ Кнопка найдена');
         btn.onclick = saveGameLogin;
-        btn.style.backgroundColor = '#4CAF50';
-        btn.style.color = 'white';
-    } else {
-        console.error('❌ Кнопка не найдена');
     }
 }
 
 // Запуск
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('✅ DOM загружен');
     login();
     setupButton();
 });
