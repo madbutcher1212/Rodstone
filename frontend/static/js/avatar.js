@@ -1,7 +1,5 @@
 // avatar.js - логика аватарок, окно выбора, покупка
 
-let selectedAvatar = null; // временно выбранный аватар (до подтверждения)
-
 // Обновление отображения аватара
 function updateAvatar() {
     const img = document.getElementById('avatarImg');
@@ -10,14 +8,19 @@ function updateAvatar() {
     const avatar = AVATARS[userData.avatar];
 
     if (avatar?.url) {
-        img.src = avatar.url;
-        img.style.display = 'block';
-        placeholder.style.display = 'none';
+        if (img) {
+            img.src = avatar.url;
+            img.style.display = 'block';
+        }
+        if (placeholder) placeholder.style.display = 'none';
         if (settingsImg) settingsImg.src = avatar.url;
     } else {
-        placeholder.textContent = userData.game_login?.charAt(0).toUpperCase() || '👤';
-        placeholder.style.display = 'block';
-        img.style.display = 'none';
+        const letter = userData.game_login?.charAt(0).toUpperCase() || '👤';
+        if (placeholder) {
+            placeholder.textContent = letter;
+            placeholder.style.display = 'block';
+        }
+        if (img) img.style.display = 'none';
     }
 
     const nameEl = document.getElementById('settingsAvatarName');
@@ -28,11 +31,13 @@ function updateAvatar() {
 function openAvatarSelector() {
     selectedAvatar = userData.avatar;
     const grid = document.getElementById('avatarGrid');
+    if (!grid) return;
+    
     grid.innerHTML = '';
 
     Object.keys(AVATARS).forEach(key => {
         const a = AVATARS[key];
-        const owned = userData.owned_avatars.includes(key);
+        const owned = userData.owned_avatars?.includes(key) || false;
         const selected = selectedAvatar === key;
 
         const div = document.createElement('div');
@@ -50,7 +55,7 @@ function openAvatarSelector() {
     document.getElementById('avatarOverlay').style.display = 'flex';
 }
 
-// Выбрать аватар в окне (подсветка)
+// Выбрать аватар в окне
 function selectAvatarOption(key) {
     selectedAvatar = key;
     document.querySelectorAll('.avatar-option').forEach(opt => {
@@ -72,10 +77,9 @@ async function confirmAvatarSelection() {
     }
 
     const avatar = AVATARS[selectedAvatar];
-    const owned = userData.owned_avatars.includes(selectedAvatar);
+    const owned = userData.owned_avatars?.includes(selectedAvatar);
 
     if (!owned) {
-        // Покупка аватара
         if (userData.gold < avatar.price) {
             showToast('❌ Не хватает монет');
             return;
@@ -85,17 +89,16 @@ async function confirmAvatarSelection() {
             price: avatar.price 
         });
         if (result.success) {
-            Object.assign(userData, result.state);
+            if (result.state) Object.assign(userData, result.state);
             updateAvatar();
             showToast('✅ Аватар куплен!');
         } else {
             showToast(`❌ ${result.error || 'Ошибка'}`);
         }
     } else {
-        // Просто выбор уже купленного аватара
         const result = await apiRequest('select_avatar', { avatar: selectedAvatar });
         if (result.success) {
-            Object.assign(userData, result.state);
+            if (result.state) Object.assign(userData, result.state);
             updateAvatar();
             showToast('✅ Аватар выбран!');
         } else {
