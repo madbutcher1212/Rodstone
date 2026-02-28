@@ -278,6 +278,20 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTimer();
         checkAutoCollection();
     }, 1000);
+    // ПРОВЕРКА КНОПКИ
+setTimeout(() => {
+    const btn = document.getElementById('confirmLogin');
+    if (btn) {
+        console.log('✅ Кнопка найдена через 2 секунды');
+        btn.style.border = '5px solid red';
+        btn.style.backgroundColor = 'green';
+        btn.onclick = function() {
+            alert('✅ Кнопка работает напрямую!');
+        };
+    } else {
+        console.error('❌ Кнопка НЕ найдена через 2 секунды');
+    }
+}, 2000);
     
     switchTab('city');
 });
