@@ -37,11 +37,13 @@ tg.ready();
 async function login() {
     try {
         const result = await authRequest();
+        console.log('📦 Ответ сервера при авторизации:', result);
         
         if (result && result.success) {
+            // ВАЖНО: загружаем game_login из ответа
             userData.id = result.user?.id || null;
             userData.username = result.user?.username || '';
-            userData.game_login = result.user?.game_login || '';
+            userData.game_login = result.user?.game_login || '';  // ← ЭТО КЛЮЧЕВОЕ
             userData.avatar = result.user?.avatar || 'male_free';
             userData.owned_avatars = result.user?.owned_avatars || ['male_free', 'female_free'];
             userData.gold = result.user?.gold || 100;
@@ -55,29 +57,41 @@ async function login() {
             userData.lastCollection = result.user?.lastCollection || Date.now();
             
             buildings = result.buildings || [
-                { id: 'house', count: 1, level: 1 },
-                { id: 'farm', count: 1, level: 1 },
-                { id: 'lumber', count: 1, level: 1 }
+                { id: 'house', level: 1 },
+                { id: 'farm', level: 1 },
+                { id: 'lumber', level: 1 }
             ];
             
             updateUserInfo();
             updateCityUI();
             
+            // ВАЖНО: проверяем game_login (включая 'EMPTY')
             const overlay = document.getElementById('overlay');
             if (overlay) {
-                overlay.style.display = userData.game_login ? 'none' : 'flex';
+                if (!userData.game_login || userData.game_login === '' || userData.game_login === 'EMPTY') {
+                    console.log('📝 Нет имени, показываем окно');
+                    overlay.style.display = 'flex';
+                } else {
+                    console.log('✅ Имя есть:', userData.game_login);
+                    overlay.style.display = 'none';
+                }
             }
         }
     } catch (error) {
-        console.error('Ошибка авторизации:', error);
+        console.error('❌ Ошибка авторизации:', error);
         showToast('⚠️ Ошибка загрузки');
     }
 }
 
 // Сохранение имени (первый вход)
 async function saveGameLogin() {
+    console.log('🖱️ Кнопка нажата');
+    
     const loginInput = document.getElementById('newLogin');
-    if (!loginInput) return;
+    if (!loginInput) {
+        alert('Ошибка: поле ввода не найдено');
+        return;
+    }
     
     let newLogin = loginInput.value.trim();
     if (!newLogin) {
@@ -89,7 +103,11 @@ async function saveGameLogin() {
         newLogin = newLogin.substring(0, 12);
     }
     
+    console.log('📤 Отправляем имя:', newLogin);
+    
+    // ВАЖНО: используем apiRequest, а не прямой fetch
     const result = await apiRequest('set_login', { game_login: newLogin });
+    console.log('📥 Результат сохранения:', result);
     
     if (result && result.success) {
         userData.game_login = newLogin;
