@@ -11,6 +11,25 @@ function formatNumber(num) {
     return num.toString();
 }
 
+// Показать точное значение ресурса при клике (старая версия)
+function showExactValue(resource) {
+    const values = {
+        gold: userData.gold,
+        wood: userData.wood,
+        stone: userData.stone,
+        food: userData.food,
+        population: `${userData.population_current}/${userData.population_max}`
+    };
+    const names = {
+        gold: 'Золото',
+        wood: 'Древесина',
+        stone: 'Камень',
+        food: 'Еда',
+        population: 'Население'
+    };
+    showToast(`${names[resource]}: ${values[resource]}`);
+}
+
 // Расчёт дохода в час
 function calculateHourlyIncome() {
     let income = {
@@ -50,7 +69,6 @@ function updateResourcesDisplay() {
     document.getElementById('stoneBar').textContent = formatNumber(userData.stone);
     document.getElementById('stoneIncome').textContent = `+${formatNumber(income.stone)}/ч`;
     
-    // Расчёт еды с учётом потребления жителей
     const foodProd = income.food;
     const foodCons = userData.population_current;
     const foodBal = foodProd - foodCons;
@@ -69,7 +87,6 @@ function updateResourcesDisplay() {
     document.getElementById('populationDisplay').textContent = 
         `${userData.population_current}/${userData.population_max}`;
 
-    // Рост населения
     const canGrow = userData.food > 0 || foodProd >= foodCons;
     const totalGrowth = canGrow ? 3 + income.populationGrowth : 0;
     document.getElementById('populationGrowth').textContent = 
