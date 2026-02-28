@@ -85,7 +85,7 @@ def auth():
                     'townHallLevel': player_data.get('town_hall_level', 1),
                     'population_current': player_data.get('population_current', 10),
                     'population_max': max_pop,
-                    'lastCollection': player_data.get('last_collection', now)  // ← берём из БД
+                    'lastCollection': player_data.get('last_collection', now)  
                 },
                 'buildings': buildings,
                 'config': BUILDINGS_CONFIG
