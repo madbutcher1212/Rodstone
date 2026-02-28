@@ -1,58 +1,3 @@
-// Показать точное значение ресурса рядом с элементом
-function showExactValue(resource, event) {
-    // Останавливаем всплытие события
-    if (event) {
-        event.stopPropagation();
-    }
-    
-    // Получаем элемент, на который кликнули
-    const target = event ? event.currentTarget : document.body;
-    
-    // Значения ресурсов
-    const values = {
-        gold: userData.gold,
-        wood: userData.wood,
-        stone: userData.stone,
-        food: userData.food,
-        population: `${userData.population_current}/${userData.population_max}`
-    };
-    
-    const names = {
-        gold: 'Золото',
-        wood: 'Древесина',
-        stone: 'Камень',
-        food: 'Еда',
-        population: 'Население'
-    };
-    
-    // Создаем всплывающее окно
-    const popup = document.createElement('div');
-    popup.className = 'resource-popup';
-    popup.textContent = `${names[resource]}: ${values[resource]}`;
-    
-    // Позиционируем рядом с кликнутым элементом
-    const rect = target.getBoundingClientRect();
-    popup.style.position = 'fixed';
-    popup.style.left = rect.left + 'px';
-    popup.style.top = (rect.bottom + 5) + 'px';
-    popup.style.backgroundColor = '#333';
-    popup.style.color = 'white';
-    popup.style.padding = '5px 10px';
-    popup.style.borderRadius = '5px';
-    popup.style.fontSize = '12px';
-    popup.style.zIndex = '10000';
-    popup.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-    
-    // Добавляем на страницу
-    document.body.appendChild(popup);
-    
-    // Удаляем через 2 секунды
-    setTimeout(() => {
-        if (popup.parentNode) {
-            popup.parentNode.removeChild(popup);
-        }
-    }, 2000);
-}
 // resources.js - логика ресурсов, форматирование, таймер
 
 // Форматирование чисел (1000 -> 1к, 1000000 -> 1м)
@@ -124,7 +69,7 @@ function updateResourcesDisplay() {
     document.getElementById('stoneBar').textContent = formatNumber(userData.stone);
     document.getElementById('stoneIncome').textContent = `+${formatNumber(income.stone)}/ч`;
     
-    // Отображение еды
+    // Расчёт еды с учётом потребления жителей
     const foodProd = income.food;
     const foodCons = userData.population_current;
     const foodBal = foodProd - foodCons;
@@ -134,18 +79,20 @@ function updateResourcesDisplay() {
         foodBal > 0 ? `+${formatNumber(foodBal)}/ч` : 
         foodBal < 0 ? `${formatNumber(foodBal)}/ч` : '0/ч';
     
-    // Отображение жителей
-    const popElement = document.getElementById('populationDisplay');
-    if (popElement) {
-        popElement.textContent = `${userData.population_current}/${userData.population_max}`;
+    if (document.getElementById('foodIncome2')) {
+        document.getElementById('foodIncome2').textContent = 
+            foodBal > 0 ? `+${formatNumber(foodBal)}/ч` : 
+            foodBal < 0 ? `${formatNumber(foodBal)}/ч` : '0/ч';
     }
-    
-    const popGrowthElement = document.getElementById('populationGrowth');
-    if (popGrowthElement) {
-        const canGrow = userData.food > 0 || foodProd >= foodCons;
-        const totalGrowth = canGrow ? 3 + income.populationGrowth : 0;
-        popGrowthElement.textContent = totalGrowth > 0 ? `+${totalGrowth}/ч` : '⚠️';
-    }
+
+    document.getElementById('populationDisplay').textContent = 
+        `${userData.population_current}/${userData.population_max}`;
+
+    // Рост населения
+    const canGrow = userData.food > 0 || foodProd >= foodCons;
+    const totalGrowth = canGrow ? 3 + income.populationGrowth : 0;
+    document.getElementById('populationGrowth').textContent = 
+        totalGrowth > 0 ? `+${totalGrowth}/ч` : '⚠️';
 }
 
 // Обновление таймера
