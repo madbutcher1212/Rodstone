@@ -40,11 +40,11 @@ async function login() {
         console.log('📦 Ответ сервера при авторизации:', result);
         
         if (result && result.success) {
-            // ВАЖНО: загружаем game_login из ответа
+            // Загружаем данные пользователя
             userData.id = result.user?.id || null;
             userData.username = result.user?.username || '';
-            userData.game_login = result.user?.game_login || '';  // ← ЭТО КЛЮЧЕВОЕ
-            userData.avatar = result.user?.avatar || 'male_free';
+            userData.game_login = result.user?.game_login || '';
+            userData.avatar = result.user?.avatar || 'male_free';  // ← avatar приходит
             userData.owned_avatars = result.user?.owned_avatars || ['male_free', 'female_free'];
             userData.gold = result.user?.gold || 100;
             userData.wood = result.user?.wood || 50;
@@ -62,10 +62,12 @@ async function login() {
                 { id: 'lumber', level: 1 }
             ];
             
+            // ВАЖНО: обновляем всё, включая аватар
             updateUserInfo();
+            updateAvatar();  // ← явный вызов обновления аватара
             updateCityUI();
             
-            // ВАЖНО: проверяем game_login (включая 'EMPTY')
+            // Проверяем game_login
             const overlay = document.getElementById('overlay');
             if (overlay) {
                 if (!userData.game_login || userData.game_login === '' || userData.game_login === 'EMPTY') {
