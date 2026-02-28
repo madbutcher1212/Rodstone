@@ -1,10 +1,8 @@
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import time
 import json
-import hashlib
-import hmac
 
 from utils.telegram import verify_telegram_data
 from models.player import Player
@@ -40,17 +38,6 @@ def require_telegram(f):
     wrapper.__name__ = f.__name__
     return wrapper
 
-def generate_nonce(telegram_id, timestamp):
-    """Генерирует уникальный nonce для защиты от повторов"""
-    data = f"{telegram_id}:{timestamp}:{current_app.config['SECRET_KEY']}"
-    return hashlib.sha256(data.encode()).hexdigest()
-
-def verify_nonce(telegram_id, nonce, timestamp):
-    """Проверяет nonce (временная заглушка, потом добавим Redis)"""
-    # TODO: добавить Redis для хранения использованных nonce
-    expected = generate_nonce(telegram_id, timestamp)
-    return hmac.compare_digest(expected, nonce)
-
 @actions_bp.route('/action', methods=['POST'])
 @require_telegram
 def game_action(telegram_user):
@@ -59,19 +46,6 @@ def game_action(telegram_user):
     action_data = data.get('data', {})
 
     telegram_id = str(telegram_user['id'])
-
-    # Защита от повторной отправки (проверка nonce)
-    nonce = action_data.get('nonce')
-    timestamp = action_data.get('timestamp')
-    
-    if not nonce or not timestamp:
-        return jsonify({'success': False, 'error': 'Missing security params'}), 400
-    
-    if abs(time.time() * 1000 - timestamp) > 30000:  # 30 секунд
-        return jsonify({'success': False, 'error': 'Request expired'}), 400
-    
-    if not verify_nonce(telegram_id, nonce, timestamp):
-        return jsonify({'success': False, 'error': 'Invalid nonce'}), 400
 
     # Получаем игрока
     player = Player.find_by_telegram_id(telegram_id)
