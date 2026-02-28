@@ -11,25 +11,6 @@ function formatNumber(num) {
     return num.toString();
 }
 
-// Показать точное значение ресурса при клике
-function showExactValue(resource) {
-    const values = {
-        gold: userData.gold,
-        wood: userData.wood,
-        stone: userData.stone,
-        food: userData.food,
-        population: `${userData.population_current}/${userData.population_max}`
-    };
-    const names = {
-        gold: 'Золото',
-        wood: 'Древесина',
-        stone: 'Камень',
-        food: 'Еда',
-        population: 'Население'
-    };
-    showToast(`${names[resource]}: ${values[resource]}`);
-}
-
 // Расчёт дохода в час
 function calculateHourlyIncome() {
     let income = {
