@@ -280,10 +280,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('changeNameWithPriceBtn')?.addEventListener('click', changeNamePaid);
     document.getElementById('confirmAvatarBtn')?.addEventListener('click', confirmAvatarSelection);
     
-    setInterval(() => {
-        updateTimer();
-        checkAutoCollection();
-    }, 1000);
+    setInterval(async () => {
+    updateTimer();
+    
+    // Проверяем, не прошёл ли час
+    const now = Date.now();
+    if (now - userData.lastCollection >= COLLECTION_INTERVAL) {
+        await apiRequest('collect', {});
+    }
+}, 1000);
     
     switchTab('city');
 });
