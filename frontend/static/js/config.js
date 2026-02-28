@@ -1,5 +1,5 @@
 // Конфигурация API
-const API_URL = 'https://game-production-10ea.up.railway.app'; // Заменишь на свой URL после деплоя
+const API_URL = 'https://game-production-10ea.up.railway.app';
 
 // Конфиг аватарок
 const AVATARS = {
