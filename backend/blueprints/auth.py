@@ -1,4 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import time
 import json
 from models.player import Player
@@ -7,7 +9,15 @@ from utils.telegram import verify_telegram_data
 
 auth_bp = Blueprint('auth', __name__)
 
+# Rate Limiter для этого blueprint
+limiter = Limiter(
+    get_remote_address,
+    app=current_app,
+    default_limits=["200 per day", "50 per hour"]
+)
+
 @auth_bp.route('/auth', methods=['POST'])
+@limiter.limit("5 per minute")  # Не больше 5 попыток в минуту
 def auth():
     """
     Авторизация пользователя через Telegram Web App данные.
@@ -21,7 +31,7 @@ def auth():
     if not init_data:
         return jsonify({'success': False, 'error': 'No initData'}), 400
 
-    # Проверяем подпись Telegram
+    # Проверяем подпись Telegram (строгая проверка)
     telegram_user = verify_telegram_data(init_data)
     if not telegram_user:
         return jsonify({'success': False, 'error': 'Invalid Telegram data'}), 401
