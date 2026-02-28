@@ -207,7 +207,163 @@ function generateBuildingCardHTML(id) {
         </div>
     `;
 }
+// Показать модальное окно улучшения
+function showUpgradeModal(buildingId) {
+    console.log('🏗️ Открытие модалки для:', buildingId);
+    
+    // Для ратуши свои данные
+    if (buildingId === 'townhall') {
+        const level = userData.townHallLevel;
+        const nextLevel = level + 1;
+        const nextIncome = TOWN_HALL_INCOME[nextLevel] || 0;
+        const cost = TOWN_HALL_UPGRADE_COST[nextLevel] || { gold: 0, wood: 0, stone: 0 };
+        
+        const modal = document.getElementById('upgradeModal');
+        modal.innerHTML = `
+            <div class="upgrade-info">
+                <h3>Улучшить Ратушу</h3>
+                
+                <div class="upgrade-levels">
+                    <div class="upgrade-level-current">
+                        <span>${level}</span>
+                        <small>текущий</small>
+                    </div>
+                    <div class="upgrade-arrow">→</div>
+                    <div class="upgrade-level-next">
+                        <span>${nextLevel}</span>
+                        <small>новый</small>
+                    </div>
+                </div>
+                
+                <div class="upgrade-income">
+                    <h4>Прибыль на ${nextLevel} уровне:</h4>
+                    <div class="upgrade-income-item">🪙 +${nextIncome}/ч</div>
+                </div>
+                
+                <div class="upgrade-cost">
+                    <h4>Стоимость:</h4>
+                    <div class="upgrade-cost-item">
+                        <span>🪙 Золото:</span>
+                        <span>${cost.gold}</span>
+                    </div>
+                    <div class="upgrade-cost-item">
+                        <span>🪵 Дерево:</span>
+                        <span>${cost.wood}</span>
+                    </div>
+                    ${cost.stone ? `
+                    <div class="upgrade-cost-item">
+                        <span>⛰️ Камень:</span>
+                        <span>${cost.stone}</span>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <div class="upgrade-actions">
+                    <button class="btn" onclick="confirmUpgrade('townhall')">
+                        Улучшить (🪙${cost.gold} 🪵${cost.wood}${cost.stone ? ` ⛰️${cost.stone}` : ''})
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeUpgradeModal()">Отмена</button>
+                </div>
+            </div>
+        `;
+        
+        document.getElementById('upgradeOverlay').style.display = 'flex';
+        selectedBuildingForUpgrade = buildingId;
+        return;
+    }
+    
+    // Для обычных зданий
+    const config = BUILDINGS_CONFIG[buildingId];
+    if (!config) return;
+    
+    const level = getBuildingLevel(buildingId);
+    const nextLevel = level + 1;
+    const nextIncome = config.income?.[level] || {};
+    const cost = level === 0 ? config.baseCost : config.upgradeCosts[level - 1];
+    
+    let incomeHtml = '';
+    const parts = [];
+    if (nextIncome.gold) parts.push(`🪙 +${nextIncome.gold}`);
+    if (nextIncome.wood) parts.push(`🪵 +${nextIncome.wood}`);
+    if (nextIncome.stone) parts.push(`⛰️ +${nextIncome.stone}`);
+    if (nextIncome.food) parts.push(nextIncome.food > 0 ? `🌾 +${nextIncome.food}` : `🌾 ${nextIncome.food}`);
+    if (nextIncome.populationGrowth) parts.push(`👥 +${nextIncome.populationGrowth}`);
+    
+    if (parts.length) {
+        incomeHtml = parts.join('<br>');
+    } else {
+        incomeHtml = 'нет дохода';
+    }
+    
+    const modal = document.getElementById('upgradeModal');
+    modal.innerHTML = `
+        <div class="upgrade-info">
+            <h3>${level === 0 ? 'Постройка' : 'Улучшить'} ${config.name}</h3>
+            
+            <div class="upgrade-levels">
+                <div class="upgrade-level-current">
+                    <span>${level || 0}</span>
+                    <small>текущий</small>
+                </div>
+                <div class="upgrade-arrow">→</div>
+                <div class="upgrade-level-next">
+                    <span>${nextLevel}</span>
+                    <small>новый</small>
+                </div>
+            </div>
+            
+            <div class="upgrade-income">
+                <h4>Прибыль на ${nextLevel} уровне:</h4>
+                <div class="upgrade-income-item">${incomeHtml}</div>
+            </div>
+            
+            <div class="upgrade-cost">
+                <h4>Стоимость:</h4>
+                <div class="upgrade-cost-item">
+                    <span>🪙 Золото:</span>
+                    <span>${cost.gold}</span>
+                </div>
+                <div class="upgrade-cost-item">
+                    <span>🪵 Дерево:</span>
+                    <span>${cost.wood}</span>
+                </div>
+                ${cost.stone ? `
+                <div class="upgrade-cost-item">
+                    <span>⛰️ Камень:</span>
+                    <span>${cost.stone}</span>
+                </div>
+                ` : ''}
+            </div>
+            
+            <div class="upgrade-actions">
+                <button class="btn" onclick="confirmUpgrade('${buildingId}')">
+                    ${level === 0 ? 'Построить' : 'Улучшить'} (🪙${cost.gold} 🪵${cost.wood}${cost.stone ? ` ⛰️${cost.stone}` : ''})
+                </button>
+                <button class="btn btn-secondary" onclick="closeUpgradeModal()">Отмена</button>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('upgradeOverlay').style.display = 'flex';
+    selectedBuildingForUpgrade = buildingId;
+}
 
+// Закрыть окно улучшения
+function closeUpgradeModal() {
+    document.getElementById('upgradeOverlay').style.display = 'none';
+    selectedBuildingForUpgrade = null;
+}
+
+// Подтвердить улучшение
+async function confirmUpgrade(buildingId) {
+    closeUpgradeModal();
+    const level = getBuildingLevel(buildingId);
+    if (level === 0) {
+        await buildBuilding(buildingId);
+    } else {
+        await upgradeBuilding(buildingId);
+    }
+}
 // Обновление отображения ратуши
 function updateTownHallDisplay() {
     const income = TOWN_HALL_INCOME[userData.townHallLevel] || 0;
