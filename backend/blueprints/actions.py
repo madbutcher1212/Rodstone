@@ -1,6 +1,4 @@
 from flask import Blueprint, request, jsonify
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 import time
 import json
 
@@ -46,6 +44,7 @@ def game_action(telegram_user):
     action_data = data.get('data', {})
 
     telegram_id = str(telegram_user['id'])
+    print(f"🎮 Действие '{action}' от пользователя {telegram_id}")
 
     # Получаем игрока
     player = Player.find_by_telegram_id(telegram_id)
@@ -102,12 +101,7 @@ def game_action(telegram_user):
             state.update(additional_state)
         return jsonify({'success': True, 'state': state})
 
-    # Валидация входных данных
-    allowed_actions = ['collect', 'build', 'upgrade', 'upgrade_level', 'set_login', 'change_name_paid', 'buy_avatar', 'select_avatar']
-    if action not in allowed_actions:
-        return jsonify({'success': False, 'error': 'Unknown action'}), 400
-
-    # Обработка действий
+    # ===== СБОР РЕСУРСОВ =====
     if action == 'collect':
         now = int(time.time() * 1000)
         time_passed = now - last_collection
@@ -141,13 +135,16 @@ def game_action(telegram_user):
                           gold=gold, wood=wood, food=food, stone=stone,
                           population_current=population_current,
                           last_collection=last_collection)
+            
+            print(f"✅ Сбор ресурсов: +{total_gold}🪙 +{total_wood}🪵 +{total_food}🌾 +{total_stone}⛰️")
 
         return build_response()
 
+    # ===== ПОСТРОЙКА НОВОГО ЗДАНИЯ =====
     if action == 'build':
         building_id = action_data.get('building_id')
-        
-        # Валидация building_id
+        print(f"🏗️ Попытка построить {building_id}")
+
         if building_id not in BUILDINGS_CONFIG:
             return jsonify({'success': False, 'error': 'Unknown building'}), 400
 
@@ -181,12 +178,14 @@ def game_action(telegram_user):
                       buildings=json.dumps(buildings),
                       population_max=population_max)
 
+        print(f"✅ Построено {building_id}")
         return build_response()
 
+    # ===== УЛУЧШЕНИЕ ЗДАНИЯ =====
     if action == 'upgrade':
         building_id = action_data.get('building_id')
-        
-        # Валидация
+        print(f"⬆️ Попытка улучшить {building_id}")
+
         if building_id not in BUILDINGS_CONFIG:
             return jsonify({'success': False, 'error': 'Unknown building'}), 400
 
@@ -223,9 +222,13 @@ def game_action(telegram_user):
                       buildings=json.dumps(buildings),
                       population_max=population_max)
 
+        print(f"✅ Улучшено {building_id} до уровня {current_level + 1}")
         return build_response()
 
+    # ===== УЛУЧШЕНИЕ РАТУШИ =====
     if action == 'upgrade_level':
+        print(f"🏛️ Попытка улучшить ратушу с {town_hall_level} до {town_hall_level + 1}")
+
         if town_hall_level >= 5:
             return jsonify({'success': False, 'error': 'Max level reached'}), 400
 
@@ -242,26 +245,61 @@ def game_action(telegram_user):
                       gold=gold, wood=wood, stone=stone,
                       town_hall_level=town_hall_level)
 
+        print(f"✅ Ратуша улучшена до уровня {town_hall_level}")
         return build_response()
 
+    # ===== УСТАНОВКА ИМЕНИ (ПРИ РЕГИСТРАЦИИ) =====
     if action == 'set_login':
         new_login = action_data.get('game_login', '').strip()
+        print(f"📝 Попытка установить имя: '{new_login}' для пользователя {telegram_id}")
         
         # Валидация
         if not new_login:
+            print("❌ Имя пустое")
             return jsonify({'success': False, 'error': 'Login cannot be empty'}), 400
+            
         if len(new_login) > 12:
             new_login = new_login[:12]
-        # Запрещаем спецсимволы
+            print(f"📏 Имя обрезано до 12 символов: '{new_login}'")
+            
+        # Запрещаем спецсимволы (оставляем буквы, цифры и подчёркивание)
         if not new_login.replace('_', '').isalnum():
+            print(f"❌ Недопустимые символы в имени: '{new_login}'")
             return jsonify({'success': False, 'error': 'Only letters, numbers and underscores'}), 400
 
-        Player.update(player_id, game_login=new_login)
-        return build_response({'game_login': new_login})
+        # Обновляем в БД
+        try:
+            Player.update(player_id, game_login=new_login)
+            print(f"✅ Имя успешно обновлено в БД: '{new_login}'")
+            
+            # Возвращаем обновлённое состояние
+            return jsonify({
+                'success': True, 
+                'state': {
+                    'game_login': new_login,
+                    'gold': gold,
+                    'wood': wood,
+                    'food': food,
+                    'stone': stone,
+                    'level': level,
+                    'townHallLevel': town_hall_level,
+                    'population_current': population_current,
+                    'population_max': population_max,
+                    'avatar': avatar,
+                    'owned_avatars': owned_avatars,
+                    'buildings': buildings,
+                    'lastCollection': last_collection
+                }
+            })
+        except Exception as e:
+            print(f"❌ Ошибка при сохранении имени в БД: {e}")
+            return jsonify({'success': False, 'error': 'Database error'}), 500
 
+    # ===== ПЛАТНАЯ СМЕНА ИМЕНИ =====
     if action == 'change_name_paid':
         new_name = action_data.get('game_login', '').strip()
         price = 5000
+        print(f"💰 Попытка платной смены имени на '{new_name}'")
         
         # Валидация
         if not new_name:
@@ -275,11 +313,14 @@ def game_action(telegram_user):
 
         gold -= price
         Player.update(player_id, game_login=new_name, gold=gold)
+        print(f"✅ Имя изменено на '{new_name}' за {price}🪙")
         return build_response({'game_login': new_name})
 
+    # ===== ПОКУПКА АВАТАРА =====
     if action == 'buy_avatar':
         new_avatar = action_data.get('avatar', '')
         price = action_data.get('price', 0)
+        print(f"🖼️ Попытка купить аватар {new_avatar} за {price}🪙")
 
         # Валидация
         allowed_avatars = ['male_free', 'female_free', 'male_premium', 'female_premium']
@@ -296,10 +337,13 @@ def game_action(telegram_user):
                       gold=gold,
                       owned_avatars=json.dumps(owned_avatars))
 
+        print(f"✅ Аватар {new_avatar} куплен")
         return build_response()
 
+    # ===== ВЫБОР АВАТАРА =====
     if action == 'select_avatar':
         new_avatar = action_data.get('avatar', '')
+        print(f"🖼️ Выбор аватара {new_avatar}")
         
         # Валидация
         allowed_avatars = ['male_free', 'female_free', 'male_premium', 'female_premium']
@@ -309,7 +353,9 @@ def game_action(telegram_user):
             return jsonify({'success': False, 'error': 'Avatar not owned'}), 400
 
         Player.update(player_id, avatar=new_avatar)
+        print(f"✅ Аватар {new_avatar} выбран")
         return build_response({'avatar': new_avatar})
 
-    # Сюда не должны доходить
+    # Если действие неизвестно
+    print(f"❌ Неизвестное действие: {action}")
     return jsonify({'success': False, 'error': 'Unknown action'}), 400
