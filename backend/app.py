@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, send_from_directory
+from flask import Flask, jsonify, render_template
 from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -9,6 +9,9 @@ from blueprints.auth import auth_bp
 from blueprints.actions import actions_bp
 from blueprints.clans import clans_bp
 from blueprints.admin import admin_bp
+
+# Импорт инициализации Supabase
+from models.player import init_supabase
 
 def create_app():
     # Указываем правильные пути к шаблонам и статике
@@ -24,6 +27,9 @@ def create_app():
     app.config['SUPABASE_URL'] = 'https://xevwktdwyioyantuqntb.supabase.co'
     app.config['SUPABASE_KEY'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhldndrdGR3eWlveWFudHVxbnRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4ODI2NTAsImV4cCI6MjA4NzQ1ODY1MH0.jC8jqGBv_yrbYg_x4XQradxxbkDtsXsQ9EBT0Iabed4'
     app.config['BOT_TOKEN'] = '8596066162:AAEm2DSAFhKemedKC8rT4RfFY4fjUhVBCvI'
+
+    # ВАЖНО: Инициализируем Supabase клиент
+    init_supabase(app.config['SUPABASE_URL'], app.config['SUPABASE_KEY'])
 
     # CORS
     CORS(app)
