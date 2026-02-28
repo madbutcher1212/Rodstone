@@ -17,7 +17,7 @@ limiter = Limiter(
 )
 
 @auth_bp.route('/auth', methods=['POST'])
-@limiter.limit("5 per minute")  # Не больше 5 попыток в минуту
+@limiter.limit("5 per minute")
 def auth():
     """
     Авторизация пользователя через Telegram Web App данные.
@@ -31,7 +31,7 @@ def auth():
     if not init_data:
         return jsonify({'success': False, 'error': 'No initData'}), 400
 
-    # Проверяем подпись Telegram (строгая проверка)
+    # Проверяем подпись Telegram
     telegram_user = verify_telegram_data(init_data)
     if not telegram_user:
         return jsonify({'success': False, 'error': 'Invalid Telegram data'}), 401
@@ -85,7 +85,7 @@ def auth():
                     'townHallLevel': player_data.get('town_hall_level', 1),
                     'population_current': player_data.get('population_current', 10),
                     'population_max': max_pop,
-                    'lastCollection': now
+                    'lastCollection': player_data.get('last_collection', now)  // ← берём из БД
                 },
                 'buildings': buildings,
                 'config': BUILDINGS_CONFIG
