@@ -47,13 +47,3 @@ async function authRequest() {
         return { success: false, error: 'Connection error' };
     }
 }
-
-async function topClansRequest() {
-    try {
-        const response = await fetch(`${API_URL}/api/clans/top`);
-        return await response.json();
-    } catch (error) {
-        console.error('Top clans error:', error);
-        return { players: [] };
-    }
-}
