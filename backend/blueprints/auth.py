@@ -64,7 +64,7 @@ def auth():
                 'user': {
                     'id': player_data.get('telegram_id'),
                     'username': player_data.get('username', ''),
-                    'game_login': player_data.get('game_login', ''),  # ВАЖНО!
+                    'game_login': player_data.get('game_login', ''),
                     'avatar': player_data.get('avatar', 'male_free'),
                     'owned_avatars': owned_avatars,
                     'gold': player_data.get('gold', 100),
@@ -88,33 +88,50 @@ def auth():
                 {"id": "lumber", "level": 1}
             ]
 
-            player_data = Player.create(telegram_id, username, initial_buildings)
             max_pop = calculate_population_max(initial_buildings)
 
-            # Обновляем максимальное население после создания
-            Player.update(player_data['id'], population_max=max_pop)
+            new_player = {
+                'telegram_id': telegram_id,
+                'username': username,
+                'game_login': '',
+                'avatar': 'male_free',
+                'owned_avatars': json.dumps(['male_free', 'female_free']),
+                'gold': 100,
+                'wood': 50,
+                'food': 50,
+                'stone': 0,
+                'level': 1,
+                'town_hall_level': 1,
+                'population_current': 10,
+                'population_max': max_pop,
+                'buildings': json.dumps(initial_buildings),
+                'last_collection': now
+            }
+            
+            Player.create(telegram_id, username, initial_buildings)
 
             return jsonify({
                 'success': True,
                 'user': {
-                    'id': player_data['telegram_id'],
-                    'username': player_data['username'],
-                    'game_login': player_data['game_login'],  # ВАЖНО! (будет пусто)
-                    'avatar': player_data['avatar'],
-                    'owned_avatars': json.loads(player_data['owned_avatars']),
-                    'gold': player_data['gold'],
-                    'wood': player_data['wood'],
-                    'food': player_data['food'],
-                    'stone': player_data['stone'],
-                    'level': player_data['level'],
-                    'townHallLevel': player_data.get('town_hall_level', 1),
-                    'population_current': player_data['population_current'],
+                    'id': telegram_id,
+                    'username': username,
+                    'game_login': '',
+                    'avatar': 'male_free',
+                    'owned_avatars': ['male_free', 'female_free'],
+                    'gold': 100,
+                    'wood': 50,
+                    'food': 50,
+                    'stone': 0,
+                    'level': 1,
+                    'townHallLevel': 1,
+                    'population_current': 10,
                     'population_max': max_pop,
-                    'lastCollection': player_data['last_collection']
+                    'lastCollection': now
                 },
                 'buildings': initial_buildings,
                 'config': BUILDINGS_CONFIG
             })
 
     except Exception as e:
+        print(f"❌ Ошибка авторизации: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
