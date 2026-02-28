@@ -1,10 +1,20 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+import time
+import json
+
 from utils.telegram import verify_telegram_data
 from models.player import Player
-import json
-import time
 
 clans_bp = Blueprint('clans', __name__)
+
+# Rate Limiter
+limiter = Limiter(
+    get_remote_address,
+    app=current_app,
+    default_limits=["200 per day", "50 per hour"]
+)
 
 # Декоратор для проверки авторизации
 def require_telegram(f):
@@ -21,18 +31,42 @@ def require_telegram(f):
     return wrapper
 
 @clans_bp.route('/create', methods=['POST'])
+@limiter.limit("3 per minute")  # Не больше 3 попыток в минуту
 @require_telegram
 def create_clan(telegram_user):
     """
     Создание нового клана.
-    Пока заглушка - будет реализовано позже.
+    Пока заглушка - будет реализовано позже с полной защитой.
     """
+    data = request.get_json()
+    name = data.get('name', '').strip()
+    tag = data.get('tag', '').strip()
+    
+    # Валидация входных данных
+    if not name or not tag:
+        return jsonify({'success': False, 'error': 'Name and tag required'}), 400
+    
+    if len(name) > 20:
+        return jsonify({'success': False, 'error': 'Name too long'}), 400
+    
+    if len(tag) > 5:
+        return jsonify({'success': False, 'error': 'Tag too long'}), 400
+    
+    if not tag.isalnum():
+        return jsonify({'success': False, 'error': 'Tag must be alphanumeric'}), 400
+    
+    telegram_id = str(telegram_user['id'])
+    
+    # TODO: добавить реальную логику кланов
+    # Сейчас просто заглушка
+    
     return jsonify({
         'success': True,
         'message': 'Clan creation will be available in future updates'
     })
 
 @clans_bp.route('/list', methods=['GET'])
+@limiter.limit("10 per minute")
 def list_clans():
     """
     Список кланов.
@@ -44,6 +78,7 @@ def list_clans():
     })
 
 @clans_bp.route('/top', methods=['GET'])
+@limiter.limit("10 per minute")
 def top_clans():
     """
     Топ кланов по уровню/силе.
@@ -58,4 +93,5 @@ def top_clans():
             .execute()
         return jsonify({'players': result.data})
     except Exception as e:
+        print(f"❌ Top clans error: {e}")
         return jsonify({'players': [], 'error': str(e)})
