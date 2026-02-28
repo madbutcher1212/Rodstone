@@ -77,6 +77,25 @@
             <div class="tab-content">
                 <!-- Город -->
                 <div id="tabCity" class="tab-pane active">
+                  
+                    <!-- Отображение ресурсов сверху -->
+                    <div class="city-resources">
+    <div class="city-resource-item" onclick="showExactValue('wood', event)">
+        <span>🪵</span>
+        <span id="woodDisplay">50</span>
+        <span class="resource-income" id="woodIncome2">+0/ч</span>
+    </div>
+    <div class="city-resource-item" onclick="showExactValue('stone', event)">
+        <span>⛰️</span>
+        <span id="stoneDisplay">0</span>
+        <span class="resource-income" id="stoneIncome2">+0/ч</span>
+    </div>
+    <div class="city-resource-item" onclick="showExactValue('food', event)">
+        <span>🌾</span>
+        <span id="foodDisplay">50</span>
+        <span class="resource-income" id="foodIncome2">0/ч</span>
+    </div>
+</div>
    
                     <!-- Ратуша -->
                     <div class="town-hall" id="townHall">
