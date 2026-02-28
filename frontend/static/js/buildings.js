@@ -207,6 +207,7 @@ function generateBuildingCardHTML(id) {
         </div>
     `;
 }
+
 // Показать модальное окно улучшения
 function showUpgradeModal(buildingId) {
     console.log('🏗️ Открытие модалки для:', buildingId);
@@ -238,24 +239,6 @@ function showUpgradeModal(buildingId) {
                 <div class="upgrade-income">
                     <h4>Прибыль на ${nextLevel} уровне:</h4>
                     <div class="upgrade-income-item">🪙 +${nextIncome}/ч</div>
-                </div>
-                
-                <div class="upgrade-cost">
-                    <h4>Стоимость:</h4>
-                    <div class="upgrade-cost-item">
-                        <span>🪙 Золото:</span>
-                        <span>${cost.gold}</span>
-                    </div>
-                    <div class="upgrade-cost-item">
-                        <span>🪵 Дерево:</span>
-                        <span>${cost.wood}</span>
-                    </div>
-                    ${cost.stone ? `
-                    <div class="upgrade-cost-item">
-                        <span>⛰️ Камень:</span>
-                        <span>${cost.stone}</span>
-                    </div>
-                    ` : ''}
                 </div>
                 
                 <div class="upgrade-actions">
@@ -317,24 +300,6 @@ function showUpgradeModal(buildingId) {
                 <div class="upgrade-income-item">${incomeHtml}</div>
             </div>
             
-            <div class="upgrade-cost">
-                <h4>Стоимость:</h4>
-                <div class="upgrade-cost-item">
-                    <span>🪙 Золото:</span>
-                    <span>${cost.gold}</span>
-                </div>
-                <div class="upgrade-cost-item">
-                    <span>🪵 Дерево:</span>
-                    <span>${cost.wood}</span>
-                </div>
-                ${cost.stone ? `
-                <div class="upgrade-cost-item">
-                    <span>⛰️ Камень:</span>
-                    <span>${cost.stone}</span>
-                </div>
-                ` : ''}
-            </div>
-            
             <div class="upgrade-actions">
                 <button class="btn" onclick="confirmUpgrade('${buildingId}')">
                     ${level === 0 ? 'Построить' : 'Улучшить'} (🪙${cost.gold} 🪵${cost.wood}${cost.stone ? ` ⛰️${cost.stone}` : ''})
@@ -364,6 +329,7 @@ async function confirmUpgrade(buildingId) {
         await upgradeBuilding(buildingId);
     }
 }
+
 // Обновление отображения ратуши
 function updateTownHallDisplay() {
     const income = TOWN_HALL_INCOME[userData.townHallLevel] || 0;
@@ -445,6 +411,8 @@ async function upgradeBuilding(id) {
         showToast(`❌ ${result.error || 'Ошибка'}`);
     }
 }
+
+// Улучшение ратуши через модальное окно
 async function upgradeTownHall() {
     if (userData.townHallLevel >= 5) {
         showToast('🏛️ Максимальный уровень');
