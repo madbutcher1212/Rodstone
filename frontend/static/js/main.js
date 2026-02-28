@@ -295,3 +295,30 @@ setTimeout(() => {
     
     switchTab('city');
 });
+// ПРЯМОЙ ТЕСТ КНОПКИ
+window.onload = function() {
+    console.log('🟢 Страница полностью загружена');
+    
+    const btn = document.getElementById('confirmLogin');
+    if (btn) {
+        console.log('✅ Кнопка найдена');
+        
+        // Вариант 1: addEventListener
+        btn.addEventListener('click', function() {
+            alert('🔴 addEventListener сработал!');
+        });
+        
+        // Вариант 2: onclick (на всякий случай)
+        btn.onclick = function() {
+            alert('🟠 onclick сработал!');
+        };
+        
+        // Вариант 3: меняем внешний вид
+        btn.style.backgroundColor = 'red';
+        btn.style.color = 'white';
+        btn.style.fontWeight = 'bold';
+        btn.style.border = '3px solid yellow';
+    } else {
+        console.error('❌ Кнопка не найдена');
+    }
+};
