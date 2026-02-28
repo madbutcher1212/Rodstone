@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import time
@@ -16,13 +16,6 @@ from models.building_config import (
 )
 
 actions_bp = Blueprint('actions', __name__)
-
-# Rate Limiter
-limiter = Limiter(
-    get_remote_address,
-    app=current_app,
-    default_limits=["200 per day", "50 per hour"]
-)
 
 # Константы ратуши
 TOWN_HALL_INCOME = {1:5, 2:10, 3:20, 4:45, 5:100}
@@ -59,7 +52,6 @@ def verify_nonce(telegram_id, nonce, timestamp):
     return hmac.compare_digest(expected, nonce)
 
 @actions_bp.route('/action', methods=['POST'])
-@limiter.limit("10 per minute")  # Не больше 10 действий в минуту
 @require_telegram
 def game_action(telegram_user):
     data = request.get_json()
@@ -81,8 +73,8 @@ def game_action(telegram_user):
     if not verify_nonce(telegram_id, nonce, timestamp):
         return jsonify({'success': False, 'error': 'Invalid nonce'}), 400
 
-    # Получаем игрока с блокировкой для защиты от race condition
-    player = Player.find_by_telegram_id(telegram_id, lock=True)  # нужно добавить lock=True
+    # Получаем игрока
+    player = Player.find_by_telegram_id(telegram_id)
     if not player:
         return jsonify({'success': False, 'error': 'Player not found'}), 404
 
