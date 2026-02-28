@@ -82,11 +82,7 @@ function generateBuildingCardHTML(id) {
     let statusBadge = '';
     let bonusText = '';
     
-    if (id === 'house' && level > 0) {
-        const totalBonus = config.populationBonus.slice(0, level).reduce((a, b) => a + b, 0);
-        bonusText = `<div class="building-bonus">👥 +${totalBonus} лимит</div>`;
-    }
-    
+    // Статус здания
     if (level === 0) {
         if (!isTownHallLevelEnough(id, 1)) {
             statusClass = 'locked';
@@ -101,23 +97,44 @@ function generateBuildingCardHTML(id) {
         statusBadge = `<span class="building-status built">🏗️ Ур. ${level}</span>`;
     }
     
+    // Для жилого района показываем бонус к лимиту
+    if (id === 'house' && level > 0) {
+        const totalBonus = config.populationBonus.slice(0, level).reduce((a, b) => a + b, 0);
+        bonusText = `<div class="building-bonus">👥 +${totalBonus} лимит</div>`;
+    }
+    
+    // Текущий доход
     const currentIncome = getBuildingIncome(id, level);
     let incomeText = '';
     if (level > 0 && Object.keys(currentIncome).length > 0) {
         let parts = [];
-        if (currentIncome.gold) parts.push(`🪙+${currentIncome.gold * count}`);
-        if (currentIncome.wood) parts.push(`🪵+${currentIncome.wood * count}`);
-        if (currentIncome.stone) parts.push(`⛰️+${currentIncome.stone * count}`);
-        if (currentIncome.food) {
-            if (currentIncome.food > 0) parts.push(`🌾+${currentIncome.food * count}`);
-            else if (currentIncome.food < 0) parts.push(`🌾${currentIncome.food * count}`);
+        
+        if (currentIncome.gold !== undefined && currentIncome.gold !== 0) {
+            parts.push(`🪙+${currentIncome.gold * count}`);
         }
-        if (currentIncome.populationGrowth) parts.push(`👥+${currentIncome.populationGrowth * count}`);
+        if (currentIncome.wood !== undefined && currentIncome.wood !== 0) {
+            parts.push(`🪵+${currentIncome.wood * count}`);
+        }
+        if (currentIncome.stone !== undefined && currentIncome.stone !== 0) {
+            parts.push(`⛰️+${currentIncome.stone * count}`);
+        }
+        if (currentIncome.food !== undefined) {
+            if (currentIncome.food > 0) {
+                parts.push(`🌾+${currentIncome.food * count}`);
+            } else if (currentIncome.food < 0) {
+                parts.push(`🌾${currentIncome.food * count}`);
+            }
+        }
+        if (currentIncome.populationGrowth !== undefined && currentIncome.populationGrowth > 0) {
+            parts.push(`👥+${currentIncome.populationGrowth * count}`);
+        }
+        
         if (parts.length > 0) {
             incomeText = `<div class="building-income">📊 Доход: ${parts.join(' ')}/ч</div>`;
         }
     }
     
+    // Доход на следующем уровне
     let nextIncomeText = '';
     let upgradeBtn = '';
     
@@ -126,18 +143,36 @@ function generateBuildingCardHTML(id) {
         const cost = getUpgradeCost(id, level);
         const canUpgradeNow = canUpgrade(id, level);
         
-        let parts = [];
-        if (nextIncome.gold) parts.push(`🪙+${nextIncome.gold}`);
-        if (nextIncome.wood) parts.push(`🪵+${nextIncome.wood}`);
-        if (nextIncome.stone) parts.push(`⛰️+${nextIncome.stone}`);
-        if (nextIncome.food) {
-            if (nextIncome.food > 0) parts.push(`🌾+${nextIncome.food}`);
-            else if (nextIncome.food < 0) parts.push(`🌾${nextIncome.food}`);
-        }
-        if (nextIncome.populationGrowth) parts.push(`👥+${nextIncome.populationGrowth}`);
-        
-        if (parts.length > 0) {
-            nextIncomeText = `<div class="building-next-income">📈 Ур.${level+1}: ${parts.join(' ')}/ч</div>`;
+        // Для жилого района показываем бонус к лимиту на следующем уровне
+        if (id === 'house') {
+            const totalBonus = config.populationBonus.slice(0, level).reduce((a, b) => a + b, 0);
+            const nextBonus = totalBonus + config.populationBonus[level];
+            nextIncomeText = `<div class="building-next-income">📈 Ур.${level+1}: 👥 +${nextBonus} лимит</div>`;
+        } else {
+            let parts = [];
+            if (nextIncome.gold !== undefined && nextIncome.gold !== 0) {
+                parts.push(`🪙+${nextIncome.gold}`);
+            }
+            if (nextIncome.wood !== undefined && nextIncome.wood !== 0) {
+                parts.push(`🪵+${nextIncome.wood}`);
+            }
+            if (nextIncome.stone !== undefined && nextIncome.stone !== 0) {
+                parts.push(`⛰️+${nextIncome.stone}`);
+            }
+            if (nextIncome.food !== undefined) {
+                if (nextIncome.food > 0) {
+                    parts.push(`🌾+${nextIncome.food}`);
+                } else if (nextIncome.food < 0) {
+                    parts.push(`🌾${nextIncome.food}`);
+                }
+            }
+            if (nextIncome.populationGrowth !== undefined && nextIncome.populationGrowth > 0) {
+                parts.push(`👥+${nextIncome.populationGrowth}`);
+            }
+            
+            if (parts.length > 0) {
+                nextIncomeText = `<div class="building-next-income">📈 Ур.${level+1}: ${parts.join(' ')}/ч</div>`;
+            }
         }
         
         let reqText = '';
@@ -164,11 +199,25 @@ function generateBuildingCardHTML(id) {
         let incomePreview = '';
         if (firstIncome) {
             let parts = [];
-            if (firstIncome.gold) parts.push(`🪙+${firstIncome.gold}`);
-            if (firstIncome.wood) parts.push(`🪵+${firstIncome.wood}`);
-            if (firstIncome.stone) parts.push(`⛰️+${firstIncome.stone}`);
-            if (firstIncome.food) parts.push(firstIncome.food > 0 ? `🌾+${firstIncome.food}` : `🌾${firstIncome.food}`);
-            if (firstIncome.populationGrowth) parts.push(`👥+${firstIncome.populationGrowth}`);
+            if (firstIncome.gold !== undefined && firstIncome.gold !== 0) {
+                parts.push(`🪙+${firstIncome.gold}`);
+            }
+            if (firstIncome.wood !== undefined && firstIncome.wood !== 0) {
+                parts.push(`🪵+${firstIncome.wood}`);
+            }
+            if (firstIncome.stone !== undefined && firstIncome.stone !== 0) {
+                parts.push(`⛰️+${firstIncome.stone}`);
+            }
+            if (firstIncome.food !== undefined) {
+                if (firstIncome.food > 0) {
+                    parts.push(`🌾+${firstIncome.food}`);
+                } else if (firstIncome.food < 0) {
+                    parts.push(`🌾${firstIncome.food}`);
+                }
+            }
+            if (firstIncome.populationGrowth !== undefined && firstIncome.populationGrowth > 0) {
+                parts.push(`👥+${firstIncome.populationGrowth}`);
+            }
             if (parts.length > 0) {
                 incomePreview = `<div class="building-next-income">📈 Доход: ${parts.join(' ')}/ч</div>`;
             }
