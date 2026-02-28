@@ -69,7 +69,7 @@ function updateResourcesDisplay() {
     document.getElementById('stoneBar').textContent = formatNumber(userData.stone);
     document.getElementById('stoneIncome').textContent = `+${formatNumber(income.stone)}/ч`;
     
-    // Расчёт еды с учётом потребления жителей
+    // Отображение еды
     const foodProd = income.food;
     const foodCons = userData.population_current;
     const foodBal = foodProd - foodCons;
@@ -79,20 +79,18 @@ function updateResourcesDisplay() {
         foodBal > 0 ? `+${formatNumber(foodBal)}/ч` : 
         foodBal < 0 ? `${formatNumber(foodBal)}/ч` : '0/ч';
     
-    if (document.getElementById('foodIncome2')) {
-        document.getElementById('foodIncome2').textContent = 
-            foodBal > 0 ? `+${formatNumber(foodBal)}/ч` : 
-            foodBal < 0 ? `${formatNumber(foodBal)}/ч` : '0/ч';
+    // Отображение жителей
+    const popElement = document.getElementById('populationDisplay');
+    if (popElement) {
+        popElement.textContent = `${userData.population_current}/${userData.population_max}`;
     }
-
-    document.getElementById('populationDisplay').textContent = 
-        `${userData.population_current}/${userData.population_max}`;
-
-    // Рост населения (базовый + от зданий)
-    const canGrow = userData.food > 0 || foodProd >= foodCons;
-    const totalGrowth = canGrow ? 3 + income.populationGrowth : 0;
-    document.getElementById('populationGrowth').textContent = 
-        totalGrowth > 0 ? `+${totalGrowth}/ч` : '⚠️';
+    
+    const popGrowthElement = document.getElementById('populationGrowth');
+    if (popGrowthElement) {
+        const canGrow = userData.food > 0 || foodProd >= foodCons;
+        const totalGrowth = canGrow ? 3 + income.populationGrowth : 0;
+        popGrowthElement.textContent = totalGrowth > 0 ? `+${totalGrowth}/ч` : '⚠️';
+    }
 }
 
 // Обновление таймера
