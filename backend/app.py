@@ -3,7 +3,6 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import os
-import redis
 
 # Импорт blueprint'ов
 from blueprints.auth import auth_bp
@@ -28,12 +27,6 @@ def create_app():
     app.config['SUPABASE_URL'] = os.environ.get('SUPABASE_URL', 'https://xevwktdwyioyantuqntb.supabase.co')
     app.config['SUPABASE_KEY'] = os.environ.get('SUPABASE_KEY', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhldndrdGR3eWlveWFudHVxbnRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4ODI2NTAsImV4cCI6MjA4NzQ1ODY1MH0.jC8jqGBv_yrbYg_x4XQradxxbkDtsXsQ9EBT0Iabed4')
     app.config['BOT_TOKEN'] = os.environ.get('BOT_TOKEN', '8596066162:AAEm2DSAFhKemedKC8rT4RfFY4fjUhVBCvI')
-    
-    # Настройка Redis для Rate Limiter (для тысяч игроков)
-    redis_url = os.environ.get('REDIS_URL', 'redis://localhost:6379')
-    app.config['RATELIMIT_STORAGE_URL'] = redis_url
-    app.config['RATELIMIT_STRATEGY'] = 'fixed-window'
-    app.config['RATELIMIT_HEADERS_ENABLED'] = True
 
     # Инициализируем Supabase клиент
     init_supabase(app.config['SUPABASE_URL'], app.config['SUPABASE_KEY'])
@@ -41,12 +34,12 @@ def create_app():
     # CORS
     CORS(app)
 
-    # Rate Limiter с Redis хранилищем
+    # Rate Limiter с памятью (без Redis)
     limiter = Limiter(
         get_remote_address,
         app=app,
         default_limits=["200 per day", "50 per hour"],
-        storage_uri=redis_url
+        storage_uri="memory://"  # Используем память вместо Redis
     )
 
     # Регистрация blueprint'ов
@@ -65,4 +58,4 @@ def create_app():
 app = create_app()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)  # debug=False в продакшене
+    app.run(host='0.0.0.0', port=5000, debug=False)
