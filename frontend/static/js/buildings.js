@@ -214,6 +214,16 @@ function updateTownHallDisplay() {
     document.getElementById('townHallIncome').textContent = `+${income} 🪙/ч`;
     document.getElementById('townHallLevel').textContent = userData.townHallLevel;
     document.getElementById('townHallLevelBadge').textContent = userData.townHallLevel;
+    
+    // Обновляем текст кнопки (опционально)
+    const btn = document.getElementById('townHallUpgradeBtn');
+    if (btn) {
+        if (userData.townHallLevel >= 5) {
+            btn.style.display = 'none';
+        } else {
+            btn.style.display = 'block';
+        }
+    }
 }
 
 // Обновление UI города
