@@ -64,11 +64,14 @@ async function login() {
             updateUserInfo();
             updateCityUI();
             
+            // ВАЖНО: Показываем окно если нет имени
             const overlay = document.getElementById('loginOverlay');
-            if (!userData.game_login) {
-                overlay.style.display = 'flex';
-            } else {
-                overlay.style.display = 'none';
+            if (overlay) {
+                if (!userData.game_login) {
+                    overlay.style.display = 'flex';
+                } else {
+                    overlay.style.display = 'none';
+                }
             }
         }
     } catch (error) {
