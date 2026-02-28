@@ -66,7 +66,6 @@ def auth():
 
             # Обновляем время последнего сбора
             Player.update(player_data['id'],
-                          last_collection=now,
                           population_max=max_pop)
 
             return jsonify({
