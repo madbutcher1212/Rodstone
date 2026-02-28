@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 import time
 import json
+import re  # добавил импорт
 
 from utils.telegram import verify_telegram_data
 from models.player import Player
@@ -265,9 +266,11 @@ def game_action(telegram_user):
             new_login = new_login[:12]
             print(f"📏 Имя обрезано до 12: '{new_login}'")
 
-        if not new_login.replace('_', '').isalnum():
+        # Разрешаем буквы, цифры, пробелы и подчёркивания
+        allowed_chars = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_ ')
+        if not all(c in allowed_chars for c in new_login):
             print(f"❌ Недопустимые символы: '{new_login}'")
-            return jsonify({'success': False, 'error': 'Only letters, numbers and underscores'}), 400
+            return jsonify({'success': False, 'error': 'Only letters, numbers, spaces and underscores'}), 400
 
         # Обновляем в БД
         try:
@@ -307,8 +310,10 @@ def game_action(telegram_user):
             return jsonify({'success': False, 'error': 'Name cannot be empty'}), 400
         if len(new_name) > 12:
             new_name = new_name[:12]
-        if not new_name.replace('_', '').isalnum():
-            return jsonify({'success': False, 'error': 'Only letters, numbers and underscores'}), 400
+        # Для платной смены тоже разрешаем пробелы
+        allowed_chars = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_ ')
+        if not all(c in allowed_chars for c in new_name):
+            return jsonify({'success': False, 'error': 'Only letters, numbers, spaces and underscores'}), 400
         if gold < price:
             return jsonify({'success': False, 'error': 'Not enough gold'}), 400
 
