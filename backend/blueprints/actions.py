@@ -1,10 +1,10 @@
 from flask import Blueprint, request, jsonify
 import time
 import json
-import re  # добавил импорт
 
 from utils.telegram import verify_telegram_data
 from models.player import Player
+from models.timer import Timer
 from models.building_config import (
     BUILDINGS_CONFIG,
     calculate_building_upgrade_cost,
@@ -182,7 +182,7 @@ def game_action(telegram_user):
         print(f"✅ Построено {building_id}")
         return build_response()
 
-    # ===== УЛУЧШЕНИЕ ЗДАНИЯ =====
+    # ===== УЛУЧШЕНИЕ ЗДАНИЯ (С ТАЙМЕРОМ) =====
     if action == 'upgrade':
         building_id = action_data.get('building_id')
         print(f"⬆️ Попытка улучшить {building_id}")
@@ -209,21 +209,39 @@ def game_action(telegram_user):
         if gold < cost['gold'] or wood < cost['wood'] or stone < cost['stone']:
             return jsonify({'success': False, 'error': 'Not enough resources'}), 400
 
-        # Списываем ресурсы
+        # Проверяем, нет ли уже активного таймера для этого здания
+        active_timers = Timer.get_active(player_id, 'building')
+        for t in active_timers:
+            if t['target_id'] == building_id:
+                return jsonify({'success': False, 'error': 'Building already upgrading'}), 400
+
+        # Списываем ресурсы сразу
         gold -= cost['gold']
         wood -= cost['wood']
         stone -= cost['stone']
 
-        # Увеличиваем уровень
-        building['level'] = current_level + 1
-        population_max = calculate_population_max(buildings)
+        # Создаём таймер (5 секунд для теста)
+        duration = 5  # секунд
+        timer_data = {
+            'building_id': building_id,
+            'current_level': current_level,
+            'target_level': current_level + 1
+        }
+        
+        Timer.create(
+            player_id=player_id,
+            timer_type='building',
+            target_id=building_id,
+            duration_seconds=duration,
+            data=timer_data
+        )
 
+        # Обновляем ресурсы сразу, уровень пока не меняем
         Player.update(player_id,
-                      gold=gold, wood=wood, stone=stone,
-                      buildings=json.dumps(buildings),
-                      population_max=population_max)
+                      gold=gold, wood=wood, stone=stone)
 
-        print(f"✅ Улучшено {building_id} до уровня {current_level + 1}")
+        print(f"⏳ Улучшение {building_id} до уровня {current_level + 1} запущено на {duration} сек")
+        
         return build_response()
 
     # ===== УЛУЧШЕНИЕ РАТУШИ =====
@@ -237,19 +255,105 @@ def game_action(telegram_user):
         if gold < cost.get('gold', 0) or wood < cost.get('wood', 0) or stone < cost.get('stone', 0):
             return jsonify({'success': False, 'error': 'Not enough resources'}), 400
 
+        # Проверяем, нет ли уже активного таймера для ратуши
+        active_timers = Timer.get_active(player_id, 'building')
+        for t in active_timers:
+            if t['target_id'] == 'townhall':
+                return jsonify({'success': False, 'error': 'Town hall already upgrading'}), 400
+
+        # Списываем ресурсы
         gold -= cost.get('gold', 0)
         wood -= cost.get('wood', 0)
         stone -= cost.get('stone', 0)
-        town_hall_level += 1
 
+        # Создаём таймер для ратуши
+        duration = 5  # секунд для теста
+        timer_data = {
+            'building_id': 'townhall',
+            'current_level': town_hall_level,
+            'target_level': town_hall_level + 1
+        }
+        
+        Timer.create(
+            player_id=player_id,
+            timer_type='building',
+            target_id='townhall',
+            duration_seconds=duration,
+            data=timer_data
+        )
+
+        # Обновляем ресурсы, уровень пока не меняем
         Player.update(player_id,
-                      gold=gold, wood=wood, stone=stone,
-                      town_hall_level=town_hall_level)
+                      gold=gold, wood=wood, stone=stone)
 
-        print(f"✅ Ратуша улучшена до уровня {town_hall_level}")
+        print(f"⏳ Улучшение ратуши до уровня {town_hall_level + 1} запущено на {duration} сек")
+        
         return build_response()
 
-       # ===== УСТАНОВКА ИМЕНИ (ПРИ РЕГИСТРАЦИИ) =====
+    # ===== ПРОВЕРКА ТАЙМЕРОВ =====
+    if action == 'check_timers':
+        now = int(time.time() * 1000)
+        completed = []
+        
+        # Получаем все активные таймеры
+        timers = Timer.get_active(player_id)
+        
+        for timer in timers:
+            if timer['end_time'] <= now:
+                # Таймер завершён
+                timer_data = Timer.complete(timer['id'])
+                if timer_data and timer_data['timer_type'] == 'building':
+                    # Завершаем улучшение здания
+                    data = json.loads(timer_data['data'])
+                    building_id = data['building_id']
+                    target_level = data['target_level']
+                    
+                    if building_id == 'townhall':
+                        # Улучшение ратуши
+                        town_hall_level = target_level
+                        Player.update(player_id, town_hall_level=town_hall_level)
+                        completed.append({
+                            'type': 'townhall',
+                            'new_level': target_level
+                        })
+                    else:
+                        # Улучшение обычного здания
+                        for b in buildings:
+                            if b['id'] == building_id:
+                                b['level'] = target_level
+                                break
+                        Player.update(player_id, buildings=json.dumps(buildings))
+                        completed.append({
+                            'type': 'building',
+                            'building_id': building_id,
+                            'new_level': target_level
+                        })
+                    
+                    # Пересчитываем население
+                    population_max = calculate_population_max(buildings)
+                    Player.update(player_id, population_max=population_max)
+        
+        return jsonify({
+            'success': True,
+            'completed': completed,
+            'state': {
+                'gold': gold,
+                'wood': wood,
+                'food': food,
+                'stone': stone,
+                'level': level,
+                'townHallLevel': town_hall_level,
+                'population_current': population_current,
+                'population_max': population_max,
+                'game_login': game_login,
+                'avatar': avatar,
+                'owned_avatars': owned_avatars,
+                'buildings': buildings,
+                'lastCollection': last_collection
+            }
+        })
+
+    # ===== УСТАНОВКА ИМЕНИ (ПРИ РЕГИСТРАЦИИ) =====
     if action == 'set_login':
         print(f"🔥 set_login вызван для {telegram_id}")
         print(f"📦 action_data: {action_data}")
@@ -266,19 +370,11 @@ def game_action(telegram_user):
             new_login = new_login[:12]
             print(f"📏 Имя обрезано до 12: '{new_login}'")
 
-        # Проверяем каждый символ отдельно
         allowed_chars = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_ ')
-        for i, c in enumerate(new_login):
-            if c not in allowed_chars:
-                print(f"❌ Недопустимый символ '{c}' на позиции {i}")
-                return jsonify({
-                    'success': False,
-                    'error': f'Недопустимый символ "{c}"'
-                }), 400
+        if not all(c in allowed_chars for c in new_login):
+            print(f"❌ Недопустимые символы: '{new_login}'")
+            return jsonify({'success': False, 'error': 'Only letters, numbers, spaces and underscores'}), 400
 
-        print(f"✅ Все символы допустимы")
-
-        # Обновляем в БД
         try:
             print(f"💾 Обновляем БД для player_id {player_id}")
             Player.update(player_id, game_login=new_login)
@@ -316,7 +412,6 @@ def game_action(telegram_user):
             return jsonify({'success': False, 'error': 'Name cannot be empty'}), 400
         if len(new_name) > 12:
             new_name = new_name[:12]
-        # Для платной смены тоже разрешаем пробелы
         allowed_chars = set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_ ')
         if not all(c in allowed_chars for c in new_name):
             return jsonify({'success': False, 'error': 'Only letters, numbers, spaces and underscores'}), 400
