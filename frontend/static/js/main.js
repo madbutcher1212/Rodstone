@@ -291,34 +291,30 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('changeNameWithPriceBtn')?.addEventListener('click', changeNamePaid);
     document.getElementById('confirmAvatarBtn')?.addEventListener('click', confirmAvatarSelection);
     
-    // Таймер обновления (каждую секунду)
-    setInterval(() => {
-        updateTimer();
-    }, 1000);
-    
-    // Проверка автосбора (раз в 10 секунд)
-    setInterval(async () => {
-        await checkAutoCollection();
-    }, 10000);
-    
-    // Проверка завершённых таймеров (раз в 5 секунд)
-    setInterval(async () => {
-        const result = await apiRequest('check_timers', {});
-        if (result.success && result.completed && result.completed.length > 0) {
-            console.log('✅ Завершённые таймеры:', result.completed);
-            if (result.state) {
-                Object.assign(userData, result.state);
-                updateCityUI();
-            }
-            for (const item of result.completed) {
-                if (item.type === 'townhall') {
-                    showToast(`🏛️ Ратуша улучшена до ${item.new_level} уровня!`);
-                } else if (item.type === 'building') {
-                    showToast(`✅ ${item.building_id} улучшено до ${item.new_level} уровня!`);
-                }
+    // Таймер обновления и проверка сбора (каждую секунду)
+setInterval(() => {
+    updateTimer();
+    checkAutoCollection();  // она сама решит, когда слать запрос
+}, 1000);
+
+// Проверка завершённых таймеров (раз в 5 секунд)
+setInterval(async () => {
+    const result = await apiRequest('check_timers', {});
+    if (result.success && result.completed && result.completed.length > 0) {
+        console.log('✅ Завершённые таймеры:', result.completed);
+        if (result.state) {
+            Object.assign(userData, result.state);
+            updateCityUI();
+        }
+        for (const item of result.completed) {
+            if (item.type === 'townhall') {
+                showToast(`🏛️ Ратуша улучшена до ${item.new_level} уровня!`);
+            } else if (item.type === 'building') {
+                showToast(`✅ ${item.building_id} улучшено до ${item.new_level} уровня!`);
             }
         }
-    }, 5000);
+    }
+}, 5000);
     
     switchTab('city');
 });
