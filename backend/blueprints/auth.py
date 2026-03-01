@@ -64,7 +64,8 @@ def auth():
             # Пересчитываем максимальное население
             max_pop = calculate_population_max(buildings)
 
-            # Обновляем время последнего сбора
+            # ВАЖНО: НЕ ОБНОВЛЯЕМ last_collection!
+            # Игрок получает всё, что накопилось с прошлого раза
             Player.update(player_data['id'],
                           population_max=max_pop)
 
@@ -84,7 +85,7 @@ def auth():
                     'townHallLevel': player_data.get('town_hall_level', 1),
                     'population_current': player_data.get('population_current', 10),
                     'population_max': max_pop,
-                    'lastCollection': player_data.get('last_collection', now)  
+                    'lastCollection': player_data.get('last_collection', now)  # Берём из БД
                 },
                 'buildings': buildings,
                 'config': BUILDINGS_CONFIG
