@@ -24,14 +24,19 @@ class Timer:
     
     @staticmethod
     def get_active(player_id, timer_type=None):
-        """Получить активные таймеры игрока"""
+        """
+        Получить активные и только что завершённые таймеры игрока.
+        Возвращает таймеры, которые ещё не завершились или завершились не более 2 секунд назад.
+        Это даёт время на обработку завершившегося таймера.
+        """
         supabase = get_supabase()
         now = int(time.time() * 1000)
         
+        # Берём таймеры с запасом 2 секунды
         query = supabase.table("timers") \
             .select("*") \
             .eq("player_id", player_id) \
-            .gt("end_time", now)
+            .gt("end_time", now - 2000)
         
         if timer_type:
             query = query.eq("timer_type", timer_type)
@@ -68,7 +73,7 @@ class Timer:
         
         result = supabase.table("timers") \
             .delete() \
-            .lt("end_time", now) \
+            .lt("end_time", now - 5000) \  # удаляем только те, что завершились больше 5 секунд назад
             .execute()
         
         return len(result.data) if result.data else 0
