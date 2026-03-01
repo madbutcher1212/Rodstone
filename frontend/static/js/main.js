@@ -44,7 +44,7 @@ async function login() {
             userData.id = result.user?.id || null;
             userData.username = result.user?.username || '';
             userData.game_login = result.user?.game_login || '';
-            userData.avatar = result.user?.avatar || 'male_free';  // ← avatar приходит
+            userData.avatar = result.user?.avatar || 'male_free';
             userData.owned_avatars = result.user?.owned_avatars || ['male_free', 'female_free'];
             userData.gold = result.user?.gold || 100;
             userData.wood = result.user?.wood || 50;
@@ -64,7 +64,7 @@ async function login() {
             
             // ВАЖНО: обновляем всё, включая аватар
             updateUserInfo();
-            updateAvatar();  // ← явный вызов обновления аватара
+            updateAvatar();
             updateCityUI();
             
             // Проверяем game_login
@@ -280,15 +280,35 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('changeNameWithPriceBtn')?.addEventListener('click', changeNamePaid);
     document.getElementById('confirmAvatarBtn')?.addEventListener('click', confirmAvatarSelection);
     
+    // Таймер сбора ресурсов (каждую секунду)
     setInterval(async () => {
-    updateTimer();
+        updateTimer();
+        
+        // Проверяем, не прошёл ли час
+        const now = Date.now();
+        if (now - userData.lastCollection >= COLLECTION_INTERVAL) {
+            await apiRequest('collect', {});
+        }
+    }, 1000);
     
-    // Проверяем, не прошёл ли час
-    const now = Date.now();
-    if (now - userData.lastCollection >= COLLECTION_INTERVAL) {
-        await apiRequest('collect', {});
-    }
-}, 1000);
+    // ПРОВЕРКА ТАЙМЕРОВ УЛУЧШЕНИЙ (каждые 2 секунды)
+    setInterval(async () => {
+        const result = await apiRequest('check_timers', {});
+        if (result.success && result.completed && result.completed.length > 0) {
+            console.log('✅ Завершённые таймеры:', result.completed);
+            if (result.state) {
+                Object.assign(userData, result.state);
+                updateCityUI();
+            }
+            for (const item of result.completed) {
+                if (item.type === 'townhall') {
+                    showToast(`🏛️ Ратуша улучшена до ${item.new_level} уровня!`);
+                } else if (item.type === 'building') {
+                    showToast(`✅ ${item.building_id} улучшено до ${item.new_level} уровня!`);
+                }
+            }
+        }
+    }, 2000);
     
     switchTab('city');
 });
