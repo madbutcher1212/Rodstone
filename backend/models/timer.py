@@ -71,9 +71,10 @@ class Timer:
         supabase = get_supabase()
         now = int(time.time() * 1000)
         
+        # удаляем только те, что завершились больше 5 секунд назад
         result = supabase.table("timers") \
             .delete() \
-            .lt("end_time", now - 5000) \  # удаляем только те, что завершились больше 5 секунд назад
+            .lt("end_time", now - 5000) \
             .execute()
         
         return len(result.data) if result.data else 0
