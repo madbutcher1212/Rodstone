@@ -105,15 +105,25 @@ def game_action(telegram_user):
     # ===== СБОР РЕСУРСОВ =====
     if action == 'collect':
         now = int(time.time() * 1000)
+        
+        # Считаем, сколько часов прошло с последнего сбора
         time_passed = now - last_collection
         hours_passed = time_passed / (60 * 60 * 1000)
-
+        
+        # Начисляем ресурсы, даже если прошло меньше часа (накопление)
         if hours_passed > 0:
-            total_gold = total_wood = total_food = total_stone = total_pop = 0
+            total_gold = 0
+            total_wood = 0
+            total_food = 0
+            total_stone = 0
+            total_pop = 0
+            
             current_pop = population_current
             current_food = food
-
-            for _ in range(int(hours_passed)):
+            
+            # Симулируем каждый полный час
+            full_hours = int(hours_passed)
+            for _ in range(full_hours):
                 inc, growth = calculate_hourly_income_and_growth(
                     buildings, town_hall_level, current_pop, population_max, current_food
                 )
@@ -124,21 +134,22 @@ def game_action(telegram_user):
                 total_pop += growth
                 current_pop += growth
                 current_food += inc["food"]
-
+            
             gold += total_gold
             wood += total_wood
             food += total_food
             stone += total_stone
             population_current = min(current_pop, population_max)
             last_collection = now
-
+            
+            # Обновляем в БД
             Player.update(player_id,
                           gold=gold, wood=wood, food=food, stone=stone,
                           population_current=population_current,
                           last_collection=last_collection)
-
+            
             print(f"✅ Сбор ресурсов: +{total_gold}🪙 +{total_wood}🪵 +{total_food}🌾 +{total_stone}⛰️")
-
+        
         return build_response()
 
     # ===== ПОСТРОЙКА НОВОГО ЗДАНИЯ =====
@@ -182,7 +193,7 @@ def game_action(telegram_user):
         print(f"✅ Построено {building_id}")
         return build_response()
 
-        # ===== УЛУЧШЕНИЕ ЗДАНИЯ (БЕЗ ТАЙМЕРА) =====
+    # ===== УЛУЧШЕНИЕ ЗДАНИЯ (С ТАЙМЕРОМ) =====
     if action == 'upgrade':
         building_id = action_data.get('building_id')
         print(f"⬆️ Попытка улучшить {building_id}")
@@ -208,6 +219,7 @@ def game_action(telegram_user):
             print(f"❌ Достигнут максимальный уровень")
             return jsonify({'success': False, 'error': 'Max level reached'}), 400
 
+        # Проверка требований к ратуше для следующего уровня
         required = config.get('requiredTownHall', [current_level + 1])[current_level]
         print(f"🔍 Требуется ратуша {required}, у игрока {town_hall_level}")
         if town_hall_level < required:
@@ -221,21 +233,41 @@ def game_action(telegram_user):
             print(f"❌ Не хватает ресурсов")
             return jsonify({'success': False, 'error': 'Not enough resources'}), 400
 
-        # Списываем ресурсы
+        # Проверяем, нет ли уже активного таймера для этого здания
+        active_timers = Timer.get_active(player_id, 'building')
+        for t in active_timers:
+            if t['target_id'] == building_id:
+                print(f"❌ Здание уже улучшается")
+                return jsonify({'success': False, 'error': 'Building already upgrading'}), 400
+
+        # Списываем ресурсы сразу
         gold -= cost['gold']
         wood -= cost['wood']
         stone -= cost['stone']
+        print(f"✅ Ресурсы списаны: золото={gold}, дерево={wood}, камень={stone}")
 
-        # Повышаем уровень сразу
-        building['level'] = current_level + 1
-        population_max = calculate_population_max(buildings)
+        # Создаём таймер (5 секунд для теста)
+        duration = 5
+        timer_data = {
+            'building_id': building_id,
+            'current_level': current_level,
+            'target_level': current_level + 1
+        }
+        
+        Timer.create(
+            player_id=player_id,
+            timer_type='building',
+            target_id=building_id,
+            duration_seconds=duration,
+            data=timer_data
+        )
 
+        # Обновляем ресурсы сразу, уровень пока не меняем
         Player.update(player_id,
-                      gold=gold, wood=wood, stone=stone,
-                      buildings=json.dumps(buildings),
-                      population_max=population_max)
+                      gold=gold, wood=wood, stone=stone)
 
-        print(f"✅ Улучшено {building_id} до уровня {current_level + 1}")
+        print(f"⏳ Улучшение {building_id} до уровня {current_level + 1} запущено на {duration} сек")
+        
         return build_response()
 
     # ===== УЛУЧШЕНИЕ РАТУШИ =====
@@ -261,7 +293,7 @@ def game_action(telegram_user):
         stone -= cost.get('stone', 0)
 
         # Создаём таймер для ратуши
-        duration = 5  # секунд для теста
+        duration = 5
         timer_data = {
             'building_id': 'townhall',
             'current_level': town_hall_level,
@@ -284,7 +316,7 @@ def game_action(telegram_user):
         
         return build_response()
 
-            # ===== ПРОВЕРКА ТАЙМЕРОВ =====
+    # ===== ПРОВЕРКА ТАЙМЕРОВ =====
     if action == 'check_timers':
         now = int(time.time() * 1000)
         completed = []
