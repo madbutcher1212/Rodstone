@@ -436,3 +436,7 @@ async function upgradeBuilding(id) {
         showToast(`❌ ${result.error || 'Ошибка'}`);
     }
 }
+// ВРЕМЕННО: проверка загрузки файла
+document.addEventListener('DOMContentLoaded', () => {
+    alert('buildings.js загружен!');
+});
