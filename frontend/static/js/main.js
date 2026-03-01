@@ -1,6 +1,5 @@
 // main.js - точка входа, инициализация, глобальные данные
-console.log('🔥 main.js загружен');
-alert('main.js загружен');
+
 // Глобальные переменные
 let userData = {
     id: null,
@@ -261,6 +260,7 @@ async function showTopClans() {
 async function checkAutoCollection() {
     const now = Date.now();
     if (now - userData.lastCollection >= COLLECTION_INTERVAL) {
+        console.log('⏰ Автосбор ресурсов');
         const result = await apiRequest('collect', {});
         if (result.success && result.state) {
             Object.assign(userData, result.state);
@@ -272,6 +272,7 @@ async function checkAutoCollection() {
 
 // Запуск
 document.addEventListener('DOMContentLoaded', () => {
+    console.log('🔥 main.js загружен');
     login();
     
     document.querySelectorAll('.tab').forEach(t => 
@@ -290,12 +291,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('changeNameWithPriceBtn')?.addEventListener('click', changeNamePaid);
     document.getElementById('confirmAvatarBtn')?.addEventListener('click', confirmAvatarSelection);
     
+    // Таймер обновления (каждую секунду)
     setInterval(() => {
         updateTimer();
-        checkAutoCollection();
     }, 1000);
     
-    // Проверка завершённых таймеров каждые 2 секунды
+    // Проверка автосбора (раз в 10 секунд)
+    setInterval(async () => {
+        await checkAutoCollection();
+    }, 10000);
+    
+    // Проверка завершённых таймеров (раз в 5 секунд)
     setInterval(async () => {
         const result = await apiRequest('check_timers', {});
         if (result.success && result.completed && result.completed.length > 0) {
@@ -312,7 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-    }, 2000);
+    }, 5000);
     
     switchTab('city');
 });
