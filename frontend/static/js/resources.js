@@ -1,99 +1,4 @@
-// resources.js - логика ресурсов, форматирование, таймер
-
-// Форматирование чисел (1000 -> 1к, 1000000 -> 1м)
-function formatNumber(num) {
-    if (num >= 1000000) {
-        return (num / 1000000).toFixed(1) + 'м';
-    }
-    if (num >= 1000) {
-        return (num / 1000).toFixed(1) + 'к';
-    }
-    return num.toString();
-}
-
-// Показать точное значение ресурса при клике (старая версия)
-function showExactValue(resource) {
-    const values = {
-        gold: userData.gold,
-        wood: userData.wood,
-        stone: userData.stone,
-        food: userData.food,
-        population: `${userData.population_current}/${userData.population_max}`
-    };
-    const names = {
-        gold: 'Золото',
-        wood: 'Древесина',
-        stone: 'Камень',
-        food: 'Еда',
-        population: 'Население'
-    };
-    showToast(`${names[resource]}: ${values[resource]}`);
-}
-
-// Расчёт дохода в час
-function calculateHourlyIncome() {
-    let income = {
-        gold: TOWN_HALL_INCOME[userData.townHallLevel] || 0,
-        wood: 0,
-        food: 0,
-        stone: 0,
-        populationGrowth: 0
-    };
-
-    buildings.forEach(b => {
-        const config = BUILDINGS_CONFIG[b.id];
-        if (!config?.income) return;
-        const inc = config.income[b.level - 1];
-        if (inc) {
-            income.gold += inc.gold || 0;
-            income.wood += inc.wood || 0;
-            income.food += inc.food || 0;
-            income.stone += inc.stone || 0;
-            income.populationGrowth += inc.populationGrowth || 0;
-        }
-    });
-
-    return income;
-}
-
-// Обновление отображения ресурсов
-function updateResourcesDisplay() {
-    const income = calculateHourlyIncome();
-
-    document.getElementById('goldBar').textContent = formatNumber(userData.gold);
-    document.getElementById('goldIncome').textContent = `+${formatNumber(income.gold)}/ч`;
-    
-    document.getElementById('woodBar').textContent = formatNumber(userData.wood);
-    document.getElementById('woodIncome').textContent = `+${formatNumber(income.wood)}/ч`;
-    
-    document.getElementById('stoneBar').textContent = formatNumber(userData.stone);
-    document.getElementById('stoneIncome').textContent = `+${formatNumber(income.stone)}/ч`;
-    
-    const foodProd = income.food;
-    const foodCons = userData.population_current;
-    const foodBal = foodProd - foodCons;
-
-    document.getElementById('foodBar').textContent = formatNumber(userData.food);
-    document.getElementById('foodIncome').textContent = 
-        foodBal > 0 ? `+${formatNumber(foodBal)}/ч` : 
-        foodBal < 0 ? `${formatNumber(foodBal)}/ч` : '0/ч';
-    
-    if (document.getElementById('foodIncome2')) {
-        document.getElementById('foodIncome2').textContent = 
-            foodBal > 0 ? `+${formatNumber(foodBal)}/ч` : 
-            foodBal < 0 ? `${formatNumber(foodBal)}/ч` : '0/ч';
-    }
-
-    document.getElementById('populationDisplay').textContent = 
-        `${userData.population_current}/${userData.population_max}`;
-
-    const canGrow = userData.food > 0 || foodProd >= foodCons;
-    const totalGrowth = canGrow ? 3 + income.populationGrowth : 0;
-    document.getElementById('populationGrowth').textContent = 
-        totalGrowth > 0 ? `+${totalGrowth}/ч` : '⚠️';
-}
-
-// Обновление таймера
+// Обновление таймера - ТЕПЕРЬ ВОЗВРАЩАЕТ ВРЕМЯ
 function updateTimer() {
     const now = Date.now();
     const timePassed = now - userData.lastCollection;
@@ -102,10 +7,10 @@ function updateTimer() {
     const timerDisplay = document.getElementById('timerDisplay');
     const timerProgress = document.getElementById('timerProgress');
     
-    if (!timerDisplay || !timerProgress) return;
+    if (!timerDisplay || !timerProgress) return timeLeft;
 
     if (timeLeft <= 0) {
-        timerDisplay.textContent = 'Готово!';
+        timerDisplay.textContent = 'Сбор...';
         timerProgress.style.width = '100%';
     } else {
         const minutes = Math.floor(timeLeft / 60000);
@@ -115,11 +20,18 @@ function updateTimer() {
         const progress = ((COLLECTION_INTERVAL - timeLeft) / COLLECTION_INTERVAL) * 100;
         timerProgress.style.width = `${progress}%`;
     }
+    
+    return timeLeft;
 }
 
-// Проверка автосбора
+// Проверка автосбора - теперь просто обёртка
 async function checkAutoCollection() {
     if (Date.now() - userData.lastCollection >= COLLECTION_INTERVAL) {
-        await apiRequest('collect', {});
+        const result = await apiRequest('collect', {});
+        if (result.success && result.state) {
+            Object.assign(userData, result.state);
+            updateCityUI();
+            showToast('📦 Ресурсы собраны!');
+        }
     }
 }
