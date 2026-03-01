@@ -284,18 +284,21 @@ def game_action(telegram_user):
         
         return build_response()
 
-        # ===== ПРОВЕРКА ТАЙМЕРОВ =====
+            # ===== ПРОВЕРКА ТАЙМЕРОВ =====
     if action == 'check_timers':
         now = int(time.time() * 1000)
         completed = []
         
         # Получаем все активные таймеры
         timers = Timer.get_active(player_id)
-        print(f"⏰ Активных таймеров: {len(timers)}")
+        print(f"⏰ Активных таймеров: {len(timers)} в момент {now}")
         
         for timer in timers:
+            time_left = timer['end_time'] - now
+            print(f"   Таймер ID={timer['id']}, тип={timer['timer_type']}, конец={timer['end_time']}, осталось={time_left}мс")
+            
             if timer['end_time'] <= now:
-                print(f"✅ Таймер завершён: {timer}")
+                print(f"✅ Таймер ЗАВЕРШЁН: {timer}")
                 # Таймер завершён
                 timer_data = Timer.complete(timer['id'])
                 if timer_data and timer_data['timer_type'] == 'building':
@@ -330,6 +333,8 @@ def game_action(telegram_user):
                     # Пересчитываем население
                     population_max = calculate_population_max(buildings)
                     Player.update(player_id, population_max=population_max)
+            else:
+                print(f"⏳ Таймер ещё не завершён, осталось {time_left}мс")
         
         return jsonify({
             'success': True,
