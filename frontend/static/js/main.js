@@ -36,12 +36,10 @@ tg.ready();
 // Авторизация при загрузке
 async function login() {
     try {
-        console.log('🔍 Авторизация...');
         const result = await authRequest();
-        console.log('📦 Ответ сервера:', result);
+        console.log('📦 Ответ сервера при авторизации:', result);
         
         if (result && result.success) {
-            // Загружаем данные пользователя
             userData.id = result.user?.id || null;
             userData.username = result.user?.username || '';
             userData.game_login = result.user?.game_login || '';
@@ -57,18 +55,16 @@ async function login() {
             userData.population_max = result.user?.population_max || 20;
             userData.lastCollection = result.user?.lastCollection || Date.now();
             
-            // Загружаем постройки из ответа сервера
-            if (result.buildings && Array.isArray(result.buildings)) {
-                buildings = result.buildings;
-                console.log('🏗️ Загружено построек:', buildings.length);
-            }
+            buildings = result.buildings || [
+                { id: 'house', level: 1 },
+                { id: 'farm', level: 1 },
+                { id: 'lumber', level: 1 }
+            ];
             
-            // Обновляем интерфейс
             updateUserInfo();
             updateAvatar();
             updateCityUI();
             
-            // Показываем окно ввода имени, если нужно
             const overlay = document.getElementById('overlay');
             if (overlay) {
                 if (!userData.game_login || userData.game_login === '' || userData.game_login === 'EMPTY') {
@@ -79,13 +75,10 @@ async function login() {
                     overlay.style.display = 'none';
                 }
             }
-        } else {
-            console.error('❌ Ошибка авторизации:', result?.error);
-            showToast('⚠️ Ошибка загрузки: ' + (result?.error || 'Неизвестная ошибка'));
         }
     } catch (error) {
-        console.error('❌ Ошибка входа:', error);
-        showToast('⚠️ Ошибка соединения с сервером');
+        console.error('❌ Ошибка авторизации:', error);
+        showToast('⚠️ Ошибка загрузки');
     }
 }
 
@@ -263,11 +256,10 @@ async function showTopClans() {
     }
 }
 
-// Автоматическая проверка сбора ресурсов
+// Проверка автосбора
 async function checkAutoCollection() {
     const now = Date.now();
     if (now - userData.lastCollection >= COLLECTION_INTERVAL) {
-        console.log('⏰ Автосбор ресурсов');
         const result = await apiRequest('collect', {});
         if (result.success && result.state) {
             Object.assign(userData, result.state);
@@ -277,40 +269,29 @@ async function checkAutoCollection() {
     }
 }
 
-// ===== ЗАПУСК =====
+// Запуск
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('🚀 main.js загружен');
     login();
     
-    // Вкладки
     document.querySelectorAll('.tab').forEach(t => 
         t.addEventListener('click', () => switchTab(t.dataset.tab)));
     
-    // Ратуша
     document.getElementById('townHall')?.addEventListener('click', upgradeTownHall);
     document.getElementById('townHallUpgradeBtn')?.addEventListener('click', (e) => {
         e.stopPropagation();
         upgradeTownHall();
     });
     
-    // Кланы
     document.getElementById('createClanBtn')?.addEventListener('click', createClan);
     document.getElementById('topClansBtn')?.addEventListener('click', showTopClans);
-    
-    // Регистрация
     document.getElementById('confirmLogin')?.addEventListener('click', saveGameLogin);
-    
-    // Смена имени
     document.getElementById('changeNameBtn')?.addEventListener('click', changeName);
     document.getElementById('changeNameWithPriceBtn')?.addEventListener('click', changeNamePaid);
-    
-    // Аватар
     document.getElementById('confirmAvatarBtn')?.addEventListener('click', confirmAvatarSelection);
     
-    // Таймер сбора ресурсов (каждую секунду)
-    setInterval(async () => {
+    setInterval(() => {
         updateTimer();
-        await checkAutoCollection();
+        checkAutoCollection();
     }, 1000);
     
     // Проверка завершённых таймеров каждые 2 секунды
