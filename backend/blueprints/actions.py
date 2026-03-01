@@ -182,7 +182,7 @@ def game_action(telegram_user):
         print(f"✅ Построено {building_id}")
         return build_response()
 
-    # ===== УЛУЧШЕНИЕ ЗДАНИЯ (С ТАЙМЕРОМ) =====
+        # ===== УЛУЧШЕНИЕ ЗДАНИЯ (БЕЗ ТАЙМЕРА) =====
     if action == 'upgrade':
         building_id = action_data.get('building_id')
         print(f"⬆️ Попытка улучшить {building_id}")
@@ -197,7 +197,7 @@ def game_action(telegram_user):
 
         building = next((b for b in buildings if b['id'] == building_id), None)
         if not building:
-            print(f"❌ Здание {building_id} не найдено в списке построек игрока")
+            print(f"❌ Здание {building_id} не найдено")
             return jsonify({'success': False, 'error': 'Building not found'}), 400
 
         current_level = building['level']
@@ -208,7 +208,6 @@ def game_action(telegram_user):
             print(f"❌ Достигнут максимальный уровень")
             return jsonify({'success': False, 'error': 'Max level reached'}), 400
 
-        # Проверка требований к ратуше для следующего уровня
         required = config.get('requiredTownHall', [current_level + 1])[current_level]
         print(f"🔍 Требуется ратуша {required}, у игрока {town_hall_level}")
         if town_hall_level < required:
@@ -216,48 +215,27 @@ def game_action(telegram_user):
             return jsonify({'success': False, 'error': f'Требуется ратуша {required}'}), 400
 
         cost = calculate_building_upgrade_cost(building_id, current_level)
-        print(f"💰 Стоимость улучшения: золото={cost['gold']}, дерево={cost['wood']}, камень={cost['stone']}")
+        print(f"💰 Стоимость: золото={cost['gold']}, дерево={cost['wood']}, камень={cost['stone']}")
         
         if gold < cost['gold'] or wood < cost['wood'] or stone < cost['stone']:
             print(f"❌ Не хватает ресурсов")
             return jsonify({'success': False, 'error': 'Not enough resources'}), 400
 
-        # Проверяем, нет ли уже активного таймера для этого здания
-        active_timers = Timer.get_active(player_id, 'building')
-        for t in active_timers:
-            if t['target_id'] == building_id:
-                print(f"❌ Здание уже улучшается")
-                return jsonify({'success': False, 'error': 'Building already upgrading'}), 400
-
-        # Списываем ресурсы сразу
+        # Списываем ресурсы
         gold -= cost['gold']
         wood -= cost['wood']
         stone -= cost['stone']
-        print(f"✅ Ресурсы списаны: золото={gold}, дерево={wood}, камень={stone}")
 
-        # Создаём таймер (5 секунд для теста)
-        duration = 5  # секунд
-        timer_data = {
-            'building_id': building_id,
-            'current_level': current_level,
-            'target_level': current_level + 1
-        }
-        
-        timer = Timer.create(
-            player_id=player_id,
-            timer_type='building',
-            target_id=building_id,
-            duration_seconds=duration,
-            data=timer_data
-        )
-        print(f"✅ Таймер создан: {timer}")
+        # Повышаем уровень сразу
+        building['level'] = current_level + 1
+        population_max = calculate_population_max(buildings)
 
-        # Обновляем ресурсы сразу, уровень пока не меняем
         Player.update(player_id,
-                      gold=gold, wood=wood, stone=stone)
+                      gold=gold, wood=wood, stone=stone,
+                      buildings=json.dumps(buildings),
+                      population_max=population_max)
 
-        print(f"⏳ Улучшение {building_id} до уровня {current_level + 1} запущено на {duration} сек")
-        
+        print(f"✅ Улучшено {building_id} до уровня {current_level + 1}")
         return build_response()
 
     # ===== УЛУЧШЕНИЕ РАТУШИ =====
