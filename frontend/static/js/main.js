@@ -57,22 +57,16 @@ async function login() {
             userData.population_max = result.user?.population_max || 20;
             userData.lastCollection = result.user?.lastCollection || Date.now();
             
-            // ВАЖНО: обновляем buildings из ответа сервера
+            // Загружаем постройки из ответа сервера
             if (result.buildings && Array.isArray(result.buildings)) {
                 buildings = result.buildings;
                 console.log('🏗️ Загружено построек:', buildings.length);
-            } else {
-                buildings = [
-                    { id: 'house', level: 1 },
-                    { id: 'farm', level: 1 },
-                    { id: 'lumber', level: 1 }
-                ];
             }
             
             // Обновляем интерфейс
             updateUserInfo();
             updateAvatar();
-            updateCityUI(); // теперь buildings уже обновлены
+            updateCityUI();
             
             // Показываем окно ввода имени, если нужно
             const overlay = document.getElementById('overlay');
@@ -129,7 +123,6 @@ async function saveGameLogin() {
         
         showToast(`✅ Добро пожаловать, ${newLogin}!`);
     } else {
-        // Понятные сообщения об ошибках
         if (result.error === 'Only letters, numbers, spaces and underscores') {
             showToast('❌ Только буквы, цифры, пробелы и _');
         } else if (result.error === 'Login cannot be empty') {
@@ -270,6 +263,20 @@ async function showTopClans() {
     }
 }
 
+// Автоматическая проверка сбора ресурсов
+async function checkAutoCollection() {
+    const now = Date.now();
+    if (now - userData.lastCollection >= COLLECTION_INTERVAL) {
+        console.log('⏰ Автосбор ресурсов');
+        const result = await apiRequest('collect', {});
+        if (result.success && result.state) {
+            Object.assign(userData, result.state);
+            updateCityUI();
+            showToast('📦 Ресурсы собраны!');
+        }
+    }
+}
+
 // ===== ЗАПУСК =====
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🚀 main.js загружен');
@@ -302,21 +309,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Таймер сбора ресурсов (каждую секунду)
     setInterval(async () => {
-        // Вызываем updateTimer (она должна быть в resources.js)
-        if (typeof updateTimer === 'function') {
-            updateTimer();
-        }
-        
-        // Проверяем, не пора ли собрать
-        const now = Date.now();
-        if (now - userData.lastCollection >= COLLECTION_INTERVAL) {
-            const result = await apiRequest('collect', {});
-            if (result.success && result.state) {
-                Object.assign(userData, result.state);
-                updateCityUI();
-                showToast('📦 Ресурсы собраны!');
-            }
-        }
+        updateTimer();
+        await checkAutoCollection();
     }, 1000);
     
     // Проверка завершённых таймеров каждые 2 секунды
