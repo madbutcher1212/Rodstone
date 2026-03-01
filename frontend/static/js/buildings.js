@@ -413,10 +413,26 @@ async function upgradeBuilding(id) {
 }
 
 // Улучшение ратуши через модальное окно
-async function upgradeTownHall() {
-    if (userData.townHallLevel >= 5) {
-        showToast('🏛️ Максимальный уровень');
+async function upgradeBuilding(id) {
+    console.log('🚀 upgradeBuilding called for', id);
+    alert('Upgrade ' + id);
+    
+    const building = buildings.find(b => b.id === id);
+    if (!building) {
+        await buildBuilding(id);
         return;
     }
-    showUpgradeModal('townhall');
+    
+    const result = await apiRequest('upgrade', { building_id: id });
+    
+    if (result.success) {
+        if (result.state) {
+            Object.assign(userData, result.state);
+            if (result.state.buildings) buildings = result.state.buildings;
+        }
+        updateCityUI();
+        showToast('✅ Улучшено!');
+    } else {
+        showToast(`❌ ${result.error || 'Ошибка'}`);
+    }
 }
