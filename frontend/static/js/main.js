@@ -57,15 +57,22 @@ async function login() {
             userData.population_max = result.user?.population_max || 20;
             userData.lastCollection = result.user?.lastCollection || Date.now();
             
-            buildings = result.buildings || [
-                { id: 'house', level: 1 },
-                { id: 'farm', level: 1 },
-                { id: 'lumber', level: 1 }
-            ];
+            // ВАЖНО: обновляем buildings из ответа сервера
+            if (result.buildings && Array.isArray(result.buildings)) {
+                buildings = result.buildings;
+                console.log('🏗️ Загружено построек:', buildings.length);
+            } else {
+                buildings = [
+                    { id: 'house', level: 1 },
+                    { id: 'farm', level: 1 },
+                    { id: 'lumber', level: 1 }
+                ];
+            }
             
+            // Обновляем интерфейс
             updateUserInfo();
             updateAvatar();
-            updateCityUI();
+            updateCityUI(); // теперь buildings уже обновлены
             
             // Показываем окно ввода имени, если нужно
             const overlay = document.getElementById('overlay');
@@ -81,20 +88,10 @@ async function login() {
         } else {
             console.error('❌ Ошибка авторизации:', result?.error);
             showToast('⚠️ Ошибка загрузки: ' + (result?.error || 'Неизвестная ошибка'));
-            
-            // Для теста показываем окно в любом случае
-            setTimeout(() => {
-                document.getElementById('overlay').style.display = 'flex';
-            }, 1000);
         }
     } catch (error) {
         console.error('❌ Ошибка входа:', error);
         showToast('⚠️ Ошибка соединения с сервером');
-        
-        // Для теста показываем окно
-        setTimeout(() => {
-            document.getElementById('overlay').style.display = 'flex';
-        }, 1000);
     }
 }
 
