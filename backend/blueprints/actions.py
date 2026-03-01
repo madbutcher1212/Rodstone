@@ -284,16 +284,18 @@ def game_action(telegram_user):
         
         return build_response()
 
-    # ===== ПРОВЕРКА ТАЙМЕРОВ =====
+        # ===== ПРОВЕРКА ТАЙМЕРОВ =====
     if action == 'check_timers':
         now = int(time.time() * 1000)
         completed = []
         
         # Получаем все активные таймеры
         timers = Timer.get_active(player_id)
+        print(f"⏰ Активных таймеров: {len(timers)}")
         
         for timer in timers:
             if timer['end_time'] <= now:
+                print(f"✅ Таймер завершён: {timer}")
                 # Таймер завершён
                 timer_data = Timer.complete(timer['id'])
                 if timer_data and timer_data['timer_type'] == 'building':
@@ -310,6 +312,7 @@ def game_action(telegram_user):
                             'type': 'townhall',
                             'new_level': target_level
                         })
+                        print(f"🏛️ Ратуша улучшена до уровня {target_level}")
                     else:
                         # Улучшение обычного здания
                         for b in buildings:
@@ -322,6 +325,7 @@ def game_action(telegram_user):
                             'building_id': building_id,
                             'new_level': target_level
                         })
+                        print(f"✅ {building_id} улучшено до уровня {target_level}")
                     
                     # Пересчитываем население
                     population_max = calculate_population_max(buildings)
