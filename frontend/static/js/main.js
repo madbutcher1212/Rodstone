@@ -240,11 +240,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('changeNameWithPriceBtn')?.addEventListener('click', changeNamePaid);
     document.getElementById('confirmAvatarBtn')?.addEventListener('click', confirmAvatarSelection);
     
+    // Таймер обновления (каждую секунду) - ТОЛЬКО ВИЗУАЛ, БЕЗ ЗАПРОСОВ
     setInterval(() => {
         updateTimer();
-        checkAutoCollection();
     }, 1000);
-    
+
+    // Проверка сбора (раз в 10 секунд)
+    setInterval(async () => {
+        await checkAutoCollection();
+    }, 10000);
+
+    // Проверка таймеров и прогресс ратуши (раз в 3 секунды)
     setInterval(async () => {
         const result = await apiRequest('check_timers', {});
         if (result.success && result.completed?.length > 0) {
@@ -258,9 +264,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        // Обновляем прогресс ратуши
         await updateTownHallProgress();
-    }, 1000); // Проверяем каждую секунду для плавности шкалы
+    }, 3000);
     
     switchTab('city');
 });
