@@ -311,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Таймер обновления и проверка сбора (каждую секунду)
     setInterval(() => {
         updateTimer();
-        checkAutoCollection();  // она сама решит, когда слать запрос
+      //  checkAutoCollection();  // она сама решит, когда слать запрос
     }, 1000);
 
     // Проверка завершённых таймеров (раз в 5 секунд)
