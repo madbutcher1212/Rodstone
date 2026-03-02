@@ -52,30 +52,30 @@
                     <div class="user-login" id="userLogin">@username</div>
                 </div>
                 <div class="resources-bar">
-    <div class="resource-item" onclick="showExactValue('gold')">
-        <span class="resource-value">🪙<span id="goldBar">100</span></span>
-        <span class="resource-income" id="goldIncome">+0/ч</span>
-    </div>
-    <div class="resource-item" onclick="showExactValue('wood')">
-        <span class="resource-value">🪵<span id="woodBar">50</span></span>
-        <span class="resource-income" id="woodIncome">+0/ч</span>
-    </div>
-    <div class="resource-item" onclick="showExactValue('food')">
-        <span class="resource-value">🌾<span id="foodBar">50</span></span>
-        <span class="resource-income" id="foodIncome">+0/ч</span>
-    </div>
-    <div class="resource-item" onclick="showExactValue('stone')">
-        <span class="resource-value">⛰️<span id="stoneBar">0</span></span>
-        <span class="resource-income" id="stoneIncome">+0/ч</span>
-    </div>
-    <div class="resource-item" onclick="showExactValue('population')">
-        <span class="resource-value">👥<span id="populationDisplay">10/20</span></span>
-        <span class="resource-income" id="populationGrowth">+3/ч</span>
-    </div>
-</div>
+                    <div class="resource-item" onclick="showExactValue('gold')">
+                        <span class="resource-value">🪙<span id="goldBar">100</span></span>
+                        <span class="resource-income" id="goldIncome">+0/ч</span>
+                    </div>
+                    <div class="resource-item" onclick="showExactValue('wood')">
+                        <span class="resource-value">🪵<span id="woodBar">50</span></span>
+                        <span class="resource-income" id="woodIncome">+0/ч</span>
+                    </div>
+                    <div class="resource-item" onclick="showExactValue('food')">
+                        <span class="resource-value">🌾<span id="foodBar">50</span></span>
+                        <span class="resource-income" id="foodIncome">+0/ч</span>
+                    </div>
+                    <div class="resource-item" onclick="showExactValue('stone')">
+                        <span class="resource-value">⛰️<span id="stoneBar">0</span></span>
+                        <span class="resource-income" id="stoneIncome">+0/ч</span>
+                    </div>
+                    <div class="resource-item" onclick="showExactValue('population')">
+                        <span class="resource-value">👥<span id="populationDisplay">10/20</span></span>
+                        <span class="resource-income" id="populationGrowth">+3/ч</span>
+                    </div>
+                </div>
             </div>
             
-            <!-- Таймер -->
+            <!-- Таймер сбора -->
             <div class="income-timer" id="incomeTimer">
                 <div>⏳ Следующий сбор через: <span id="timerDisplay">59:59</span></div>
                 <div class="timer-progress">
@@ -92,34 +92,38 @@
                   
                     <!-- Отображение ресурсов сверху -->
                     <div class="city-resources">
-    <div class="city-resource-item" onclick="showExactValue('wood', event)">
-        <span>🪵</span>
-        <span id="woodDisplay">50</span>
-        <span class="resource-income" id="woodIncome2">+0/ч</span>
-    </div>
-    <div class="city-resource-item" onclick="showExactValue('stone', event)">
-        <span>⛰️</span>
-        <span id="stoneDisplay">0</span>
-        <span class="resource-income" id="stoneIncome2">+0/ч</span>
-    </div>
-    <div class="city-resource-item" onclick="showExactValue('food', event)">
-        <span>🌾</span>
-        <span id="foodDisplay">50</span>
-        <span class="resource-income" id="foodIncome2">0/ч</span>
-    </div>
-</div>
+                        <div class="city-resource-item" onclick="showExactValue('wood')">
+                            <span>🪵</span>
+                            <span id="woodDisplay">50</span>
+                            <span class="resource-income" id="woodIncome2">+0/ч</span>
+                        </div>
+                        <div class="city-resource-item" onclick="showExactValue('stone')">
+                            <span>⛰️</span>
+                            <span id="stoneDisplay">0</span>
+                            <span class="resource-income" id="stoneIncome2">+0/ч</span>
+                        </div>
+                        <div class="city-resource-item" onclick="showExactValue('food')">
+                            <span>🌾</span>
+                            <span id="foodDisplay">50</span>
+                            <span class="resource-income" id="foodIncome2">0/ч</span>
+                        </div>
+                    </div>
    
-                    <!-- Ратуша -->
-<div class="town-hall" id="townHall">
-    <div class="town-hall-icon">🏛️</div>
-    <div class="town-hall-info">
-        <div class="town-hall-name">Ратуша</div>
-        <div class="town-hall-income" id="townHallIncome">+5 🪙/ч</div>
-        <div class="town-hall-level">Уровень <span id="townHallLevel">1</span>/5</div>
-    </div>
-    <div class="town-hall-level-badge" id="townHallLevelBadge">1</div>
-    <button class="building-upgrade-btn" id="townHallUpgradeBtn" onclick="showUpgradeModal('townhall')">Улучшить</button>
-</div>
+                    <!-- Ратуша с шкалой строительства -->
+                    <div class="town-hall" id="townHall">
+                        <div class="town-hall-icon">🏛️</div>
+                        <div class="town-hall-info">
+                            <div class="town-hall-name">Ратуша</div>
+                            <div class="town-hall-income" id="townHallIncome">+5 🪙/ч</div>
+                            <div class="town-hall-level">Уровень <span id="townHallLevel">1</span>/5</div>
+                        </div>
+                        <div class="town-hall-level-badge" id="townHallLevelBadge">1</div>
+                        <!-- Шкала строительства -->
+                        <div class="construction-progress" id="townHallProgress" style="display: none;">
+                            <div class="construction-bar" id="townHallProgressBar"></div>
+                        </div>
+                        <button class="building-upgrade-btn" id="townHallUpgradeBtn" onclick="showUpgradeModal('townhall')">Улучшить</button>
+                    </div>
                     
                     <!-- Социальные постройки -->
                     <div class="buildings-section collapsed" id="socialSection">
@@ -219,11 +223,11 @@
     <div class="toast" id="toast"></div>
     
     <script src="/static/js/config.js"></script>
-<script src="/static/js/api.js"></script>
-<script src="/static/js/resources.js"></script> 
-<script src="/static/js/buildings.js"></script>   
-<script src="/static/js/avatar.js"></script>
-<script src="/static/js/ui.js"></script>
-<script src="/static/js/main.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/resources.js"></script> 
+    <script src="/static/js/buildings.js"></script>   
+    <script src="/static/js/avatar.js"></script>
+    <script src="/static/js/ui.js"></script>
+    <script src="/static/js/main.js"></script>
 </body>
 </html>
