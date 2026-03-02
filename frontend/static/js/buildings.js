@@ -365,8 +365,24 @@ async function upgradeTownHallConfirm() {
 function updateTownHallDisplay() {
     const income = TOWN_HALL_INCOME[userData.townHallLevel] || 0;
     document.getElementById('townHallIncome').textContent = `+${income} 🪙/ч`;
-    document.getElementById('townHallLevel').textContent = userData.townHallLevel;
-    document.getElementById('townHallLevelBadge').textContent = userData.townHallLevel;
+    
+    // Скрываем элемент с текстом "Уровень X/5"
+    const levelElement = document.getElementById('townHallLevel');
+    if (levelElement) {
+        levelElement.style.display = 'none';  // или levelElement.remove() для полного удаления
+    }
+    
+    // Обновляем кружок с цифрой
+    const badge = document.getElementById('townHallLevelBadge');
+    if (badge) {
+        badge.textContent = userData.townHallLevel;
+    }
+    
+    // Обновляем уровень игрока (справа от ника)
+    const levelBadge = document.getElementById('levelBadge');
+    if (levelBadge) {
+        levelBadge.textContent = userData.townHallLevel;
+    }
     
     // Обновляем кнопку
     const btn = document.getElementById('townHallUpgradeBtn');
