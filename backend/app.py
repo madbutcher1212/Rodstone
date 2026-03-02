@@ -17,14 +17,6 @@ from models.player import init_supabase
 # Импорт SocketIO
 from socket_manager import socketio, register_socket_handlers, init_socketio
 
-# Решение проблемы с distutils для Python 3.12
-if sys.version_info >= (3, 12):
-    try:
-        import distutils
-    except ImportError:
-        import setuptools.distutils as distutils
-        sys.modules['distutils'] = distutils
-        
 def create_app():
     template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend/templates'))
     static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend/static'))
