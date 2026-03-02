@@ -35,65 +35,8 @@ tg.ready();
 // Функция обновления шкал строительства для всех зданий
 // ============================================
 async function updateConstructionProgress() {
-    try {
-        const result = await apiRequest('check_timers', {});
-        
-        if (!result.success || !result.active) return;
-        
-        // Скрываем все шкалы по умолчанию
-        document.querySelectorAll('.construction-progress').forEach(el => {
-            el.style.display = 'none';
-        });
-        
-        // Показываем шкалы для активных таймеров
-        result.active.forEach(timer => {
-            if (timer.type === 'building') {
-                const progressContainer = document.getElementById(`progress-${timer.building_id}`);
-                const progressBar = document.getElementById(`progress-bar-${timer.building_id}`);
-                const progressText = document.getElementById(`progress-text-${timer.building_id}`);
-                
-                if (!progressContainer || !progressBar) return;
-                
-                progressContainer.style.display = 'flex';
-                
-                const now = Date.now();
-                const total = timer.end_time - timer.start_time;
-                const elapsed = now - timer.start_time;
-                const remaining = Math.max(0, timer.end_time - now);
-                
-                if (now < timer.end_time) {
-                    const percent = Math.min(100, (elapsed / total) * 100);
-                    progressBar.style.width = `${percent}%`;
-                    
-                    // Форматируем оставшееся время
-                    const seconds = Math.floor(remaining / 1000);
-                    const minutes = Math.floor(seconds / 60);
-                    const displaySeconds = seconds % 60;
-                    
-                    let timeText = '';
-                    if (minutes > 0) {
-                        timeText = `${minutes}м ${displaySeconds}с`;
-                    } else {
-                        timeText = `${displaySeconds}с`;
-                    }
-                    
-                    // Обновляем или создаём текст
-                    if (progressText) {
-                        progressText.textContent = `🏗️ Строительство: ${timeText}`;
-                    } else {
-                        // Создаём текст, если его нет
-                        const textDiv = document.createElement('div');
-                        textDiv.className = 'construction-text';
-                        textDiv.id = `progress-text-${timer.building_id}`;
-                        textDiv.textContent = `🏗️ Строительство: ${timeText}`;
-                        progressContainer.appendChild(textDiv);
-                    }
-                }
-            }
-        });
-    } catch (error) {
-        console.error('Ошибка при обновлении прогресса:', error);
-    }
+    // Эта функция больше не нужна — всё через сокеты
+    // Оставляем пустой для совместимости
 }
 
 async function login() {
@@ -126,6 +69,11 @@ async function login() {
             updateUserInfo();
             updateAvatar();
             updateCityUI();
+            
+            // Инициализируем WebSocket с telegram_id
+            if (typeof initSocket === 'function' && userData.id) {
+                initSocket(userData.id);
+            }
             
             const overlay = document.getElementById('overlay');
             if (overlay) {
@@ -274,27 +222,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(async () => {
         await checkAutoCollection();
     }, 10000);
-
-    // Проверка таймеров и обновление шкал (раз в 3 секунды)
-    setInterval(async () => {
-        const result = await apiRequest('check_timers', {});
-        
-        // Обработка завершённых таймеров
-        if (result.success && result.completed?.length > 0) {
-            if (result.state) Object.assign(userData, result.state);
-            updateCityUI();
-            result.completed.forEach(item => {
-                if (item.type === 'townhall') {
-                    showToast(`🏛️ Ратуша улучшена до ${item.new_level} уровня!`);
-                } else {
-                    showToast(`✅ ${item.building_id} улучшено до ${item.new_level} уровня!`);
-                }
-            });
-        }
-        
-        // Обновляем шкалы прогресса
-        await updateConstructionProgress();
-    }, 3000);
+    
+    // ВСЁ! Интервал с check_timers УДАЛЁН
     
     switchTab('city');
 });
