@@ -12,6 +12,9 @@ from models.building_config import (
     calculate_hourly_income_and_growth
 )
 
+# Импорт SocketIO уведомлений
+from socket_manager import notify_upgrade_complete, notify_construction_start
+
 actions_bp = Blueprint('actions', __name__)
 
 TOWN_HALL_INCOME = {1:5, 2:10, 3:20, 4:45, 5:100}
@@ -176,6 +179,11 @@ def game_action(telegram_user):
     # ===== УЛУЧШЕНИЕ =====
     if action == 'upgrade':
         building_id = action_data.get('building_id')
+        print(f"⬆️ Попытка улучшить {building_id}")
+
+        if building_id not in BUILDINGS_CONFIG:
+            return jsonify({'success': False, 'error': 'Unknown building'}), 400
+
         building = next((b for b in buildings if b['id'] == building_id), None)
         if not building:
             return jsonify({'success': False, 'error': 'Building not found'}), 400
@@ -210,7 +218,7 @@ def game_action(telegram_user):
             'target_level': current_level + 1
         }
 
-        Timer.create(
+        timer = Timer.create(
             player_id=player_id,
             timer_type='building',
             target_id=building_id,
@@ -218,11 +226,19 @@ def game_action(telegram_user):
             data=timer_data
         )
 
+        # Уведомляем о начале строительства
+        if timer:
+            notify_construction_start(telegram_id, building_id, timer['end_time'])
+
         Player.update(player_id, gold=gold, wood=wood, stone=stone)
+
+        print(f"⏳ Улучшение {building_id} до уровня {current_level + 1} запущено на {duration} сек")
         return build_response()
 
     # ===== УЛУЧШЕНИЕ РАТУШИ =====
     if action == 'upgrade_level':
+        print(f"🏛️ Попытка улучшить ратушу с {town_hall_level} до {town_hall_level + 1}")
+
         if town_hall_level >= 5:
             return jsonify({'success': False, 'error': 'Max level reached'}), 400
 
@@ -246,7 +262,7 @@ def game_action(telegram_user):
             'target_level': town_hall_level + 1
         }
 
-        Timer.create(
+        timer = Timer.create(
             player_id=player_id,
             timer_type='building',
             target_id='townhall',
@@ -254,17 +270,21 @@ def game_action(telegram_user):
             data=timer_data
         )
 
+        # Уведомляем о начале строительства ратуши
+        if timer:
+            notify_construction_start(telegram_id, 'townhall', timer['end_time'])
+
         Player.update(player_id, gold=gold, wood=wood, stone=stone)
+
+        print(f"⏳ Улучшение ратуши до уровня {town_hall_level + 1} запущено на {duration} сек")
         return build_response()
 
-    # ===== ПРОВЕРКА ТАЙМЕРОВ =====
+    # ===== ПРОВЕРКА ТАЙМЕРОВ ===== (оставляем для обратной совместимости)
     if action == 'check_timers':
         now = int(time.time() * 1000)
         completed = []
-        active = []
         
         timers = Timer.get_active(player_id)
-        print(f"⏰ Активных таймеров: {len(timers)}")
         
         for timer in timers:
             if timer['end_time'] <= now:
@@ -281,6 +301,8 @@ def game_action(telegram_user):
                             'type': 'townhall',
                             'new_level': target_level
                         })
+                        # Уведомляем через сокет
+                        notify_upgrade_complete(telegram_id, building_id, target_level)
                         print(f"🏛️ Ратуша улучшена до уровня {target_level}")
                     else:
                         for b in buildings:
@@ -293,25 +315,16 @@ def game_action(telegram_user):
                             'building_id': building_id,
                             'new_level': target_level
                         })
+                        # Уведомляем через сокет
+                        notify_upgrade_complete(telegram_id, building_id, target_level)
                         print(f"✅ {building_id} улучшено до уровня {target_level}")
 
                     population_max = calculate_population_max(buildings)
                     Player.update(player_id, population_max=population_max)
-            else:
-                if timer['timer_type'] == 'building':
-                    data = json.loads(timer['data'])
-                    active.append({
-                        'type': 'building',
-                        'building_id': data['building_id'],
-                        'target_level': data['target_level'],
-                        'start_time': timer['start_time'],
-                        'end_time': timer['end_time']
-                    })
 
         return jsonify({
             'success': True,
             'completed': completed,
-            'active': active,
             'state': {
                 'gold': gold,
                 'wood': wood,
