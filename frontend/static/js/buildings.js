@@ -377,6 +377,25 @@ function updateTownHallDisplay() {
             btn.style.display = 'block';
         }
     }
+    
+    // Добавляем шкалу строительства для ратуши (если её ещё нет)
+    let townHallProgress = document.getElementById('progress-townhall');
+    if (!townHallProgress) {
+        const townHall = document.getElementById('townHall');
+        if (townHall) {
+            const progressDiv = document.createElement('div');
+            progressDiv.className = 'construction-progress';
+            progressDiv.id = 'progress-townhall';
+            progressDiv.style.display = 'none';
+            
+            const progressBar = document.createElement('div');
+            progressBar.className = 'construction-bar';
+            progressBar.id = 'progress-bar-townhall';
+            
+            progressDiv.appendChild(progressBar);
+            townHall.appendChild(progressDiv);
+        }
+    }
 }
 
 // Обновление UI города
