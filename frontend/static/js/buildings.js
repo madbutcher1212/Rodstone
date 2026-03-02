@@ -221,40 +221,71 @@ function generateBuildingCardHTML(id) {
 function showUpgradeModal(buildingId) {
     console.log('🏗️ Открытие модалки для:', buildingId);
     
-    // Для ратуши свои данные
+    // Для ратуши
     if (buildingId === 'townhall') {
         const level = userData.townHallLevel;
         const nextLevel = level + 1;
         const nextIncome = TOWN_HALL_INCOME[nextLevel] || 0;
         const cost = TOWN_HALL_UPGRADE_COST[nextLevel] || { gold: 0, wood: 0, stone: 0 };
         
+        const canUpgrade = userData.gold >= cost.gold && 
+                          userData.wood >= cost.wood && 
+                          userData.stone >= (cost.stone || 0);
+        
         const modal = document.getElementById('upgradeModal');
         modal.innerHTML = `
-            <div class="upgrade-info">
-                <h3>Улучшить Ратушу</h3>
-                
+            <div class="upgrade-header">
+                <div class="upgrade-title">🏛️ Улучшить Ратушу</div>
                 <div class="upgrade-levels">
-                    <div class="upgrade-level-current">
-                        <span>${level}</span>
-                        <small>текущий</small>
+                    <div class="level-item">
+                        <span class="level-label">Текущий</span>
+                        <span class="level-value">${level}</span>
                     </div>
-                    <div class="upgrade-arrow">→</div>
-                    <div class="upgrade-level-next">
-                        <span>${nextLevel}</span>
-                        <small>новый</small>
+                    <div class="level-arrow">→</div>
+                    <div class="level-item">
+                        <span class="level-label">Новый</span>
+                        <span class="level-value">${nextLevel}</span>
                     </div>
                 </div>
-                
+            </div>
+            
+            <div class="upgrade-content">
                 <div class="upgrade-income">
-                    <h4>Прибыль на ${nextLevel} уровне:</h4>
-                    <div class="upgrade-income-item">🪙 +${nextIncome}/ч</div>
+                    <div class="income-label">Прибыль на ${nextLevel} уровне:</div>
+                    <div class="income-value">🪙 +${nextIncome}/ч</div>
+                </div>
+                
+                <div class="upgrade-cost">
+                    <div class="cost-label">Стоимость улучшения:</div>
+                    <div class="cost-resources">
+                        <div class="cost-item ${userData.gold >= cost.gold ? 'enough' : 'not-enough'}">
+                            <span class="cost-icon">🪙</span>
+                            <span class="cost-amount">${cost.gold}</span>
+                        </div>
+                        ${cost.wood > 0 ? `
+                        <div class="cost-item ${userData.wood >= cost.wood ? 'enough' : 'not-enough'}">
+                            <span class="cost-icon">🪵</span>
+                            <span class="cost-amount">${cost.wood}</span>
+                        </div>
+                        ` : ''}
+                        ${cost.stone > 0 ? `
+                        <div class="cost-item ${userData.stone >= cost.stone ? 'enough' : 'not-enough'}">
+                            <span class="cost-icon">⛰️</span>
+                            <span class="cost-amount">${cost.stone}</span>
+                        </div>
+                        ` : ''}
+                    </div>
                 </div>
                 
                 <div class="upgrade-actions">
-                    <button class="btn" onclick="confirmUpgrade('townhall')">
-                        Улучшить (🪙${cost.gold} 🪵${cost.wood}${cost.stone ? ` ⛰️${cost.stone}` : ''})
+                    <button class="btn-upgrade ${canUpgrade ? 'available' : 'unavailable'}" 
+                            onclick="confirmUpgrade('townhall')"
+                            ${!canUpgrade ? 'disabled' : ''}>
+                        Улучшить
                     </button>
-                    <button class="btn btn-secondary" onclick="closeUpgradeModal()">Отмена</button>
+                    <button class="btn-cancel" onclick="closeUpgradeModal()">
+                        Отмена
+                    </button>
                 </div>
             </div>
         `;
@@ -273,47 +304,77 @@ function showUpgradeModal(buildingId) {
     const nextIncome = config.income?.[level] || {};
     const cost = level === 0 ? config.baseCost : config.upgradeCosts[level - 1];
     
-    let incomeHtml = '';
-    const parts = [];
-    if (nextIncome.gold) parts.push(`🪙 +${nextIncome.gold}`);
-    if (nextIncome.wood) parts.push(`🪵 +${nextIncome.wood}`);
-    if (nextIncome.stone) parts.push(`⛰️ +${nextIncome.stone}`);
-    if (nextIncome.food) parts.push(nextIncome.food > 0 ? `🌾 +${nextIncome.food}` : `🌾 ${nextIncome.food}`);
-    if (nextIncome.populationGrowth) parts.push(`👥 +${nextIncome.populationGrowth}`);
+    const canUpgrade = userData.gold >= cost.gold && 
+                      userData.wood >= cost.wood && 
+                      userData.stone >= (cost.stone || 0);
     
-    if (parts.length) {
-        incomeHtml = parts.join('<br>');
-    } else {
-        incomeHtml = 'нет дохода';
+    // Формируем строку с доходом
+    let incomeParts = [];
+    if (nextIncome.gold) incomeParts.push(`🪙+${nextIncome.gold}`);
+    if (nextIncome.wood) incomeParts.push(`🪵+${nextIncome.wood}`);
+    if (nextIncome.stone) incomeParts.push(`⛰️+${nextIncome.stone}`);
+    if (nextIncome.food) {
+        if (nextIncome.food > 0) incomeParts.push(`🌾+${nextIncome.food}`);
+        else if (nextIncome.food < 0) incomeParts.push(`🌾${nextIncome.food}`);
     }
+    if (nextIncome.populationGrowth) incomeParts.push(`👥+${nextIncome.populationGrowth}`);
+    
+    const incomeText = incomeParts.length > 0 ? incomeParts.join(' ') : 'нет дохода';
     
     const modal = document.getElementById('upgradeModal');
     modal.innerHTML = `
-        <div class="upgrade-info">
-            <h3>${level === 0 ? 'Постройка' : 'Улучшить'} ${config.name}</h3>
-            
+        <div class="upgrade-header">
+            <div class="upgrade-title">${level === 0 ? '🏗️ Построить' : '⬆️ Улучшить'} ${config.name}</div>
             <div class="upgrade-levels">
-                <div class="upgrade-level-current">
-                    <span>${level || 0}</span>
-                    <small>текущий</small>
+                <div class="level-item">
+                    <span class="level-label">Текущий</span>
+                    <span class="level-value">${level || 0}</span>
                 </div>
-                <div class="upgrade-arrow">→</div>
-                <div class="upgrade-level-next">
-                    <span>${nextLevel}</span>
-                    <small>новый</small>
+                <div class="level-arrow">→</div>
+                <div class="level-item">
+                    <span class="level-label">Новый</span>
+                    <span class="level-value">${nextLevel}</span>
                 </div>
             </div>
-            
+        </div>
+        
+        <div class="upgrade-content">
             <div class="upgrade-income">
-                <h4>Прибыль на ${nextLevel} уровне:</h4>
-                <div class="upgrade-income-item">${incomeHtml}</div>
+                <div class="income-label">Прибыль на ${nextLevel} уровне:</div>
+                <div class="income-value">${incomeText}/ч</div>
+            </div>
+            
+            <div class="upgrade-cost">
+                <div class="cost-label">Стоимость:</div>
+                <div class="cost-resources">
+                    <div class="cost-item ${userData.gold >= cost.gold ? 'enough' : 'not-enough'}">
+                        <span class="cost-icon">🪙</span>
+                        <span class="cost-amount">${cost.gold}</span>
+                    </div>
+                    ${cost.wood > 0 ? `
+                    <div class="cost-item ${userData.wood >= cost.wood ? 'enough' : 'not-enough'}">
+                        <span class="cost-icon">🪵</span>
+                        <span class="cost-amount">${cost.wood}</span>
+                    </div>
+                    ` : ''}
+                    ${cost.stone > 0 ? `
+                    <div class="cost-item ${userData.stone >= cost.stone ? 'enough' : 'not-enough'}">
+                        <span class="cost-icon">⛰️</span>
+                        <span class="cost-amount">${cost.stone}</span>
+                    </div>
+                    ` : ''}
+                </div>
             </div>
             
             <div class="upgrade-actions">
-                <button class="btn" onclick="confirmUpgrade('${buildingId}')">
-                    ${level === 0 ? 'Построить' : 'Улучшить'} (🪙${cost.gold} 🪵${cost.wood}${cost.stone ? ` ⛰️${cost.stone}` : ''})
+                <button class="btn-upgrade ${canUpgrade ? 'available' : 'unavailable'}" 
+                        onclick="confirmUpgrade('${buildingId}')"
+                        ${!canUpgrade ? 'disabled' : ''}>
+                    ${level === 0 ? 'Построить' : 'Улучшить'}
                 </button>
-                <button class="btn btn-secondary" onclick="closeUpgradeModal()">Отмена</button>
+                <button class="btn-cancel" onclick="closeUpgradeModal()">
+                    Отмена
+                </button>
             </div>
         </div>
     `;
