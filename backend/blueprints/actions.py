@@ -261,8 +261,11 @@ def game_action(telegram_user):
     if action == 'check_timers':
         now = int(time.time() * 1000)
         completed = []
+        active = []
+        
         timers = Timer.get_active(player_id)
-
+        print(f"⏰ Активных таймеров: {len(timers)}")
+        
         for timer in timers:
             if timer['end_time'] <= now:
                 timer_data = Timer.complete(timer['id'])
@@ -274,26 +277,57 @@ def game_action(telegram_user):
                     if building_id == 'townhall':
                         town_hall_level = target_level
                         Player.update(player_id, town_hall_level=town_hall_level)
-                        completed.append({'type': 'townhall', 'new_level': target_level})
+                        completed.append({
+                            'type': 'townhall',
+                            'new_level': target_level
+                        })
+                        print(f"🏛️ Ратуша улучшена до уровня {target_level}")
                     else:
                         for b in buildings:
                             if b['id'] == building_id:
                                 b['level'] = target_level
                                 break
                         Player.update(player_id, buildings=json.dumps(buildings))
-                        completed.append({'type': 'building', 'building_id': building_id, 'new_level': target_level})
+                        completed.append({
+                            'type': 'building',
+                            'building_id': building_id,
+                            'new_level': target_level
+                        })
+                        print(f"✅ {building_id} улучшено до уровня {target_level}")
 
                     population_max = calculate_population_max(buildings)
                     Player.update(player_id, population_max=population_max)
+            else:
+                if timer['timer_type'] == 'building':
+                    data = json.loads(timer['data'])
+                    active.append({
+                        'type': 'building',
+                        'building_id': data['building_id'],
+                        'target_level': data['target_level'],
+                        'start_time': timer['start_time'],
+                        'end_time': timer['end_time']
+                    })
 
-        return jsonify({'success': True, 'completed': completed, 'state': {
-            'gold': gold, 'wood': wood, 'food': food, 'stone': stone,
-            'level': level, 'townHallLevel': town_hall_level,
-            'population_current': population_current, 'population_max': population_max,
-            'game_login': game_login, 'avatar': avatar,
-            'owned_avatars': owned_avatars, 'buildings': buildings,
-            'lastCollection': last_collection
-        }})
+        return jsonify({
+            'success': True,
+            'completed': completed,
+            'active': active,
+            'state': {
+                'gold': gold,
+                'wood': wood,
+                'food': food,
+                'stone': stone,
+                'level': level,
+                'townHallLevel': town_hall_level,
+                'population_current': population_current,
+                'population_max': population_max,
+                'game_login': game_login,
+                'avatar': avatar,
+                'owned_avatars': owned_avatars,
+                'buildings': buildings,
+                'lastCollection': last_collection
+            }
+        })
 
     # ===== УСТАНОВКА ИМЕНИ =====
     if action == 'set_login':
