@@ -58,6 +58,9 @@ def create_app():
 
 # Создаём приложение
 app = create_app()
+# Запускаем фоновую проверку таймеров
+from timer_checker import start_timer_checker
+start_timer_checker()
 
 # Этот блок выполняется только при прямом запуске (не через start.py)
 if __name__ == '__main__':
