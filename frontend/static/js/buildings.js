@@ -191,21 +191,30 @@ function generateBuildingCardHTML(id) {
         `;
     }
     
-    return `
-        <div class="building-card ${statusClass}">
-            <div class="building-icon">${config.icon}</div>
-            <div class="building-info">
-                <div class="building-header">
-                    <span class="building-name">${config.name}</span>
-                    ${statusBadge}
-                </div>
-                ${bonusText}
-                ${incomeText}
-                ${nextIncomeText}
-                ${upgradeBtn}
+   return `
+    <div class="building-card ${statusClass}">
+        <div class="building-icon">${config.icon}</div>
+        <div class="building-info">
+            <div class="building-header">
+                <span class="building-name">${config.name}</span>
+                ${statusBadge}
             </div>
+            
+            <!-- Бейдж уровня (справа в кружке) -->
+            ${level > 0 ? `<div class="building-level-badge">${level}</div>` : ''}
+            
+            <!-- Шкала строительства для всех зданий -->
+            <div class="construction-progress" id="progress-${id}" style="display: none;">
+                <div class="construction-bar" id="progress-bar-${id}"></div>
+            </div>
+            
+            ${bonusText}
+            ${incomeText}
+            ${nextIncomeText}
+            ${upgradeBtn}
         </div>
-    `;
+    </div>
+`;
 }
 
 // Показать модальное окно улучшения
