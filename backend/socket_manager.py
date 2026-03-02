@@ -1,5 +1,6 @@
 # backend/socket_manager.py
 from flask_socketio import SocketIO, emit, join_room, leave_room
+from flask import request  # ← ЭТО БЫЛО ПРОПУЩЕНО
 import logging
 
 # Создаём SocketIO instance (будет инициализирован в app.py)
@@ -61,3 +62,4 @@ def notify_construction_start(telegram_id, building_id, end_time):
         'building_id': building_id,
         'end_time': end_time
     }, room=telegram_id)
+    print(f"🚧 Начало строительства для {telegram_id}: {building_id}")
