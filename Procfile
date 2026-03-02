@@ -1,1 +1,1 @@
-web: gunicorn -k gevent -w 1 wsgi:app
+web: cd backend && gunicorn -k sync -w 1 app:app
