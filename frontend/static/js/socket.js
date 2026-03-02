@@ -29,36 +29,43 @@ function initSocket(telegramId) {
     });
     
     socket.on('upgrade_complete', (data) => {
-        console.log('🏗️ Улучшение завершено:', data);
+    console.log('🏗️ Улучшение завершено:', data);
+    
+    // Обновляем данные
+    if (data.building_id === 'townhall') {
+        userData.townHallLevel = data.new_level;
+        userData.level = data.new_level;  // ← ВАЖНО: уровень игрока = уровню ратуши
+        console.log(`🏛️ Ратуша улучшена до ${data.new_level} уровня`);
         
-        // Обновляем данные
-        if (data.building_id === 'townhall') {
-            userData.townHallLevel = data.new_level;
-            console.log(`🏛️ Ратуша улучшена до ${data.new_level} уровня`);
+        // Прячем шкалу для ратуши
+        const progressContainer = document.getElementById('progress-townhall');
+        if (progressContainer) {
+            progressContainer.style.display = 'none';
+        }
+        
+        // Обновляем отображение уровня в интерфейсе
+        const levelBadge = document.getElementById('levelBadge');
+        if (levelBadge) {
+            levelBadge.textContent = data.new_level;
+        }
+    } else {
+        const building = buildings.find(b => b.id === data.building_id);
+        if (building) {
+            building.level = data.new_level;
+            console.log(`✅ ${data.building_id} улучшено до ${data.new_level} уровня`);
             
-            // Прячем шкалу для ратуши
-            const progressContainer = document.getElementById('progress-townhall');
+            // Прячем шкалу для обычного здания
+            const progressContainer = document.getElementById(`progress-${data.building_id}`);
             if (progressContainer) {
                 progressContainer.style.display = 'none';
             }
-        } else {
-            const building = buildings.find(b => b.id === data.building_id);
-            if (building) {
-                building.level = data.new_level;
-                console.log(`✅ ${data.building_id} улучшено до ${data.new_level} уровня`);
-                
-                // Прячем шкалу для обычного здания
-                const progressContainer = document.getElementById(`progress-${data.building_id}`);
-                if (progressContainer) {
-                    progressContainer.style.display = 'none';
-                }
-            }
         }
-        
-        // Обновляем UI
-        updateCityUI();
-        showToast(`✅ ${data.building_id === 'townhall' ? 'Ратуша' : data.building_id} улучшена до ${data.new_level} уровня!`);
-    });
+    }
+    
+    // Обновляем UI
+    updateCityUI();
+    showToast(`✅ ${data.building_id === 'townhall' ? 'Ратуша' : data.building_id} улучшена до ${data.new_level} уровня!`);
+});
     
     socket.on('construction_start', (data) => {
         console.log('🚧 Начало строительства:', data);
