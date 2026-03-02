@@ -40,6 +40,14 @@ async function login() {
         console.log('📦 Ответ сервера при авторизации:', result);
         
         if (result && result.success) {
+            // ДИАГНОСТИКА: смотрим, что пришло с сервера
+            console.log('🔥 lastCollection с сервера:', result.user?.lastCollection);
+            console.log('🔥 Текущее время:', Date.now());
+            if (result.user?.lastCollection) {
+                console.log('🔥 Разница:', Date.now() - result.user.lastCollection, 'мс');
+                console.log('🔥 Разница в часах:', (Date.now() - result.user.lastCollection) / (60 * 60 * 1000));
+            }
+            
             userData.id = result.user?.id || null;
             userData.username = result.user?.username || '';
             userData.game_login = result.user?.game_login || '';
@@ -259,8 +267,17 @@ async function showTopClans() {
 // Проверка автосбора
 async function checkAutoCollection() {
     const now = Date.now();
-    if (now - userData.lastCollection >= COLLECTION_INTERVAL) {
-        console.log('⏰ Автосбор ресурсов');
+    const timeLeft = userData.lastCollection ? (now - userData.lastCollection) : 0;
+    console.log('⏰ Проверка сбора:', {
+        lastCollection: userData.lastCollection,
+        now: now,
+        разница: timeLeft,
+        интервал: COLLECTION_INTERVAL,
+        нужно_собирать: timeLeft >= COLLECTION_INTERVAL
+    });
+    
+    if (timeLeft >= COLLECTION_INTERVAL) {
+        console.log('⏰ Автосбор ресурсов!');
         const result = await apiRequest('collect', {});
         if (result.success && result.state) {
             Object.assign(userData, result.state);
@@ -292,29 +309,29 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('confirmAvatarBtn')?.addEventListener('click', confirmAvatarSelection);
     
     // Таймер обновления и проверка сбора (каждую секунду)
-setInterval(() => {
-    updateTimer();
-    checkAutoCollection();  // она сама решит, когда слать запрос
-}, 1000);
+    setInterval(() => {
+        updateTimer();
+        checkAutoCollection();  // она сама решит, когда слать запрос
+    }, 1000);
 
-// Проверка завершённых таймеров (раз в 5 секунд)
-setInterval(async () => {
-    const result = await apiRequest('check_timers', {});
-    if (result.success && result.completed && result.completed.length > 0) {
-        console.log('✅ Завершённые таймеры:', result.completed);
-        if (result.state) {
-            Object.assign(userData, result.state);
-            updateCityUI();
-        }
-        for (const item of result.completed) {
-            if (item.type === 'townhall') {
-                showToast(`🏛️ Ратуша улучшена до ${item.new_level} уровня!`);
-            } else if (item.type === 'building') {
-                showToast(`✅ ${item.building_id} улучшено до ${item.new_level} уровня!`);
+    // Проверка завершённых таймеров (раз в 5 секунд)
+    setInterval(async () => {
+        const result = await apiRequest('check_timers', {});
+        if (result.success && result.completed && result.completed.length > 0) {
+            console.log('✅ Завершённые таймеры:', result.completed);
+            if (result.state) {
+                Object.assign(userData, result.state);
+                updateCityUI();
+            }
+            for (const item of result.completed) {
+                if (item.type === 'townhall') {
+                    showToast(`🏛️ Ратуша улучшена до ${item.new_level} уровня!`);
+                } else if (item.type === 'building') {
+                    showToast(`✅ ${item.building_id} улучшено до ${item.new_level} уровня!`);
+                }
             }
         }
-    }
-}, 5000);
+    }, 5000);
     
     switchTab('city');
 });
