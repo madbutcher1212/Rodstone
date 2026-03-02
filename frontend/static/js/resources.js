@@ -12,13 +12,13 @@ function showExactValue(resource) {
         wood: userData.wood,
         stone: userData.stone,
         food: userData.food,
+        ore: userData.ore || 0,
+        rodstone: userData.rodstone || 0,
         population: `${userData.population_current}/${userData.population_max}`
     };
     const names = {
-        gold: 'Золото',
-        wood: 'Древесина',
-        stone: 'Камень',
-        food: 'Еда',
+        gold: 'Золото', wood: 'Древесина', stone: 'Камень',
+        food: 'Еда', ore: 'Руда', rodstone: 'Родстоун',
         population: 'Население'
     };
     showToast(`${names[resource]}: ${values[resource]}`);
@@ -27,9 +27,7 @@ function showExactValue(resource) {
 function calculateHourlyIncome() {
     let income = {
         gold: TOWN_HALL_INCOME[userData.townHallLevel] || 0,
-        wood: 0,
-        food: 0,
-        stone: 0,
+        wood: 0, food: 0, stone: 0, ore: 0, rodstone: 0,
         populationGrowth: 0
     };
 
@@ -42,7 +40,7 @@ function calculateHourlyIncome() {
             income.wood += inc.wood || 0;
             income.food += inc.food || 0;
             income.stone += inc.stone || 0;
-            income.populationGrowth += inc.populationGrowth || 0;
+            // ore и rodstone пока не добываются
         }
     });
 
@@ -52,47 +50,64 @@ function calculateHourlyIncome() {
 function updateResourcesDisplay() {
     const income = calculateHourlyIncome();
 
-    // Верхний бар
-    document.getElementById('goldBar').textContent = formatNumber(userData.gold);
-    document.getElementById('goldIncome').textContent = `+${formatNumber(income.gold)}/ч`;
+    // Верхний бар (только золото, родстоун, население)
+    const goldBar = document.getElementById('goldBar');
+    if (goldBar) goldBar.textContent = formatNumber(userData.gold);
     
-    document.getElementById('woodBar').textContent = formatNumber(userData.wood);
-    document.getElementById('woodIncome').textContent = `+${formatNumber(income.wood)}/ч`;
+    const goldIncome = document.getElementById('goldIncome');
+    if (goldIncome) goldIncome.textContent = `+${formatNumber(income.gold)}/ч`;
     
-    document.getElementById('stoneBar').textContent = formatNumber(userData.stone);
-    document.getElementById('stoneIncome').textContent = `+${formatNumber(income.stone)}/ч`;
+    const rodstoneBar = document.getElementById('rodstoneBar');
+    if (rodstoneBar) rodstoneBar.textContent = formatNumber(userData.rodstone || 0);
     
-    document.getElementById('foodBar').textContent = formatNumber(userData.food);
-    document.getElementById('foodIncome').textContent = `+${formatNumber(income.food)}/ч`;
+    const rodstoneIncome = document.getElementById('rodstoneIncome');
+    if (rodstoneIncome) rodstoneIncome.textContent = `+0/ч`;
     
-    document.getElementById('populationDisplay').textContent = 
+    const populationDisplay = document.getElementById('populationDisplay');
+    if (populationDisplay) populationDisplay.textContent = 
         `${userData.population_current}/${userData.population_max}`;
 
-    const canGrow = userData.food > 0 || income.food >= userData.population_current;
-    const totalGrowth = canGrow ? 3 + income.populationGrowth : 0;
-    document.getElementById('populationGrowth').textContent = 
-        totalGrowth > 0 ? `+${totalGrowth}/ч` : '⚠️';
-
-    // Ресурсы в городе
-    document.getElementById('woodDisplay').textContent = formatNumber(userData.wood);
-    document.getElementById('stoneDisplay').textContent = formatNumber(userData.stone);
-    document.getElementById('foodDisplay').textContent = formatNumber(userData.food);
+    // Ресурсы в городе (дерево, камень, еда, руда)
+    const woodDisplay = document.getElementById('woodDisplay');
+    if (woodDisplay) woodDisplay.textContent = formatNumber(userData.wood);
+    
+    const stoneDisplay = document.getElementById('stoneDisplay');
+    if (stoneDisplay) stoneDisplay.textContent = formatNumber(userData.stone);
+    
+    const foodDisplay = document.getElementById('foodDisplay');
+    if (foodDisplay) foodDisplay.textContent = formatNumber(userData.food);
+    
+    const oreDisplay = document.getElementById('oreDisplay');
+    if (oreDisplay) oreDisplay.textContent = formatNumber(userData.ore || 0);
 
     // Доходы в городе
+    const woodIncome2 = document.getElementById('woodIncome2');
+    if (woodIncome2) woodIncome2.textContent = `+${formatNumber(income.wood)}/ч`;
+    
+    const stoneIncome2 = document.getElementById('stoneIncome2');
+    if (stoneIncome2) stoneIncome2.textContent = `+${formatNumber(income.stone)}/ч`;
+    
     const foodProd = income.food;
     const foodCons = userData.population_current;
     const foodBal = foodProd - foodCons;
-
-    if (document.getElementById('woodIncome2')) {
-        document.getElementById('woodIncome2').textContent = `+${formatNumber(income.wood)}/ч`;
-    }
-    if (document.getElementById('stoneIncome2')) {
-        document.getElementById('stoneIncome2').textContent = `+${formatNumber(income.stone)}/ч`;
-    }
-    if (document.getElementById('foodIncome2')) {
-        document.getElementById('foodIncome2').textContent = 
+    
+    const foodIncome2 = document.getElementById('foodIncome2');
+    if (foodIncome2) {
+        foodIncome2.textContent = 
             foodBal > 0 ? `+${formatNumber(foodBal)}/ч` : 
             foodBal < 0 ? `${formatNumber(foodBal)}/ч` : '0/ч';
+    }
+    
+    const oreIncome2 = document.getElementById('oreIncome2');
+    if (oreIncome2) oreIncome2.textContent = `+0/ч`;
+
+    // Рост населения
+    const canGrow = userData.food > 0 || income.food >= userData.population_current;
+    const totalGrowth = canGrow ? 3 + income.populationGrowth : 0;
+    
+    const populationGrowth = document.getElementById('populationGrowth');
+    if (populationGrowth) {
+        populationGrowth.textContent = totalGrowth > 0 ? `+${totalGrowth}/ч` : '⚠️';
     }
 }
 
