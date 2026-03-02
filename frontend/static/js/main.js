@@ -138,15 +138,40 @@ function switchTab(tab) {
         p.classList.toggle('hidden', !p.id.includes(tab.charAt(0).toUpperCase() + tab.slice(1))));
     
     if (tab === 'settings') {
-        document.getElementById('settingsAvatarImg').src = AVATARS[userData.avatar].url;
-        document.getElementById('settingsAvatarName').textContent = AVATARS[userData.avatar].name;
+        const img = document.getElementById('settingsAvatarImg');
+        const name = document.getElementById('settingsAvatarName');
+        if (img && name && AVATARS[userData.avatar]) {
+            img.src = AVATARS[userData.avatar].url;
+            name.textContent = AVATARS[userData.avatar].name;
+        }
     }
 }
 
-async function checkAndCollect() {
+async function showTopClans() {
+    try {
+        const response = await fetch(`${API_URL}/api/clans/top`);
+        const data = await response.json();
+        let html = '<h4 style="margin-bottom:10px;">🏆 Топ игроков</h4>';
+        if (!data.players?.length) {
+            html += '<p style="color:#666;">Пока нет игроков</p>';
+        } else {
+            data.players.forEach((p, i) => {
+                html += `<div style="padding:8px; margin:5px 0; background:white; border-radius:8px; display:flex; justify-content:space-between;">
+                    <span><b>${i+1}.</b> ${p.game_login || 'Без имени'}</span>
+                    <span>🪙${p.gold}</span>
+                </div>`;
+            });
+        }
+        document.getElementById('topClans').innerHTML = html;
+    } catch { 
+        showToast('❌ Ошибка'); 
+    }
+}
+
+async function checkAutoCollection() {
     const now = Date.now();
     if (now - userData.lastCollection >= COLLECTION_INTERVAL) {
-        console.log('⏰ Запускаем сбор');
+        console.log('⏰ Автосбор ресурсов');
         const result = await apiRequest('collect', {});
         if (result.success && result.state) {
             Object.assign(userData, result.state);
@@ -175,8 +200,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('changeNameWithPriceBtn')?.addEventListener('click', changeNamePaid);
     document.getElementById('confirmAvatarBtn')?.addEventListener('click', confirmAvatarSelection);
     
-    setInterval(() => updateTimer(), 1000);
-    setInterval(() => checkAndCollect(), 10000);
+    setInterval(() => {
+        updateTimer();
+        checkAutoCollection();
+    }, 1000);
+    
     setInterval(async () => {
         const result = await apiRequest('check_timers', {});
         if (result.success && result.completed?.length > 0) {
