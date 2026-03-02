@@ -1,6 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+from flask import Blueprint, request, jsonify
 import time
 import json
 from models.player import Player
@@ -9,20 +7,8 @@ from utils.telegram import verify_telegram_data
 
 auth_bp = Blueprint('auth', __name__)
 
-# Rate Limiter для этого blueprint
-limiter = Limiter(
-    get_remote_address,
-    app=current_app,
-    default_limits=["200 per day", "50 per hour"]
-)
-
 @auth_bp.route('/auth', methods=['POST'])
-@limiter.limit("5 per minute")
 def auth():
-    """
-    Авторизация пользователя через Telegram Web App данные.
-    Если пользователь новый - создает запись в БД.
-    """
     data = request.get_json()
     if not data:
         return jsonify({'success': False, 'error': 'No data provided'}), 400
@@ -31,7 +17,6 @@ def auth():
     if not init_data:
         return jsonify({'success': False, 'error': 'No initData'}), 400
 
-    # Проверяем подпись Telegram
     telegram_user = verify_telegram_data(init_data)
     if not telegram_user:
         return jsonify({'success': False, 'error': 'Invalid Telegram data'}), 401
@@ -40,12 +25,10 @@ def auth():
     username = telegram_user.get('username', '')
 
     try:
-        # Ищем игрока в БД
         player_data = Player.find_by_telegram_id(telegram_id)
         now = int(time.time() * 1000)
 
         if player_data:
-            # Игрок существует - загружаем данные
             buildings = []
             if player_data.get('buildings'):
                 try:
@@ -53,7 +36,6 @@ def auth():
                 except:
                     buildings = []
 
-            # Загружаем список купленных аватаров
             owned_avatars = player_data.get('owned_avatars', '["male_free","female_free"]')
             if isinstance(owned_avatars, str):
                 try:
@@ -61,11 +43,9 @@ def auth():
                 except:
                     owned_avatars = ['male_free', 'female_free']
 
-            # Пересчитываем максимальное население
             max_pop = calculate_population_max(buildings)
 
             # ВАЖНО: НЕ ОБНОВЛЯЕМ last_collection!
-            # Игрок получает всё, что накопилось с прошлого раза
             Player.update(player_data['id'],
                           population_max=max_pop)
 
@@ -85,13 +65,12 @@ def auth():
                     'townHallLevel': player_data.get('town_hall_level', 1),
                     'population_current': player_data.get('population_current', 10),
                     'population_max': max_pop,
-                    'lastCollection': player_data.get('last_collection', now)  # Берём из БД
+                    'lastCollection': player_data.get('last_collection', now)
                 },
                 'buildings': buildings,
                 'config': BUILDINGS_CONFIG
             })
         else:
-            # Новый игрок - создаем запись
             initial_buildings = [
                 {"id": "house", "level": 1},
                 {"id": "farm", "level": 1},
@@ -117,7 +96,7 @@ def auth():
                 'buildings': json.dumps(initial_buildings),
                 'last_collection': now
             }
-            
+
             Player.create(telegram_id, username, initial_buildings)
 
             return jsonify({
