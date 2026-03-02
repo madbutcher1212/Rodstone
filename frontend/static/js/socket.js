@@ -35,11 +35,23 @@ function initSocket(telegramId) {
         if (data.building_id === 'townhall') {
             userData.townHallLevel = data.new_level;
             console.log(`🏛️ Ратуша улучшена до ${data.new_level} уровня`);
+            
+            // Прячем шкалу для ратуши
+            const progressContainer = document.getElementById('progress-townhall');
+            if (progressContainer) {
+                progressContainer.style.display = 'none';
+            }
         } else {
             const building = buildings.find(b => b.id === data.building_id);
             if (building) {
                 building.level = data.new_level;
                 console.log(`✅ ${data.building_id} улучшено до ${data.new_level} уровня`);
+                
+                // Прячем шкалу для обычного здания
+                const progressContainer = document.getElementById(`progress-${data.building_id}`);
+                if (progressContainer) {
+                    progressContainer.style.display = 'none';
+                }
             }
         }
         
@@ -51,20 +63,40 @@ function initSocket(telegramId) {
     socket.on('construction_start', (data) => {
         console.log('🚧 Начало строительства:', data);
         
-        // Показываем шкалу прогресса
         const buildingId = data.building_id;
         const endTime = data.end_time;
         
         // Для ратуши
         if (buildingId === 'townhall') {
-            const progressContainer = document.getElementById('progress-townhall');
-            const progressBar = document.getElementById('progress-bar-townhall');
-            const progressText = document.getElementById('progress-text-townhall');
+            let progressContainer = document.getElementById('progress-townhall');
+            let progressBar = document.getElementById('progress-bar-townhall');
+            let progressText = document.getElementById('progress-text-townhall');
+            
+            // Если шкалы нет - создаём
+            if (!progressContainer) {
+                const townHall = document.getElementById('townHall');
+                if (townHall) {
+                    progressContainer = document.createElement('div');
+                    progressContainer.className = 'construction-progress';
+                    progressContainer.id = 'progress-townhall';
+                    
+                    progressBar = document.createElement('div');
+                    progressBar.className = 'construction-bar';
+                    progressBar.id = 'progress-bar-townhall';
+                    
+                    progressText = document.createElement('div');
+                    progressText.className = 'construction-text';
+                    progressText.id = 'progress-text-townhall';
+                    
+                    progressContainer.appendChild(progressBar);
+                    progressContainer.appendChild(progressText);
+                    townHall.appendChild(progressContainer);
+                }
+            }
             
             if (progressContainer && progressBar) {
                 progressContainer.style.display = 'flex';
                 
-                // Запускаем анимацию прогресса
                 const startTime = Date.now();
                 const duration = endTime - startTime;
                 
@@ -75,7 +107,6 @@ function initSocket(telegramId) {
                     
                     progressBar.style.width = `${percent}%`;
                     
-                    // Обновляем текст с таймером
                     if (progressText) {
                         const remaining = Math.max(0, endTime - now);
                         const seconds = Math.floor(remaining / 1000);
@@ -91,9 +122,37 @@ function initSocket(telegramId) {
             }
         } else {
             // Для обычных зданий
-            const progressContainer = document.getElementById(`progress-${buildingId}`);
-            const progressBar = document.getElementById(`progress-bar-${buildingId}`);
-            const progressText = document.getElementById(`progress-text-${buildingId}`);
+            let progressContainer = document.getElementById(`progress-${buildingId}`);
+            let progressBar = document.getElementById(`progress-bar-${buildingId}`);
+            let progressText = document.getElementById(`progress-text-${buildingId}`);
+            
+            // Если шкалы нет - ищем карточку здания и добавляем
+            if (!progressContainer) {
+                // Ищем карточку здания по классу или data-атрибуту
+                const buildingCards = document.querySelectorAll('.building-card');
+                for (const card of buildingCards) {
+                    // Пытаемся найти здание по имени или иконке (костыль, но рабочий)
+                    const nameElement = card.querySelector('.building-name');
+                    if (nameElement && nameElement.textContent.toLowerCase().includes(buildingId)) {
+                        progressContainer = document.createElement('div');
+                        progressContainer.className = 'construction-progress';
+                        progressContainer.id = `progress-${buildingId}`;
+                        
+                        progressBar = document.createElement('div');
+                        progressBar.className = 'construction-bar';
+                        progressBar.id = `progress-bar-${buildingId}`;
+                        
+                        progressText = document.createElement('div');
+                        progressText.className = 'construction-text';
+                        progressText.id = `progress-text-${buildingId}`;
+                        
+                        progressContainer.appendChild(progressBar);
+                        progressContainer.appendChild(progressText);
+                        card.appendChild(progressContainer);
+                        break;
+                    }
+                }
+            }
             
             if (progressContainer && progressBar) {
                 progressContainer.style.display = 'flex';
@@ -121,6 +180,14 @@ function initSocket(telegramId) {
                 
                 requestAnimationFrame(updateProgress);
             }
+        }
+    });
+    
+    socket.on('resources_updated', (data) => {
+        console.log('💰 Ресурсы обновлены:', data);
+        if (data) {
+            Object.assign(userData, data);
+            updateResourcesDisplay();
         }
     });
     
