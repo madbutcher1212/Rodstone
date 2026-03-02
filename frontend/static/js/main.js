@@ -50,18 +50,44 @@ async function updateConstructionProgress() {
             if (timer.type === 'building') {
                 const progressContainer = document.getElementById(`progress-${timer.building_id}`);
                 const progressBar = document.getElementById(`progress-bar-${timer.building_id}`);
+                const progressText = document.getElementById(`progress-text-${timer.building_id}`);
                 
                 if (!progressContainer || !progressBar) return;
                 
-                progressContainer.style.display = 'block';
+                progressContainer.style.display = 'flex';
                 
                 const now = Date.now();
                 const total = timer.end_time - timer.start_time;
                 const elapsed = now - timer.start_time;
+                const remaining = Math.max(0, timer.end_time - now);
                 
                 if (now < timer.end_time) {
                     const percent = Math.min(100, (elapsed / total) * 100);
                     progressBar.style.width = `${percent}%`;
+                    
+                    // Форматируем оставшееся время
+                    const seconds = Math.floor(remaining / 1000);
+                    const minutes = Math.floor(seconds / 60);
+                    const displaySeconds = seconds % 60;
+                    
+                    let timeText = '';
+                    if (minutes > 0) {
+                        timeText = `${minutes}м ${displaySeconds}с`;
+                    } else {
+                        timeText = `${displaySeconds}с`;
+                    }
+                    
+                    // Обновляем или создаём текст
+                    if (progressText) {
+                        progressText.textContent = `🏗️ Строительство: ${timeText}`;
+                    } else {
+                        // Создаём текст, если его нет
+                        const textDiv = document.createElement('div');
+                        textDiv.className = 'construction-text';
+                        textDiv.id = `progress-text-${timer.building_id}`;
+                        textDiv.textContent = `🏗️ Строительство: ${timeText}`;
+                        progressContainer.appendChild(textDiv);
+                    }
                 }
             }
         });
