@@ -3,7 +3,6 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import os
-import sys
 
 # Импорт blueprint'ов
 from blueprints.auth import auth_bp
@@ -14,8 +13,8 @@ from blueprints.admin import admin_bp
 # Импорт инициализации Supabase
 from models.player import init_supabase
 
-# Импорт SocketIO
-from socket_manager import socketio, register_socket_handlers, init_socketio
+# Импорт SocketIO - импортируем ТОЛЬКО функции, не сам socketio
+from socket_manager import init_socketio, register_socket_handlers
 
 def create_app():
     template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend/templates'))
@@ -57,8 +56,11 @@ def create_app():
 
     return app
 
+# Создаём приложение
 app = create_app()
 
+# Этот блок выполняется только при прямом запуске (не через start.py)
 if __name__ == '__main__':
+    from socket_manager import socketio
     port = int(os.environ.get('PORT', 5000))
     socketio.run(app, host='0.0.0.0', port=port, debug=True)
