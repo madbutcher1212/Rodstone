@@ -817,3 +817,56 @@ input {
     color: #4CAF50;
     margin-left: 1px;
 }
+/* Закреплённые ресурсы города */
+.city-resources-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: #f8f8f8;
+    padding: 8px 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Сами ресурсы (без изменений, но теперь внутри sticky) */
+.city-resources {
+    display: flex;
+    justify-content: space-between;
+    background: #f0f0f0;
+    border-radius: 12px;
+    padding: 6px 8px;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.city-resource-item {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 6px;
+    min-width: 60px;
+    justify-content: center;
+}
+
+.city-resource-item:hover {
+    background: rgba(0,0,0,0.05);
+}
+
+.resource-icon {
+    font-size: 14px;
+}
+
+.resource-value {
+    color: #333;
+    font-size: 12px;
+}
+
+.resource-income-small {
+    font-size: 9px;
+    color: #4CAF50;
+    margin-left: 1px;
+}
