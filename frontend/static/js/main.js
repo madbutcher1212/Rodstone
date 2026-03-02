@@ -31,6 +31,46 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 tg.ready();
 
+// Функция обновления шкалы строительства ратуши
+async function updateTownHallProgress() {
+    const progressBar = document.getElementById('townHallProgressBar');
+    const progressContainer = document.getElementById('townHallProgress');
+    
+    if (!progressBar || !progressContainer) return;
+    
+    try {
+        const result = await apiRequest('check_timers', {});
+        if (result.success && result.completed) {
+            // Ищем активный таймер ратуши (ещё не завершённый)
+            const activeTimers = result.completed.filter(t => t.type === 'townhall');
+            
+            if (activeTimers.length > 0) {
+                // Есть активный таймер - показываем прогресс
+                progressContainer.style.display = 'block';
+                
+                // Для теста (5 секунд) просто заполняем шкалу
+                // В реальности нужно брать start_time и end_time из ответа
+                const now = Date.now();
+                const endTime = userData.lastUpgradeStart ? userData.lastUpgradeStart + 5000 : now + 5000;
+                const startTime = userData.lastUpgradeStart || now;
+                
+                if (now < endTime) {
+                    const total = endTime - startTime;
+                    const elapsed = now - startTime;
+                    const percent = (elapsed / total) * 100;
+                    progressBar.style.width = `${percent}%`;
+                } else {
+                    progressContainer.style.display = 'none';
+                }
+            } else {
+                progressContainer.style.display = 'none';
+            }
+        }
+    } catch (error) {
+        console.error('Ошибка при обновлении прогресса:', error);
+    }
+}
+
 async function login() {
     try {
         const result = await authRequest();
@@ -218,7 +258,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-    }, 5000);
+        // Обновляем прогресс ратуши
+        await updateTownHallProgress();
+    }, 1000); // Проверяем каждую секунду для плавности шкалы
     
     switchTab('city');
 });
