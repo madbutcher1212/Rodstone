@@ -15,7 +15,7 @@ let userData = {
     townHallLevel: 1,
     population_current: 10,
     population_max: 20,
-    lastCollection: Date.now()
+    lastCollection: null
 };
 
 let buildings = [
