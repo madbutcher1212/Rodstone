@@ -1,6 +1,6 @@
 # backend/socket_manager.py
 from flask_socketio import SocketIO, emit, join_room, leave_room
-from flask import request  # ← ЭТО БЫЛО ПРОПУЩЕНО
+from flask import request
 import logging
 
 # Создаём SocketIO instance (будет инициализирован в app.py)
@@ -11,7 +11,7 @@ user_rooms = {}
 
 def init_socketio(app):
     """Инициализирует SocketIO с приложением"""
-    socketio.init_app(app)
+    socketio.init_app(app, cors_allowed_origins="*")
     return socketio
 
 def register_socket_handlers():
