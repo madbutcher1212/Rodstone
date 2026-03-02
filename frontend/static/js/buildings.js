@@ -378,29 +378,29 @@ function updateTownHallDisplay() {
         }
     }
     
-   // Добавляем шкалу строительства для ратуши (если её ещё нет)
-let townHallProgress = document.getElementById('progress-townhall');
-if (!townHallProgress) {
-    const townHall = document.getElementById('townHall');
-    if (townHall) {
-        const progressDiv = document.createElement('div');
-        progressDiv.className = 'construction-progress';
-        progressDiv.id = 'progress-townhall';
-        progressDiv.style.display = 'none';
-        
-        const progressBar = document.createElement('div');
-        progressBar.className = 'construction-bar';
-        progressBar.id = 'progress-bar-townhall';
-        
-        const progressText = document.createElement('div');
-        progressText.className = 'construction-text';
-        progressText.id = 'progress-text-townhall';
-        
-        progressDiv.appendChild(progressBar);
-        progressDiv.appendChild(progressText);
-        townHall.appendChild(progressDiv);
+    // Добавляем шкалу строительства для ратуши (если её ещё нет)
+    let townHallProgress = document.getElementById('progress-townhall');
+    if (!townHallProgress) {
+        const townHall = document.getElementById('townHall');
+        if (townHall) {
+            const progressDiv = document.createElement('div');
+            progressDiv.className = 'construction-progress';
+            progressDiv.id = 'progress-townhall';
+            progressDiv.style.display = 'none';
+            
+            const progressBar = document.createElement('div');
+            progressBar.className = 'construction-bar';
+            progressBar.id = 'progress-bar-townhall';
+            
+            const progressText = document.createElement('div');
+            progressText.className = 'construction-text';
+            progressText.id = 'progress-text-townhall';
+            
+            progressDiv.appendChild(progressBar);
+            progressDiv.appendChild(progressText);
+            townHall.appendChild(progressDiv);
+        }
     }
-}
 }
 
 // Обновление UI города
