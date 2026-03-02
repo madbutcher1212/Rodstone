@@ -120,15 +120,3 @@ function updateTimer() {
     return timeLeft;
 }
 
-// Проверка автосбора
-async function checkAutoCollection() {
-    const now = Date.now();
-    if (now - userData.lastCollection >= COLLECTION_INTERVAL) {
-        const result = await apiRequest('collect', {});
-        if (result.success && result.state) {
-            Object.assign(userData, result.state);
-            updateCityUI();
-            showToast('📦 Ресурсы собраны!');
-        }
-    }
-}
