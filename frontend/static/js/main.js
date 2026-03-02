@@ -31,41 +31,40 @@ const tg = window.Telegram.WebApp;
 tg.expand();
 tg.ready();
 
-// Функция обновления шкалы строительства ратуши
-async function updateTownHallProgress() {
-    const progressBar = document.getElementById('townHallProgressBar');
-    const progressContainer = document.getElementById('townHallProgress');
-    
-    if (!progressBar || !progressContainer) return;
-    
+// ============================================
+// Функция обновления шкал строительства для всех зданий
+// ============================================
+async function updateConstructionProgress() {
     try {
         const result = await apiRequest('check_timers', {});
-        if (result.success && result.completed) {
-            // Ищем активный таймер ратуши (ещё не завершённый)
-            const activeTimers = result.completed.filter(t => t.type === 'townhall');
-            
-            if (activeTimers.length > 0) {
-                // Есть активный таймер - показываем прогресс
+        
+        if (!result.success || !result.active) return;
+        
+        // Скрываем все шкалы по умолчанию
+        document.querySelectorAll('.construction-progress').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        // Показываем шкалы для активных таймеров
+        result.active.forEach(timer => {
+            if (timer.type === 'building') {
+                const progressContainer = document.getElementById(`progress-${timer.building_id}`);
+                const progressBar = document.getElementById(`progress-bar-${timer.building_id}`);
+                
+                if (!progressContainer || !progressBar) return;
+                
                 progressContainer.style.display = 'block';
                 
-                // Для теста (5 секунд) просто заполняем шкалу
-                // В реальности нужно брать start_time и end_time из ответа
                 const now = Date.now();
-                const endTime = userData.lastUpgradeStart ? userData.lastUpgradeStart + 5000 : now + 5000;
-                const startTime = userData.lastUpgradeStart || now;
+                const total = timer.end_time - timer.start_time;
+                const elapsed = now - timer.start_time;
                 
-                if (now < endTime) {
-                    const total = endTime - startTime;
-                    const elapsed = now - startTime;
-                    const percent = (elapsed / total) * 100;
+                if (now < timer.end_time) {
+                    const percent = Math.min(100, (elapsed / total) * 100);
                     progressBar.style.width = `${percent}%`;
-                } else {
-                    progressContainer.style.display = 'none';
                 }
-            } else {
-                progressContainer.style.display = 'none';
             }
-        }
+        });
     } catch (error) {
         console.error('Ошибка при обновлении прогресса:', error);
     }
@@ -240,7 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('changeNameWithPriceBtn')?.addEventListener('click', changeNamePaid);
     document.getElementById('confirmAvatarBtn')?.addEventListener('click', confirmAvatarSelection);
     
-    // Таймер обновления (каждую секунду) - ТОЛЬКО ВИЗУАЛ, БЕЗ ЗАПРОСОВ
+    // Таймер обновления (каждую секунду) - ТОЛЬКО ВИЗУАЛ
     setInterval(() => {
         updateTimer();
     }, 1000);
@@ -250,9 +249,11 @@ document.addEventListener('DOMContentLoaded', () => {
         await checkAutoCollection();
     }, 10000);
 
-    // Проверка таймеров и прогресс ратуши (раз в 3 секунды)
+    // Проверка таймеров и обновление шкал (раз в 3 секунды)
     setInterval(async () => {
         const result = await apiRequest('check_timers', {});
+        
+        // Обработка завершённых таймеров
         if (result.success && result.completed?.length > 0) {
             if (result.state) Object.assign(userData, result.state);
             updateCityUI();
@@ -264,7 +265,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         }
-        await updateTownHallProgress();
+        
+        // Обновляем шкалы прогресса
+        await updateConstructionProgress();
     }, 3000);
     
     switchTab('city');
