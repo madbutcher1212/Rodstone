@@ -5,6 +5,7 @@ BUILDINGS_CONFIG = {
         "icon": "🏘️",
         "section": "social",
         "max_level": 5,
+        "workers_needed": [0, 0, 0, 0, 0],  # Жилой район не требует рабочих
         "base_cost": {"gold": 50, "wood": 20, "stone": 0},
         "upgrade_costs": [
             {"gold": 50, "wood": 100, "stone": 50},
@@ -21,6 +22,7 @@ BUILDINGS_CONFIG = {
         "icon": "🍺",
         "section": "social",
         "max_level": 5,
+        "workers_needed": [1, 2, 2, 3, 3],
         "base_cost": {"gold": 100, "wood": 100, "stone": 25},
         "upgrade_costs": [
             {"gold": 250, "wood": 250, "stone": 100},
@@ -42,6 +44,7 @@ BUILDINGS_CONFIG = {
         "icon": "💧",
         "section": "social",
         "max_level": 5,
+        "workers_needed": [1, 1, 2, 2, 3],
         "base_cost": {"gold": 100, "wood": 100, "stone": 25},
         "upgrade_costs": [
             {"gold": 250, "wood": 250, "stone": 100},
@@ -63,6 +66,7 @@ BUILDINGS_CONFIG = {
         "icon": "🌾",
         "section": "economic",
         "max_level": 5,
+        "workers_needed": [1, 2, 3, 4, 5],
         "base_cost": {"gold": 30, "wood": 40, "stone": 0},
         "upgrade_costs": [
             {"gold": 50, "wood": 100, "stone": 0},
@@ -84,6 +88,7 @@ BUILDINGS_CONFIG = {
         "icon": "🪵",
         "section": "economic",
         "max_level": 5,
+        "workers_needed": [1, 2, 3, 4, 5],
         "base_cost": {"gold": 40, "wood": 30, "stone": 0},
         "upgrade_costs": [
             {"gold": 50, "wood": 100, "stone": 0},
@@ -105,6 +110,7 @@ BUILDINGS_CONFIG = {
         "icon": "⛰️",
         "section": "economic",
         "max_level": 5,
+        "workers_needed": [2, 3, 4, 5, 6],
         "base_cost": {"gold": 20, "wood": 80, "stone": 0},
         "upgrade_costs": [
             {"gold": 50, "wood": 150, "stone": 0},
@@ -170,20 +176,34 @@ def calculate_hourly_income_and_growth(buildings, town_hall_level, current_popul
             if resource in income:
                 income[resource] += value
 
-    food_prod = income["food"]  # сколько произвели
-    food_needed = current_population  # сколько съели
-    
-    # Реальный остаток еды после часа
-    food_after = current_food + food_prod - food_needed
-    
-    # В income["food"] кладем НОВЫЙ баланс, а не остаток
-    income["food"] = max(0, food_after)  # не может быть меньше 0
-    
-    # Рост населения
+    food_prod = income["food"]
+    food_needed = current_population
+    food_left = food_prod - food_needed
     pop_growth = 0
-    if food_after >= 0:  # еда не ушла в минус
+
+    if food_left >= 0:
+        # Еды хватает - население растет
+        income["food"] = food_left
         potential = 3
-        available_space = max_population - current_population
-        pop_growth = min(potential, available_space)
-    
+        if current_population + potential <= max_population:
+            pop_growth = potential
+        else:
+            pop_growth = max_population - current_population
+    else:
+        # Еды не хватает - используем запасы
+        total_food = current_food + food_prod
+        if total_food >= food_needed:
+            income["food"] = total_food - food_needed
+        else:
+            income["food"] = 0
+
     return income, pop_growth
+
+def get_workers_needed(building_id, level):
+    """
+    Возвращает количество рабочих, необходимых для здания на указанном уровне.
+    """
+    config = BUILDINGS_CONFIG.get(building_id)
+    if not config or level == 0:
+        return 0
+    return config["workers_needed"][level - 1]
