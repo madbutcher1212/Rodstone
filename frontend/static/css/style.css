@@ -100,48 +100,7 @@ body {
     text-overflow: ellipsis;
 }
 
-.resources-bar {
-    display: flex;
-    gap: 6px;
-    background: #f0f0f0;
-    padding: 6px 8px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-    flex-shrink: 0;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    max-width: 180px;
-}
-
-.resource-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 45px;
-}
-
-.resource-value {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    color: #333;
-}
-
-.resource-income {
-    font-size: 9px;
-    color: #4CAF50;
-    margin-top: 2px;
-    white-space: nowrap;
-}
-
-.resource-income-negative {
-    font-size: 9px;
-    color: #ff4444;
-    margin-top: 2px;
-    white-space: nowrap;
-}
-/* Верхний бар с ресурсами */
+/* Верхний бар с ресурсами (ОДИН БЛОК) */
 .resources-bar {
     display: flex;
     gap: 6px;
@@ -271,6 +230,7 @@ body {
     color: #4CAF50;
     margin-left: 1px;
 }
+
 /* Ратуша */
 .town-hall {
     background: linear-gradient(135deg, #f5e6d3, #e6d5b8);
