@@ -234,10 +234,32 @@ function showUpgradeModal(buildingId) {
     const nextLevel = level + 1;
     const nextIncome = config.income?.[level] || {};
     const cost = level === 0 ? config.baseCost : config.upgradeCosts[level - 1];
+ // Проверка требования к ратуше
+const requiredTownHall = config.requiredTownHall?.[level] || 1;
+const townHallEnough = userData.townHallLevel >= requiredTownHall;
+
+// Формируем строку с требованием ратуши
+let requirementHtml = '';
+if (!townHallEnough) {
+    requirementHtml = `
+        <div class="upgrade-requirement not-enough">
+            <span class="requirement-icon">🏛️</span>
+            <span class="requirement-text">Требуется ратуша ${requiredTownHall} уровня</span>
+        </div>
+    `;
+} else {
+    requirementHtml = `
+        <div class="upgrade-requirement enough">
+            <span class="requirement-icon">🏛️</span>
+            <span class="requirement-text">Ратуша ${requiredTownHall} уровня ✅</span>
+        </div>
+    `;
+}
     
     const canUpgrade = userData.gold >= cost.gold && 
-                      userData.wood >= cost.wood && 
-                      userData.stone >= (cost.stone || 0);
+                  userData.wood >= cost.wood && 
+                  userData.stone >= (cost.stone || 0) &&
+                  townHallEnough;  // ← ДОБАВЛЕНА ПРОВЕРКА РАТУШИ
     
     // Формируем строку с доходом
     let incomeParts = [];
