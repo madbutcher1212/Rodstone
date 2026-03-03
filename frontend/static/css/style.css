@@ -116,13 +116,10 @@ body {
 
 .resource-item {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;  /* Было column, стало row */
     align-items: center;
+    gap: 4px;
     min-width: 45px;
-}
-
-.resource-item[onclick*="population"] {
-    min-width: 80px;
 }
 
 .resource-value {
@@ -135,8 +132,21 @@ body {
 .resource-income {
     font-size: 9px;
     color: #4CAF50;
-    margin-top: 2px;
     white-space: nowrap;
+    margin-left: 2px;  
+}
+.resource-item[onclick*="population"] {
+    flex-direction: column;
+    min-width: 80px;
+}
+
+.resource-item[onclick*="population"] .population-main {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+    justify-content: center;
 }
 
 .resource-income-negative {
