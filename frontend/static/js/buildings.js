@@ -252,10 +252,13 @@ function showUpgradeModal(buildingId) {
     
     const incomeText = incomeParts.length > 0 ? incomeParts.join(' ') : 'нет дохода';
     
-    // Для жилого района показываем бонус к лимиту вместо дохода
+  // Для жилого района показываем бонус к лимиту вместо дохода
 let incomeDisplay = '';
 if (buildingId === 'house') {
-    const nextBonus = config.populationBonus[level]; // бонус на СЛЕДУЮЩЕМ уровне
+    // Для улучшения показываем бонус СЛЕДУЮЩЕГО уровня
+    const nextBonus = config.populationBonus[level]; // level = текущий уровень
+    // populationBonus[level] дает бонус следующего уровня
+    // потому что в массиве индекс 0 = 1 ур, индекс 1 = 2 ур и т.д.
     incomeDisplay = `<div class="income-value">👥 +${nextBonus} лимит</div>`;
 } else {
     incomeDisplay = `<div class="income-value">${incomeText}/ч</div>`;
