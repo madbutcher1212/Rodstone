@@ -398,14 +398,13 @@ async function upgradeTownHallConfirm() {
     const result = await apiRequest('upgrade_level', {});
     if (result.success) {
         if (result.state) {
-            // Явно обновляем уровень ратуши
             if (result.state.townHallLevel !== undefined) {
                 userData.townHallLevel = result.state.townHallLevel;
             }
             Object.assign(userData, result.state);
         }
         updateCityUI();
-        showToast('🏛️ Ратуша улучшена!');
+        // Уведомление убрано - теперь только после завершения стройки
     } else {
         showToast(`❌ ${result.error || 'Ошибка'}`);
     }
