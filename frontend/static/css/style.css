@@ -241,6 +241,7 @@ body {
     gap: 15px;
     cursor: pointer;
     margin-bottom: 15px;
+    margin-top: 10px;  /* ← ЭТО НОВАЯ СТРОКА */
     transition: all 0.2s;
     position: relative;
     overflow: hidden;
