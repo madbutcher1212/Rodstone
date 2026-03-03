@@ -212,9 +212,9 @@ function updateWorkersDisplay() {
 }
 function showWorkerInfo(type) {
     if (type === 'free') {
-        showToast(`🟢 Свободные жители: ${userData.workers_free}\nМогут работать на новых зданиях`);
+        showToast(`🟢 Свободные жители: ${userData.workers_free}`);
     } else if (type === 'workers') {
-        showToast(`🔴 Занятые жители: ${userData.workers_used}\nРаботают на существующих зданиях`);
+        showToast(`🔴 Занятые жители: ${userData.workers_used}`);
     }
 }
 
