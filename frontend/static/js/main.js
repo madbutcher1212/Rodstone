@@ -246,29 +246,6 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(async () => {
         await checkAutoCollection();
     }, 10000);
-
-    // Проверка таймеров и обновление шкал (раз в 3 секунды)
-    setInterval(async () => {
-        const result = await apiRequest('check_timers', {});
-        
-        // Обработка завершённых таймеров
-        if (result.success && result.completed?.length > 0) {
-            if (result.state) Object.assign(userData, result.state);
-            updateCityUI();
-            result.completed.forEach(item => {
-                if (item.type === 'townhall') {
-                    showToast(`🏛️ Ратуша улучшена до ${item.new_level} уровня!`);
-                } else {
-                    showToast(`✅ ${item.building_id} улучшено до ${item.new_level} уровня!`);
-                }
-            });
-        }
-        
-        // Обновляем шкалы прогресса
-        await updateConstructionProgress();
-        // Обновляем отображение рабочих
-        updateWorkersDisplay();
-    }, 3000);
     
     switchTab('city');
 });
