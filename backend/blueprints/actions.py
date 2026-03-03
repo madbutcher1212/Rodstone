@@ -102,50 +102,52 @@ def game_action(telegram_user):
         return jsonify({'success': True, 'state': state})
 
     # ===== СБОР РЕСУРСОВ =====
-    if action == 'collect':
-        now = int(time.time() * 1000)
-        time_passed = now - last_collection
-        hours_passed = time_passed / (60 * 60 * 1000)
+if action == 'collect':
+    now = int(time.time() * 1000)
+    time_passed = now - last_collection
+    hours_passed = time_passed / (60 * 60 * 1000)
 
-        if hours_passed >= 1:
-            full_hours = int(hours_passed)
-            total_gold = total_wood = total_food = total_stone = 0
-            current_pop = population_current
-            current_food = food
+    if hours_passed >= 1:
+        full_hours = int(hours_passed)
+        total_gold = total_wood = total_food = total_stone = 0
+        current_pop = population_current
+        # НЕ ИСПОЛЬЗУЕМ current_food в цикле!
+        temp_food = food  # временная переменная для расчета
 
-            for _ in range(full_hours):
-                inc, growth = calculate_hourly_income_and_growth(
-                    buildings, town_hall_level, current_pop, population_max, current_food
-                )
-                total_gold += inc["gold"]
-                total_wood += inc["wood"]
-                total_food += inc["food"]
-                total_stone += inc["stone"]
-                
-                # Рост населения с учётом лимита
-                available_space = population_max - current_pop
-                actual_growth = min(growth, available_space)
-                current_pop += actual_growth
-                
-                current_food += inc["food"]
+        for _ in range(full_hours):
+            inc, growth = calculate_hourly_income_and_growth(
+                buildings, town_hall_level, current_pop, population_max, temp_food
+            )
+            total_gold += inc["gold"]
+            total_wood += inc["wood"]
+            total_food += inc["food"]
+            total_stone += inc["stone"]
+            
+            # Рост населения с учётом лимита
+            available_space = population_max - current_pop
+            actual_growth = min(growth, available_space)
+            current_pop += actual_growth
+            
+            # Обновляем временную еду для следующего часа
+            temp_food += inc["food"]
 
-            gold += total_gold
-            wood += total_wood
-            food += total_food
-            stone += total_stone
-            population_current = current_pop
-            last_collection = now
+        gold += total_gold
+        wood += total_wood
+        food += total_food  # ← ТОЛЬКО ОДИН РАЗ!
+        stone += total_stone
+        population_current = current_pop
+        last_collection = now
 
-            Player.update(player_id,
-                          gold=gold, wood=wood, food=food, stone=stone,
-                          population_current=population_current,
-                          last_collection=last_collection)
+        Player.update(player_id,
+                      gold=gold, wood=wood, food=food, stone=stone,
+                      population_current=population_current,
+                      last_collection=last_collection)
 
-            print(f"✅ Сбор: +{total_gold}🪙 +{total_wood}🪵 +{total_food}🌾 +{total_stone}⛰️ за {full_hours}ч")
-        else:
-            print(f"⏳ Сбор слишком рано, прошло {hours_passed:.2f}ч")
+        print(f"✅ Сбор: +{total_gold}🪙 +{total_wood}🪵 +{total_food}🌾 +{total_stone}⛰️ за {full_hours}ч")
+    else:
+        print(f"⏳ Сбор слишком рано, прошло {hours_passed:.2f}ч")
 
-        return build_response()
+    return build_response()
 
     # ===== ПОСТРОЙКА =====
     if action == 'build':
