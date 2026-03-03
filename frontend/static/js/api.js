@@ -15,7 +15,12 @@ async function apiRequest(action, data = {}) {
         });
         
         if (!response.ok) {
-            return { success: false, error: `HTTP ${response.status}` };
+            try {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error || `HTTP ${response.status}` };
+            } catch {
+                return { success: false, error: `HTTP ${response.status}` };
+            }
         }
         
         return await response.json();
@@ -37,7 +42,12 @@ async function authRequest() {
         });
         
         if (!response.ok) {
-            return { success: false, error: `HTTP ${response.status}` };
+            try {
+                const errorData = await response.json();
+                return { success: false, error: errorData.error || `HTTP ${response.status}` };
+            } catch {
+                return { success: false, error: `HTTP ${response.status}` };
+            }
         }
         
         return await response.json();
