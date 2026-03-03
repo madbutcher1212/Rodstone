@@ -14,6 +14,8 @@ let userData = {
     townHallLevel: 1,
     population_current: 10,
     population_max: 20,
+    workers_used: 0,      // НОВОЕ: занятые жители
+    workers_free: 10,      // НОВОЕ: свободные жители
     lastCollection: null
 };
 
@@ -58,6 +60,8 @@ async function login() {
             userData.townHallLevel = result.user?.townHallLevel || 1;
             userData.population_current = result.user?.population_current || 10;
             userData.population_max = result.user?.population_max || 20;
+            userData.workers_used = result.user?.workers_used || 0;      // НОВОЕ
+            userData.workers_free = result.user?.workers_free || 10;      // НОВОЕ
             userData.lastCollection = result.user?.lastCollection || Date.now();
             
             buildings = result.buildings || [
@@ -194,6 +198,19 @@ async function checkAutoCollection() {
     }
 }
 
+// Функция для обновления отображения рабочих
+function updateWorkersDisplay() {
+    const freeElement = document.getElementById('freePopulation');
+    const workersElement = document.getElementById('workersPopulation');
+    
+    if (freeElement) {
+        freeElement.textContent = userData.workers_free;
+    }
+    if (workersElement) {
+        workersElement.textContent = userData.workers_used;
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🔥 main.js загружен');
     login();
@@ -222,8 +239,36 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(async () => {
         await checkAutoCollection();
     }, 10000);
-    
-    // ВСЁ! Интервал с check_timers УДАЛЁН
+
+    // Проверка таймеров и обновление шкал (раз в 3 секунды)
+    setInterval(async () => {
+        const result = await apiRequest('check_timers', {});
+        
+        // Обработка завершённых таймеров
+        if (result.success && result.completed?.length > 0) {
+            if (result.state) Object.assign(userData, result.state);
+            updateCityUI();
+            result.completed.forEach(item => {
+                if (item.type === 'townhall') {
+                    showToast(`🏛️ Ратуша улучшена до ${item.new_level} уровня!`);
+                } else {
+                    showToast(`✅ ${item.building_id} улучшено до ${item.new_level} уровня!`);
+                }
+            });
+        }
+        
+        // Обновляем шкалы прогресса
+        await updateConstructionProgress();
+        // Обновляем отображение рабочих
+        updateWorkersDisplay();
+    }, 3000);
     
     switchTab('city');
 });
+
+// Переопределяем updateCityUI чтобы включать обновление рабочих
+const originalUpdateCityUI = updateCityUI;
+updateCityUI = function() {
+    originalUpdateCityUI();
+    updateWorkersDisplay();
+};
