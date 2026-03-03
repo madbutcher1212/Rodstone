@@ -141,6 +141,48 @@ body {
     margin-top: 2px;
     white-space: nowrap;
 }
+/* Верхний бар с ресурсами */
+.resources-bar {
+    display: flex;
+    gap: 6px;
+    background: #f0f0f0;
+    padding: 6px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    max-width: 180px;
+}
+
+.resource-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 45px;
+}
+
+.resource-value {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    color: #333;
+}
+
+.resource-income {
+    font-size: 9px;
+    color: #4CAF50;
+    margin-top: 2px;
+    white-space: nowrap;
+}
+
+.resource-income-negative {
+    font-size: 9px;
+    color: #ff4444;
+    margin-top: 2px;
+    white-space: nowrap;
+}
 
 /* Таймер */
 .income-timer {
