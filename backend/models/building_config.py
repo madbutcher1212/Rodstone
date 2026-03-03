@@ -160,7 +160,7 @@ def calculate_hourly_income_and_growth(buildings, town_hall_level, current_popul
         "stone": 0
     }
 
-    # Доход от построек (ПРОИЗВЕДЕННАЯ еда)
+    # Доход от построек
     for b in buildings:
         config = BUILDINGS_CONFIG.get(b["id"])
         if not config or b["level"] == 0 or not config.get("income"):
@@ -170,20 +170,25 @@ def calculate_hourly_income_and_growth(buildings, town_hall_level, current_popul
             if resource in income:
                 income[resource] += value
 
-    # food_prod - это сколько еды ПРОИЗВЕЛИ
     food_prod = income["food"]
+    food_needed = current_population
     
-    # Расчет роста населения
+    # Расчет, хватит ли еды (с учетом запасов)
+    total_available_food = current_food + food_prod
+    food_left_after_consumption = total_available_food - food_needed
+    
     pop_growth = 0
-    if food_prod >= current_population:
-        # Еды хватает - население растет
+    
+    if food_left_after_consumption >= 0:
+        # Еды хватает (с учетом запасов) - население растет
         potential = 3
         available_space = max_population - current_population
         pop_growth = min(potential, available_space)
+        # Еда, которая останется после потребления
+        income["food"] = food_left_after_consumption
     else:
-        # Еды не хватает - население не растет
+        # Еды не хватает даже с запасами - население не растет
         pop_growth = 0
-        # Еда все равно производится, просто не хватает на всех
-        # Ничего не вычитаем из запасов - это сделает клиент при сборке
+        income["food"] = 0  # Вся еда съедена, запасы кончились
 
     return income, pop_growth
