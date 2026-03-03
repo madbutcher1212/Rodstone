@@ -29,49 +29,80 @@ function initSocket(telegramId) {
     });
     
     socket.on('upgrade_complete', (data) => {
-    console.log('🏗️ Улучшение завершено:', data);
-    
-    // Обновляем данные
-    if (data.building_id === 'townhall') {
-        userData.townHallLevel = data.new_level;
-        userData.level = data.new_level;  // ← ВАЖНО: уровень игрока = уровню ратуши
-        console.log(`🏛️ Ратуша улучшена до ${data.new_level} уровня`);
+        console.log('🏗️ Улучшение завершено:', data);
         
-        // Прячем шкалу для ратуши
-        const progressContainer = document.getElementById('progress-townhall');
-        if (progressContainer) {
-            progressContainer.style.display = 'none';
-        }
-        
-        // Обновляем отображение уровня в интерфейсе
-        const levelBadge = document.getElementById('levelBadge');
-        if (levelBadge) {
-            levelBadge.textContent = data.new_level;
-        }
-    } else {
-        const building = buildings.find(b => b.id === data.building_id);
-        if (building) {
-            building.level = data.new_level;
-            console.log(`✅ ${data.building_id} улучшено до ${data.new_level} уровня`);
+        // Обновляем данные
+        if (data.building_id === 'townhall') {
+            userData.townHallLevel = data.new_level;
+            userData.level = data.new_level;
+            console.log(`🏛️ Ратуша улучшена до ${data.new_level} уровня`);
             
-            // Прячем шкалу для обычного здания
-            const progressContainer = document.getElementById(`progress-${data.building_id}`);
+            // Прячем шкалу для ратуши
+            const progressContainer = document.getElementById('progress-townhall');
             if (progressContainer) {
                 progressContainer.style.display = 'none';
             }
+            
+            // Обновляем отображение уровня
+            const levelBadge = document.getElementById('levelBadge');
+            if (levelBadge) {
+                levelBadge.textContent = data.new_level;
+            }
+        } else {
+            const building = buildings.find(b => b.id === data.building_id);
+            if (building) {
+                building.level = data.new_level;
+                console.log(`✅ ${data.building_id} улучшено до ${data.new_level} уровня`);
+                
+                // Прячем шкалу для обычного здания
+                const progressContainer = document.getElementById(`progress-${data.building_id}`);
+                if (progressContainer) {
+                    progressContainer.style.display = 'none';
+                }
+            }
         }
-    }
-    
-    // Обновляем UI
-    updateCityUI();
-    showToast(`✅ ${data.building_id === 'townhall' ? 'Ратуша' : data.building_id} улучшена до ${data.new_level} уровня!`);
-});
+        
+        // Обновляем UI
+        updateCityUI();
+        showToast(`✅ ${data.building_id === 'townhall' ? 'Ратуша' : data.building_id} улучшена до ${data.new_level} уровня!`);
+    });
     
     socket.on('construction_start', (data) => {
         console.log('🚧 Начало строительства:', data);
         
         const buildingId = data.building_id;
         const endTime = data.end_time;
+        
+        // Функция для создания и обновления шкалы прогресса
+        const setupProgressBar = (container, bar, text, id) => {
+            if (!container || !bar) return null;
+            
+            container.style.display = 'flex';
+            
+            const startTime = Date.now();
+            const duration = endTime - startTime;
+            
+            const updateProgress = () => {
+                const now = Date.now();
+                const elapsed = now - startTime;
+                const percent = Math.min(100, (elapsed / duration) * 100);
+                
+                bar.style.width = `${percent}%`;
+                
+                if (text) {
+                    const remaining = Math.max(0, endTime - now);
+                    const seconds = Math.floor(remaining / 1000);
+                    text.textContent = `🏗️ ${seconds}с`;
+                }
+                
+                if (now < endTime) {
+                    requestAnimationFrame(updateProgress);
+                }
+            };
+            
+            requestAnimationFrame(updateProgress);
+            return true;
+        };
         
         // Для ратуши
         if (buildingId === 'townhall') {
@@ -101,46 +132,23 @@ function initSocket(telegramId) {
                 }
             }
             
-            if (progressContainer && progressBar) {
-                progressContainer.style.display = 'flex';
-                
-                const startTime = Date.now();
-                const duration = endTime - startTime;
-                
-                const updateProgress = () => {
-                    const now = Date.now();
-                    const elapsed = now - startTime;
-                    const percent = Math.min(100, (elapsed / duration) * 100);
-                    
-                    progressBar.style.width = `${percent}%`;
-                    
-                    if (progressText) {
-                        const remaining = Math.max(0, endTime - now);
-                        const seconds = Math.floor(remaining / 1000);
-                        progressText.textContent = `🏗️ Строительство: ${seconds}с`;
-                    }
-                    
-                    if (now < endTime) {
-                        requestAnimationFrame(updateProgress);
-                    }
-                };
-                
-                requestAnimationFrame(updateProgress);
-            }
-        } else {
-            // Для обычных зданий
+            setupProgressBar(progressContainer, progressBar, progressText, buildingId);
+        } 
+        // Для обычных зданий
+        else {
             let progressContainer = document.getElementById(`progress-${buildingId}`);
             let progressBar = document.getElementById(`progress-bar-${buildingId}`);
             let progressText = document.getElementById(`progress-text-${buildingId}`);
             
             // Если шкалы нет - ищем карточку здания и добавляем
             if (!progressContainer) {
-                // Ищем карточку здания по классу или data-атрибуту
+                // Ищем карточку здания по ID здания
                 const buildingCards = document.querySelectorAll('.building-card');
                 for (const card of buildingCards) {
-                    // Пытаемся найти здание по имени или иконке (костыль, но рабочий)
                     const nameElement = card.querySelector('.building-name');
-                    if (nameElement && nameElement.textContent.toLowerCase().includes(buildingId)) {
+                    const config = BUILDINGS_CONFIG[buildingId];
+                    
+                    if (nameElement && config && nameElement.textContent === config.name) {
                         progressContainer = document.createElement('div');
                         progressContainer.className = 'construction-progress';
                         progressContainer.id = `progress-${buildingId}`;
@@ -161,32 +169,7 @@ function initSocket(telegramId) {
                 }
             }
             
-            if (progressContainer && progressBar) {
-                progressContainer.style.display = 'flex';
-                
-                const startTime = Date.now();
-                const duration = endTime - startTime;
-                
-                const updateProgress = () => {
-                    const now = Date.now();
-                    const elapsed = now - startTime;
-                    const percent = Math.min(100, (elapsed / duration) * 100);
-                    
-                    progressBar.style.width = `${percent}%`;
-                    
-                    if (progressText) {
-                        const remaining = Math.max(0, endTime - now);
-                        const seconds = Math.floor(remaining / 1000);
-                        progressText.textContent = `🏗️ Строительство: ${seconds}с`;
-                    }
-                    
-                    if (now < endTime) {
-                        requestAnimationFrame(updateProgress);
-                    }
-                };
-                
-                requestAnimationFrame(updateProgress);
-            }
+            setupProgressBar(progressContainer, progressBar, progressText, buildingId);
         }
     });
     
