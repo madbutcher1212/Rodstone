@@ -38,43 +38,44 @@
 
     <div class="game">
         <!-- Верхний бар -->
-        <div class="top-bar-fixed">
-            <div class="top-bar">
-                <div class="avatar" id="avatar">
-                    <img id="avatarImg" class="avatar-img" src="" style="display: none;">
-                    <span id="avatarPlaceholder">👤</span>
-                </div>
-                <div class="user-info">
-                    <div class="name-level">
-                        <div class="user-name" id="userName">Загрузка...</div>
-                        <div class="level-badge" id="levelBadge">1</div>
-                    </div>
-                    <div class="user-login" id="userLogin">@username</div>
-                </div>
-                <div class="resources-bar">
-                    <div class="resource-item" onclick="showExactValue('gold')">
-                        <span class="resource-value">🪙<span id="goldBar">100</span></span>
-                        <span class="resource-income" id="goldIncome">+0/ч</span>
-                    </div>
-                    <div class="resource-item" onclick="showExactValue('rodstone')">
-                        <span class="resource-value">🔴<span id="rodstoneBar">0</span></span>
-                        <span class="resource-income" id="rodstoneIncome">+0/ч</span>
-                    </div>
-                    <div class="resource-item" onclick="showExactValue('population')">
-                        <span class="resource-value">👥<span id="populationDisplay">10/20</span></span>
-                    <div class="population-detail">
-                        <span class="population-free">
+<div class="top-bar-fixed">
+    <div class="top-bar">
+        <div class="avatar" id="avatar">
+            <img id="avatarImg" class="avatar-img" src="" style="display: none;">
+            <span id="avatarPlaceholder">👤</span>
+        </div>
+        <div class="user-info">
+            <div class="name-level">
+                <div class="user-name" id="userName">Загрузка...</div>
+                <div class="level-badge" id="levelBadge">1</div>
+            </div>
+            <div class="user-login" id="userLogin">@username</div>
+        </div>
+        <div class="resources-bar">
+            <div class="resource-item" onclick="showExactValue('gold')">
+                <span class="resource-value">🪙<span id="goldBar">100</span></span>
+                <span class="resource-income" id="goldIncome">+0/ч</span>
+            </div>
+            <div class="resource-item" onclick="showExactValue('rodstone')">
+                <span class="resource-value">🔴<span id="rodstoneBar">0</span></span>
+                <span class="resource-income" id="rodstoneIncome">+0/ч</span>
+            </div>
+            <div class="resource-item" onclick="showExactValue('population')">
+                <span class="resource-value">👥<span id="populationDisplay">10/20</span></span>
+                <div class="population-detail">
+                    <span class="population-free">
                         <img src="/static/icons/worker-green.png" class="worker-icon"> 
                         <span id="freePopulation">0</span>
-                        </span>
-                        <span class="population-workers">
-                       <img src="/static/icons/worker-red.png" class="worker-icon"> 
-                       <span id="workersPopulation">0</span>
-                       </span>
+                    </span>
+                    <span class="population-workers">
+                        <img src="/static/icons/worker-red.png" class="worker-icon"> 
+                        <span id="workersPopulation">0</span>
+                    </span>
                 </div>
-                       <span class="resource-income" id="populationGrowth">+3/ч</span>
-               </div>
+                <span class="resource-income" id="populationGrowth">+3/ч</span>
             </div>
+        </div> <!-- закрываем resources-bar -->
+    </div> <!-- закрываем top-bar -->
             
             <!-- Таймер сбора -->
             <div class="income-timer" id="incomeTimer">
