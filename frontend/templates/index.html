@@ -61,21 +61,24 @@
                 <span class="resource-income" id="rodstoneIncome">+0/ч</span>
             </div>
             <div class="resource-item" onclick="showExactValue('population')">
-                <span class="resource-value">👥<span id="populationDisplay">10/20</span></span>
-                <div class="population-detail">
-                    <span class="population-free">
-                        <img src="/static/icons/worker-green.png" class="worker-icon"> 
-                        <span id="freePopulation">0</span>
-                    </span>
-                    <span class="population-workers">
-                        <img src="/static/icons/worker-red.png" class="worker-icon"> 
-                        <span id="workersPopulation">0</span>
-                    </span>
-                </div>
-                <span class="resource-income" id="populationGrowth">+3/ч</span>
-            </div>
-        </div> <!-- закрываем resources-bar -->
-    </div> <!-- закрываем top-bar -->
+    <!-- Верхняя строка - общее население и рост -->
+    <div class="population-main">
+        <span class="resource-value">👥<span id="populationDisplay">16/30</span></span>
+        <span class="resource-income" id="populationGrowth">+3/ч</span>
+    </div>
+    
+    <!-- Нижняя строка - свободные/занятые -->
+    <div class="population-detail">
+        <span class="population-free">
+            <img src="/static/icons/worker-green.png" class="worker-icon"> 
+            <span id="freePopulation">14</span>
+        </span>
+        <span class="population-workers">
+            <img src="/static/icons/worker-red.png" class="worker-icon"> 
+            <span id="workersPopulation">2</span>
+        </span>
+    </div>
+</div>
             
             <!-- Таймер сбора -->
             <div class="income-timer" id="incomeTimer">
