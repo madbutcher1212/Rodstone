@@ -100,18 +100,35 @@ body {
     text-overflow: ellipsis;
 }
 
+/* Resources bar - двухэтажная структура */
 .resources-bar {
     display: flex;
-    gap: 8px;
+    flex-direction: column;
+    gap: 4px;
     background: #f0f0f0;
     padding: 8px 12px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: bold;
     flex-shrink: 0;
-    flex-wrap: wrap;
+    min-width: 160px;
+}
+
+/* Верхний ряд - монеты и родстоун */
+.resources-row {
+    display: flex;
     justify-content: space-between;
-    max-width: 280px;
+    width: 100%;
+    gap: 12px;
+}
+
+/* Нижний ряд - население и свободные/занятые */
+.resources-row-bottom {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 12px;
+    align-items: center;
 }
 
 .resource-item {
@@ -119,41 +136,7 @@ body {
     flex-direction: row;
     align-items: center;
     gap: 4px;
-    min-width: auto;
-    flex: 1;
-    justify-content: center;
     white-space: nowrap;
-}
-/* Стили для населения */
-.resource-item[onclick*="population"] {
-    flex-direction: column;
-    min-width: 100px;
-    flex: 1.5;
-}
-
-.resource-item[onclick*="population"] .population-main {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 4px;
-    width: 100%;
-    justify-content: center;
-}
-
-.population-detail {
-    display: flex;
-    gap: 12px;
-    font-size: 10px;
-    margin-top: 2px;
-    width: 100%;
-    justify-content: center;
-}
-
-.resource-value {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-    color: #333;
 }
 
 .resource-value {
@@ -170,15 +153,6 @@ body {
     margin-left: 2px;
 }
 
-.resource-item[onclick*="population"] .population-main {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 4px;
-    width: 100%;
-    justify-content: center;
-}
-
 .resource-income-negative {
     font-size: 9px;
     color: #ff4444;
@@ -186,18 +160,18 @@ body {
     white-space: nowrap;
 }
 
-.population-main {
+/* Блок населения */
+.population-block {
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 4px;
-    margin-bottom: 2px;
 }
 
-.population-detail {
+/* Блок свободных/занятых */
+.workers-block {
     display: flex;
     gap: 8px;
-    font-size: 10px;
-    margin-top: 2px;
 }
 
 .population-free, .population-workers {
@@ -357,6 +331,11 @@ body {
     color: #4CAF50;
     font-weight: bold;
     margin-bottom: 4px;
+}
+
+.town-hall-level {
+    font-size: 14px;
+    color: #8b6b42;
 }
 
 .town-hall-level-badge {
