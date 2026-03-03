@@ -9,7 +9,8 @@ from models.building_config import (
     BUILDINGS_CONFIG,
     calculate_building_upgrade_cost,
     calculate_population_max,
-    calculate_hourly_income_and_growth
+    calculate_hourly_income_and_growth,
+    get_workers_needed
 )
 
 # Импорт SocketIO уведомлений
@@ -62,6 +63,8 @@ def game_action(telegram_user):
     town_hall_level = player.get('town_hall_level', 1)
     population_current = player.get('population_current', 10)
     population_max = player.get('population_max', 20)
+    workers_used = player.get('workers_used', 0)
+    workers_free = player.get('workers_free', population_current)
     game_login = player.get('game_login', '')
     avatar = player.get('avatar', 'male_free')
 
@@ -82,6 +85,8 @@ def game_action(telegram_user):
     last_collection = player.get('last_collection', int(time.time() * 1000))
 
     def build_response(additional_state=None):
+        # Пересчитываем свободных жителей
+        free = population_current - workers_used
         state = {
             'gold': gold,
             'wood': wood,
@@ -91,6 +96,8 @@ def game_action(telegram_user):
             'townHallLevel': town_hall_level,
             'population_current': population_current,
             'population_max': population_max,
+            'workers_used': workers_used,
+            'workers_free': free,
             'game_login': game_login,
             'avatar': avatar,
             'owned_avatars': owned_avatars,
@@ -101,7 +108,7 @@ def game_action(telegram_user):
             state.update(additional_state)
         return jsonify({'success': True, 'state': state})
 
-    # ===== СБОР РЕСУРСОВ (ИСПРАВЛЕНО) =====
+    # ===== СБОР РЕСУРСОВ =====
     if action == 'collect':
         now = int(time.time() * 1000)
         time_passed = now - last_collection
@@ -111,44 +118,40 @@ def game_action(telegram_user):
             full_hours = int(hours_passed)
             total_gold = total_wood = total_food = total_stone = 0
             current_pop = population_current
-            # Текущий баланс еды для расчета
-            current_food_balance = food
+            temp_food = food
 
             for _ in range(full_hours):
                 inc, growth = calculate_hourly_income_and_growth(
-                    buildings, town_hall_level, current_pop, population_max, current_food_balance
+                    buildings, town_hall_level, current_pop, population_max, temp_food
                 )
-                
                 total_gold += inc["gold"]
                 total_wood += inc["wood"]
+                total_food += inc["food"] - temp_food  # Изменение еды
                 total_stone += inc["stone"]
-                
-                # Расчет изменения еды
-                food_change = inc["food"] - current_food_balance
-                total_food += food_change
                 
                 # Рост населения с учётом лимита
                 available_space = population_max - current_pop
                 actual_growth = min(growth, available_space)
                 current_pop += actual_growth
                 
-                # Обновляем баланс еды для следующего часа
-                current_food_balance = inc["food"]
+                temp_food = inc["food"]
 
             gold += total_gold
             wood += total_wood
-            food += total_food  # Добавляем только изменение
+            food += total_food
             stone += total_stone
             population_current = current_pop
+            # При росте населения новые жители добавляются в свободные
+            workers_free = population_current - workers_used
             last_collection = now
 
             Player.update(player_id,
                           gold=gold, wood=wood, food=food, stone=stone,
                           population_current=population_current,
+                          workers_free=workers_free,
                           last_collection=last_collection)
 
             print(f"✅ Сбор: +{total_gold}🪙 +{total_wood}🪵 +{total_food}🌾 +{total_stone}⛰️ за {full_hours}ч")
-            print(f"📊 Население: {population_current}/{population_max}, Еда: {food}")
         else:
             print(f"⏳ Сбор слишком рано, прошло {hours_passed:.2f}ч")
 
@@ -166,25 +169,39 @@ def game_action(telegram_user):
         config = BUILDINGS_CONFIG[building_id]
         cost = config["base_cost"]
 
+        # Проверка ресурсов
         if gold < cost['gold'] or wood < cost['wood'] or stone < cost['stone']:
             return jsonify({'success': False, 'error': 'Not enough resources'}), 400
 
+        # Проверка уровня ратуши
         required = config.get('requiredTownHall', [1])[0]
         if town_hall_level < required:
             return jsonify({'success': False, 'error': f'Требуется ратуша {required}'}), 400
 
+        # Проверка рабочих
+        workers_needed = get_workers_needed(building_id, 1)
+        if workers_needed > workers_free:
+            return jsonify({'success': False, 'error': f'Нужно {workers_needed} свободных жителей'}), 400
+
+        # Списываем ресурсы
         gold -= cost['gold']
         wood -= cost['wood']
         stone -= cost['stone']
 
+        # Добавляем здание и занимаем рабочих
         buildings.append({"id": building_id, "level": 1})
+        workers_used += workers_needed
+        workers_free -= workers_needed
         population_max = calculate_population_max(buildings)
 
         Player.update(player_id,
                       gold=gold, wood=wood, stone=stone,
+                      workers_used=workers_used,
+                      workers_free=workers_free,
                       buildings=json.dumps(buildings),
                       population_max=population_max)
 
+        print(f"✅ Построено {building_id}, занято {workers_needed} рабочих")
         return build_response()
 
     # ===== УЛУЧШЕНИЕ =====
@@ -205,22 +222,40 @@ def game_action(telegram_user):
         if current_level >= config['max_level']:
             return jsonify({'success': False, 'error': 'Max level reached'}), 400
 
+        # Проверка уровня ратуши
         required = config.get('requiredTownHall', [current_level + 1])[current_level]
         if town_hall_level < required:
             return jsonify({'success': False, 'error': f'Требуется ратуша {required}'}), 400
 
+        # Проверка ресурсов
         cost = calculate_building_upgrade_cost(building_id, current_level)
         if gold < cost['gold'] or wood < cost['wood'] or stone < cost['stone']:
             return jsonify({'success': False, 'error': 'Not enough resources'}), 400
 
+        # Проверка дополнительных рабочих
+        current_workers = get_workers_needed(building_id, current_level)
+        new_workers = get_workers_needed(building_id, current_level + 1)
+        additional_workers = new_workers - current_workers
+        
+        if additional_workers > 0 and additional_workers > workers_free:
+            return jsonify({'success': False, 'error': f'Нужно еще {additional_workers} свободных жителей'}), 400
+
+        # Проверка на уже улучшающееся здание
         active_timers = Timer.get_active(player_id, 'building')
         for t in active_timers:
             if t['target_id'] == building_id:
                 return jsonify({'success': False, 'error': 'Building already upgrading'}), 400
 
+        # Списываем ресурсы
         gold -= cost['gold']
         wood -= cost['wood']
         stone -= cost['stone']
+
+        # Занимаем дополнительных рабочих если нужно
+        if additional_workers > 0:
+            workers_used += additional_workers
+            workers_free -= additional_workers
+            Player.update(player_id, workers_used=workers_used, workers_free=workers_free)
 
         duration = 5
         timer_data = {
@@ -244,6 +279,7 @@ def game_action(telegram_user):
         Player.update(player_id, gold=gold, wood=wood, stone=stone)
 
         print(f"⏳ Улучшение {building_id} до уровня {current_level + 1} запущено на {duration} сек")
+        print(f"👷‍♂️ Рабочих: занято {workers_used}, свободно {workers_free}")
         return build_response()
 
     # ===== УЛУЧШЕНИЕ РАТУШИ =====
@@ -312,7 +348,6 @@ def game_action(telegram_user):
                             'type': 'townhall',
                             'new_level': target_level
                         })
-                        # Уведомляем через сокет
                         notify_upgrade_complete(telegram_id, building_id, target_level)
                         print(f"🏛️ Ратуша улучшена до уровня {target_level}")
                     else:
@@ -326,7 +361,6 @@ def game_action(telegram_user):
                             'building_id': building_id,
                             'new_level': target_level
                         })
-                        # Уведомляем через сокет
                         notify_upgrade_complete(telegram_id, building_id, target_level)
                         print(f"✅ {building_id} улучшено до уровня {target_level}")
 
@@ -345,6 +379,8 @@ def game_action(telegram_user):
                 'townHallLevel': town_hall_level,
                 'population_current': population_current,
                 'population_max': population_max,
+                'workers_used': workers_used,
+                'workers_free': population_current - workers_used,
                 'game_login': game_login,
                 'avatar': avatar,
                 'owned_avatars': owned_avatars,
