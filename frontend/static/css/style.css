@@ -111,7 +111,7 @@ body {
     flex-shrink: 0;
     flex-wrap: wrap;
     justify-content: flex-end;
-    max-width: 220px; 
+    max-width: 220px;
 }
 
 .resource-item {
@@ -119,6 +119,10 @@ body {
     flex-direction: column;
     align-items: center;
     min-width: 45px;
+}
+
+.resource-item[onclick*="population"] {
+    min-width: 80px;
 }
 
 .resource-value {
@@ -140,6 +144,40 @@ body {
     color: #ff4444;
     margin-top: 2px;
     white-space: nowrap;
+}
+
+.population-main {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 2px;
+}
+
+.population-detail {
+    display: flex;
+    gap: 8px;
+    font-size: 10px;
+    margin-top: 2px;
+}
+
+.population-free, .population-workers {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.population-free {
+    color: #4CAF50;
+}
+
+.population-workers {
+    color: #ff4444;
+}
+
+.worker-icon {
+    width: 12px;
+    height: 12px;
+    vertical-align: middle;
 }
 
 /* Таймер */
@@ -176,10 +214,10 @@ body {
     padding: 0 16px 16px;
 }
 
-/* Контейнер для ресурсов города (всегда видимы) */
+/* Контейнер для ресурсов города */
 .city-resources-container {
     position: sticky;
-    top: 0px;
+    top: 0;
     z-index: 50;
     background: #f8f8f8;
     padding: 8px 0;
@@ -187,7 +225,6 @@ body {
     border-bottom: 1px solid #ddd;
 }
 
-/* Ресурсы города */
 .city-resources {
     display: flex;
     justify-content: space-between;
@@ -219,7 +256,7 @@ body {
     font-size: 14px;
 }
 
-.resource-value {
+.city-resource-item .resource-value {
     color: #333;
     font-size: 12px;
 }
@@ -241,7 +278,7 @@ body {
     gap: 15px;
     cursor: pointer;
     margin-bottom: 15px;
-    margin-top: 10px;  /* ← ЭТО НОВАЯ СТРОКА */
+    margin-top: 10px;
     transition: all 0.2s;
     position: relative;
     overflow: hidden;
@@ -274,11 +311,6 @@ body {
     margin-bottom: 4px;
 }
 
-.town-hall-level {
-    font-size: 14px;
-    color: #8b6b42;
-}
-
 .town-hall-level-badge {
     width: 40px;
     height: 40px;
@@ -307,7 +339,7 @@ body {
     transition: background 0.2s;
 }
 
-/* ===== НОВЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ЗДАНИЙ ===== */
+/* Карточки зданий */
 .building-card {
     background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
     border: 2px solid #d0d0d0;
@@ -538,7 +570,7 @@ body {
     gap: 15px;
 }
 
-/* ===== НОВЫЕ СТИЛИ ДЛЯ МОДАЛЬНОГО ОКНА ===== */
+/* Модальное окно улучшения */
 .overlay {
     position: fixed;
     top: 0;
@@ -738,10 +770,6 @@ body {
     margin-bottom: 2px;
 }
 
-.tab-label {
-    font-size: 11px;
-}
-
 /* Пустые вкладки */
 .empty-tab {
     text-align: center;
@@ -823,7 +851,7 @@ body {
     color: #333;
 }
 
-/* Модальные окна */
+/* Аватар модалка */
 .avatar-modal {
     max-width: 400px;
 }
@@ -953,43 +981,4 @@ input {
     color: #999;
     background: white;
     border-radius: 12px;
-}
-.resource-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-width: 70px;  /* чуть шире для двух строк */
-}
-
-.population-main {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-bottom: 2px;
-}
-
-.population-detail {
-    display: flex;
-    gap: 8px;
-    font-size: 10px;  /* мельче чем основной текст */
-    margin-top: 2px;
-}
-
-.population-free, .population-workers {
-    display: flex;
-    align-items: center;
-    gap: 2px;
-}
-
-.population-free {
-    color: #4CAF50;
-}
-
-.population-workers {
-    color: #ff4444;
-}
-
-.worker-icon {
-    width: 12px;  /* ещё меньше */
-    height: 12px;
 }
