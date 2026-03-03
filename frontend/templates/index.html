@@ -52,31 +52,36 @@
             <div class="user-login" id="userLogin">@username</div>
         </div>
         <div class="resources-bar">
-            <div class="resource-item" onclick="showExactValue('gold')">
-                <span class="resource-value">🪙<span id="goldBar">100</span></span>
-                <span class="resource-income" id="goldIncome">+0/ч</span>
-            </div>
-            <div class="resource-item" onclick="showExactValue('rodstone')">
-                <span class="resource-value">🔴<span id="rodstoneBar">0</span></span>
-                <span class="resource-income" id="rodstoneIncome">+0/ч</span>
-            </div>
-            <div class="resource-item" onclick="showExactValue('population')">
-    <div class="population-main">
-        <span class="resource-value">👥<span id="populationDisplay">22/30</span></span>
-        <span class="resource-income" id="populationGrowth">+3/ч</span>
+    <!-- Верхний ряд: монеты и родстоун -->
+    <div class="resources-row">
+        <div class="resource-item" onclick="showExactValue('gold')">
+            <span class="resource-value">🪙<span id="goldBar">190</span></span>
+            <span class="resource-income" id="goldIncome">+5/ч</span>
+        </div>
+        <div class="resource-item" onclick="showExactValue('rodstone')">
+            <span class="resource-value">🔴<span id="rodstoneBar">0</span></span>
+            <span class="resource-income" id="rodstoneIncome">+0/ч</span>
+        </div>
     </div>
-    <div class="population-detail">
-        <span class="population-free" onclick="event.stopPropagation(); showWorkerInfo('free')">
-            <img src="/static/icons/worker-green.png" class="worker-icon"> 
-            <span id="freePopulation">22</span>
-        </span>
-        <span class="population-workers" onclick="event.stopPropagation(); showWorkerInfo('workers')">
-            <img src="/static/icons/worker-red.png" class="worker-icon"> 
-            <span id="workersPopulation">0</span>
-        </span>
+    
+    <!-- Нижний ряд: население + свободные/занятые -->
+    <div class="resources-row-bottom">
+        <div class="population-block">
+            <span class="resource-value">👥<span id="populationDisplay">22/30</span></span>
+            <span class="resource-income" id="populationGrowth">+3/ч</span>
+        </div>
+        <div class="workers-block">
+            <span class="population-free" onclick="event.stopPropagation(); showWorkerInfo('free')">
+                <img src="/static/icons/worker-green.png" class="worker-icon"> 
+                <span id="freePopulation">22</span>
+            </span>
+            <span class="population-workers" onclick="event.stopPropagation(); showWorkerInfo('workers')">
+                <img src="/static/icons/worker-red.png" class="worker-icon"> 
+                <span id="workersPopulation">0</span>
+            </span>
+        </div>
     </div>
-</div>
-</div> <!-- ЗДЕСЬ ЗАКРЫВАЕТСЯ resources-bar -->
+</div><!-- ЗДЕСЬ ЗАКРЫВАЕТСЯ resources-bar -->
 </div> <!-- ЗДЕСЬ ЗАКРЫВАЕТСЯ top-bar -->
             
             <!-- Таймер сбора -->
