@@ -61,21 +61,18 @@
                 <span class="resource-income" id="rodstoneIncome">+0/ч</span>
             </div>
             <div class="resource-item" onclick="showExactValue('population')">
-    <!-- Верхняя строка - общее население и рост -->
     <div class="population-main">
-        <span class="resource-value">👥<span id="populationDisplay">16/30</span></span>
+        <span class="resource-value">👥<span id="populationDisplay">22/30</span></span>
         <span class="resource-income" id="populationGrowth">+3/ч</span>
     </div>
-    
-    <!-- Нижняя строка - свободные/занятые -->
     <div class="population-detail">
-        <span class="population-free">
+        <span class="population-free" onclick="event.stopPropagation(); showWorkerInfo('free')">
             <img src="/static/icons/worker-green.png" class="worker-icon"> 
-            <span id="freePopulation">14</span>
+            <span id="freePopulation">22</span>
         </span>
-        <span class="population-workers">
+        <span class="population-workers" onclick="event.stopPropagation(); showWorkerInfo('workers')">
             <img src="/static/icons/worker-red.png" class="worker-icon"> 
-            <span id="workersPopulation">2</span>
+            <span id="workersPopulation">0</span>
         </span>
     </div>
 </div>
