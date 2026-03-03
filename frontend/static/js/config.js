@@ -61,7 +61,7 @@ const BUILDINGS_CONFIG = {
             { gold: 7200, wood: 5300, stone: 2450 }
         ],
         income: [{}, {}, {}, {}, {}],
-        populationBonus: [20, 20, 40, 100, 250]
+        populationBonus: [10, 25, 50, 100, 250]
     },
     'tavern': {
         name: 'Корчма',
