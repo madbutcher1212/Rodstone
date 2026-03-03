@@ -170,25 +170,20 @@ def calculate_hourly_income_and_growth(buildings, town_hall_level, current_popul
             if resource in income:
                 income[resource] += value
 
-    food_prod = income["food"]
-    food_needed = current_population
+    food_prod = income["food"]  # сколько произвели
+    food_needed = current_population  # сколько съели
     
-    # Расчет, хватит ли еды (с учетом запасов)
-    total_available_food = current_food + food_prod
-    food_left_after_consumption = total_available_food - food_needed
+    # Реальный остаток еды после часа
+    food_after = current_food + food_prod - food_needed
     
+    # В income["food"] кладем НОВЫЙ баланс, а не остаток
+    income["food"] = max(0, food_after)  # не может быть меньше 0
+    
+    # Рост населения
     pop_growth = 0
-    
-    if food_left_after_consumption >= 0:
-        # Еды хватает (с учетом запасов) - население растет
+    if food_after >= 0:  # еда не ушла в минус
         potential = 3
         available_space = max_population - current_population
         pop_growth = min(potential, available_space)
-        # Еда, которая останется после потребления
-        income["food"] = food_left_after_consumption
-    else:
-        # Еды не хватает даже с запасами - население не растет
-        pop_growth = 0
-        income["food"] = 0  # Вся еда съедена, запасы кончились
-
+    
     return income, pop_growth
