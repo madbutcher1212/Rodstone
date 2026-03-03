@@ -235,9 +235,7 @@ function showUpgradeModal(buildingId) {
     const nextIncome = config.income?.[level] || {};
     const cost = level === 0 ? config.baseCost : config.upgradeCosts[level - 1];
  // Проверка требования к ратуше
-const requiredTownHall = config.requiredTownHall?.[level] || 1;  // level = 3 (текущий)
-// Нам нужен уровень для СЛЕДУЮЩЕГО уровня:
-const requiredNextLevel = config.requiredTownHall?.[level] || 1;  // для уровня 4
+const requiredTownHall = config.requiredTownHall?.[level] || 1;
 const townHallEnough = userData.townHallLevel >= requiredTownHall;
 
 // Формируем строку с требованием ратуши
