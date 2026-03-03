@@ -142,7 +142,6 @@ function generateBuildingCardHTML(id) {
         <div class="building-info">
             <div class="building-header">
                 <span class="building-name">${config.name}</span>
-                ${statusBadge}
             </div>
             
             ${level > 0 ? `<div class="building-level-badge">${level}</div>` : ''}
