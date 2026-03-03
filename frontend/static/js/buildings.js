@@ -29,13 +29,7 @@ function getUpgradeCost(buildingId, currentLevel) {
     }
     const config = BUILDINGS_CONFIG[buildingId];
     if (!config || currentLevel >= config.maxLevel) return { gold: 0, wood: 0, stone: 0 };
-    
-    const multiplier = currentLevel + 1;
-    return {
-        gold: config.baseCost.gold * multiplier,
-        wood: config.baseCost.wood * multiplier,
-        stone: config.baseCost.stone * multiplier
-    };
+    return config.upgradeCosts[currentLevel - 1] || { gold: 0, wood: 0, stone: 0 };
 }
 
 // Проверить, достаточно ли уровня ратуши
@@ -81,17 +75,19 @@ function generateBuildingCardHTML(id) {
     if (!config) return '';
     
     const level = getBuildingLevel(id);
-    const count = getBuildingCount(id);
     
     let statusClass = '';
     let statusBadge = '';
     let bonusText = '';
+    let incomeText = '';
     
+    // Бонус для жилого района
     if (id === 'house' && level > 0) {
         const totalBonus = config.populationBonus.slice(0, level).reduce((a, b) => a + b, 0);
         bonusText = `<div class="building-bonus">👥 +${totalBonus} лимит</div>`;
     }
     
+    // Статус здания
     if (level === 0) {
         if (!isTownHallLevelEnough(id, 1)) {
             statusClass = 'locked';
@@ -106,80 +102,35 @@ function generateBuildingCardHTML(id) {
         statusBadge = `<span class="building-status built">Ур. ${level}</span>`;
     }
     
-    const currentIncome = getBuildingIncome(id, level);
-    let incomeText = '';
-    if (level > 0 && Object.keys(currentIncome).length > 0) {
+    // Текущий доход
+    if (level > 0) {
+        const currentIncome = getBuildingIncome(id, level);
         let parts = [];
-        if (currentIncome.gold) parts.push(`🪙+${currentIncome.gold * count}`);
-        if (currentIncome.wood) parts.push(`🪵+${currentIncome.wood * count}`);
-        if (currentIncome.stone) parts.push(`⛰️+${currentIncome.stone * count}`);
+        if (currentIncome.gold) parts.push(`🪙+${currentIncome.gold}`);
+        if (currentIncome.wood) parts.push(`🪵+${currentIncome.wood}`);
+        if (currentIncome.stone) parts.push(`⛰️+${currentIncome.stone}`);
         if (currentIncome.food) {
-            if (currentIncome.food > 0) parts.push(`🌾+${currentIncome.food * count}`);
-            else if (currentIncome.food < 0) parts.push(`🌾${currentIncome.food * count}`);
+            if (currentIncome.food > 0) parts.push(`🌾+${currentIncome.food}`);
+            else if (currentIncome.food < 0) parts.push(`🌾${currentIncome.food}`);
         }
-        if (currentIncome.populationGrowth) parts.push(`👥+${currentIncome.populationGrowth * count}`);
+        if (currentIncome.populationGrowth) parts.push(`👥+${currentIncome.populationGrowth}`);
+        
         if (parts.length > 0) {
             incomeText = `<div class="building-income">📊 ${parts.join(' ')}/ч</div>`;
         }
     }
     
-    let nextIncomeText = '';
+    // Кнопка улучшения
     let upgradeBtn = '';
-    
     if (level > 0 && level < config.maxLevel) {
-        const nextIncome = config.income[level];
-        const cost = getUpgradeCost(id, level);
-        const canUpgradeNow = canUpgrade(id, level);
-        
-        let parts = [];
-        if (nextIncome.gold) parts.push(`🪙+${nextIncome.gold}`);
-        if (nextIncome.wood) parts.push(`🪵+${nextIncome.wood}`);
-        if (nextIncome.stone) parts.push(`⛰️+${nextIncome.stone}`);
-        if (nextIncome.food) {
-            if (nextIncome.food > 0) parts.push(`🌾+${nextIncome.food}`);
-            else if (nextIncome.food < 0) parts.push(`🌾${nextIncome.food}`);
-        }
-        if (nextIncome.populationGrowth) parts.push(`👥+${nextIncome.populationGrowth}`);
-        
-        if (parts.length > 0) {
-            nextIncomeText = `<div class="building-next-income">📈 Ур.${level+1}: ${parts.join(' ')}/ч</div>`;
-        }
-        
-        let btnClass = canUpgradeNow ? 'building-upgrade-btn available' : 'building-upgrade-btn unavailable';
-        
         upgradeBtn = `
-            <button class="${btnClass}" onclick="upgradeBuilding('${id}')" 
-                    ${!canUpgradeNow ? 'disabled' : ''}>
-                Улучшить до Ур.${level+1}
+            <button class="building-upgrade-btn available" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
+                Улучшить до Ур.${level + 1}
             </button>
         `;
     } else if (level === 0 && isTownHallLevelEnough(id, 1)) {
-        const cost = config.baseCost;
-        const canBuildNow = userData.gold >= cost.gold && userData.wood >= cost.wood;
-        
-        let btnClass = canBuildNow ? 'building-upgrade-btn available' : 'building-upgrade-btn unavailable';
-        
-        const firstIncome = config.income[0];
-        let incomePreview = '';
-        if (firstIncome) {
-            let parts = [];
-            if (firstIncome.gold) parts.push(`🪙+${firstIncome.gold}`);
-            if (firstIncome.wood) parts.push(`🪵+${firstIncome.wood}`);
-            if (firstIncome.stone) parts.push(`⛰️+${firstIncome.stone}`);
-            if (firstIncome.food) {
-                if (firstIncome.food > 0) parts.push(`🌾+${firstIncome.food}`);
-                else if (firstIncome.food < 0) parts.push(`🌾${firstIncome.food}`);
-            }
-            if (firstIncome.populationGrowth) parts.push(`👥+${firstIncome.populationGrowth}`);
-            if (parts.length > 0) {
-                incomePreview = `<div class="building-next-income">📈 Доход: ${parts.join(' ')}/ч</div>`;
-            }
-        }
-        
         upgradeBtn = `
-            ${incomePreview}
-            <button class="${btnClass}" onclick="buildBuilding('${id}')" 
-                    ${!canBuildNow ? 'disabled' : ''}>
+            <button class="building-upgrade-btn available" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
                 Построить
             </button>
         `;
@@ -203,7 +154,6 @@ function generateBuildingCardHTML(id) {
                 
                 ${bonusText}
                 ${incomeText}
-                ${nextIncomeText}
                 ${upgradeBtn}
             </div>
         </div>
@@ -228,18 +178,7 @@ function showUpgradeModal(buildingId) {
         const modal = document.getElementById('upgradeModal');
         modal.innerHTML = `
             <div class="upgrade-header">
-                <div class="upgrade-title">🏛️ Улучшить Ратушу</div>
-                <div class="upgrade-levels">
-                    <div class="level-item">
-                        <span class="level-label">Текущий</span>
-                        <span class="level-value">${level}</span>
-                    </div>
-                    <div class="level-arrow">→</div>
-                    <div class="level-item">
-                        <span class="level-label">Новый</span>
-                        <span class="level-value">${nextLevel}</span>
-                    </div>
-                </div>
+                <div class="upgrade-title">🏛️ Улучшить Ратушу до ${nextLevel} уровня</div>
             </div>
             
             <div class="upgrade-content">
@@ -314,16 +253,23 @@ function showUpgradeModal(buildingId) {
     
     const incomeText = incomeParts.length > 0 ? incomeParts.join(' ') : 'нет дохода';
     
+    // Для жилого района показываем бонус к лимиту вместо дохода
+    let bonusText = '';
+    if (buildingId === 'house' && level > 0) {
+        const nextBonus = config.populationBonus[level];
+        bonusText = `<div class="income-value">👥 +${nextBonus} лимит</div>`;
+    }
+    
     const modal = document.getElementById('upgradeModal');
     modal.innerHTML = `
         <div class="upgrade-header">
-            <div class="upgrade-title">${level === 0 ? '🏗️ Построить' : '⬆️ Улучшить'} ${config.name}</div>
+            <div class="upgrade-title">${level === 0 ? '🏗️ Построить' : '⬆️ Улучшить'} ${config.name} до ${nextLevel} уровня</div>
         </div>
         
         <div class="upgrade-content">
             <div class="upgrade-income">
-                <div class="income-label">Прибыль на ${nextLevel} уровне:</div>
-                <div class="income-value">${incomeText}/ч</div>
+                <div class="income-label">${buildingId === 'house' ? 'Бонус на ' + nextLevel + ' уровне:' : 'Прибыль на ' + nextLevel + ' уровне:'}</div>
+                ${buildingId === 'house' ? bonusText : `<div class="income-value">${incomeText}/ч</div>`}
             </div>
             
             <div class="upgrade-cost">
@@ -386,18 +332,18 @@ async function confirmUpgrade(buildingId) {
     }
 }
 
-// Новая функция для подтверждения улучшения ратуши
+// Функция для подтверждения улучшения ратуши
 async function upgradeTownHallConfirm() {
     const result = await apiRequest('upgrade_level', {});
     if (result.success) {
         if (result.state) {
             if (result.state.townHallLevel !== undefined) {
                 userData.townHallLevel = result.state.townHallLevel;
+                userData.level = result.state.townHallLevel;
             }
             Object.assign(userData, result.state);
         }
         updateCityUI();
-        // Уведомление убрано - теперь только после завершения стройки
     } else {
         showToast(`❌ ${result.error || 'Ошибка'}`);
     }
@@ -411,7 +357,7 @@ function updateTownHallDisplay() {
     // Скрываем элемент с текстом "Уровень X/5"
     const levelElement = document.getElementById('townHallLevel');
     if (levelElement) {
-        levelElement.style.display = 'none';  // или levelElement.remove() для полного удаления
+        levelElement.style.display = 'none';
     }
     
     // Обновляем кружок с цифрой
@@ -498,7 +444,6 @@ async function buildBuilding(id) {
             if (result.state.buildings) buildings = result.state.buildings;
         }
         updateCityUI();
-        showToast('✅ Построено!');
     } else {
         showToast(`❌ ${result.error || 'Ошибка'}`);
     }
@@ -519,7 +464,6 @@ async function upgradeBuilding(id) {
             if (result.state.buildings) buildings = result.state.buildings;
         }
         updateCityUI();
-        showToast('✅ Улучшено!');
     } else {
         showToast(`❌ ${result.error || 'Ошибка'}`);
     }
