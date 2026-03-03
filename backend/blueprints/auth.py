@@ -45,7 +45,7 @@ def auth():
 
             max_pop = calculate_population_max(buildings)
 
-            # ВАЖНО: НЕ ОБНОВЛЯЕМ last_collection!
+            # Обновляем только population_max, last_collection не трогаем
             Player.update(player_data['id'],
                           population_max=max_pop)
 
@@ -65,6 +65,8 @@ def auth():
                     'townHallLevel': player_data.get('town_hall_level', 1),
                     'population_current': player_data.get('population_current', 10),
                     'population_max': max_pop,
+                    'workers_used': player_data.get('workers_used', 0),  # НОВОЕ
+                    'workers_free': player_data.get('workers_free', player_data.get('population_current', 10)),  # НОВОЕ
                     'lastCollection': player_data.get('last_collection', now)
                 },
                 'buildings': buildings,
@@ -93,6 +95,8 @@ def auth():
                 'town_hall_level': 1,
                 'population_current': 10,
                 'population_max': max_pop,
+                'workers_used': 0,  # НОВОЕ
+                'workers_free': 10,  # НОВОЕ
                 'buildings': json.dumps(initial_buildings),
                 'last_collection': now
             }
@@ -115,6 +119,8 @@ def auth():
                     'townHallLevel': 1,
                     'population_current': 10,
                     'population_max': max_pop,
+                    'workers_used': 0,  # НОВОЕ
+                    'workers_free': 10,  # НОВОЕ
                     'lastCollection': now
                 },
                 'buildings': initial_buildings,
