@@ -146,18 +146,18 @@ function generateBuildingCardHTML(id) {
             </div>
             
             ${level > 0 ? `<div class="building-level-badge">${level}</div>` : ''}
-                
-                <div class="construction-progress" id="progress-${id}" style="display: none;">
-                    <div class="construction-bar" id="progress-bar-${id}"></div>
-                    <div class="construction-text" id="progress-text-${id}"></div>
-                </div>
-                
-                ${bonusText}
-                ${incomeText}
-                ${upgradeBtn}
+            
+            <div class="construction-progress" id="progress-${id}" style="display: none;">
+                <div class="construction-bar" id="progress-bar-${id}"></div>
+                <div class="construction-text" id="progress-text-${id}"></div>
             </div>
+            
+            ${bonusText}
+            ${incomeText}
+            ${upgradeBtn}
         </div>
-    `;
+    </div>
+`;
 }
 
 // Показать модальное окно улучшения
