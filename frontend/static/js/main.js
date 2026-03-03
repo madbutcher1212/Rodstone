@@ -210,6 +210,13 @@ function updateWorkersDisplay() {
         workersElement.textContent = userData.workers_used;
     }
 }
+function showWorkerInfo(type) {
+    if (type === 'free') {
+        showToast(`🟢 Свободные жители: ${userData.workers_free}\nМогут работать на новых зданиях`);
+    } else if (type === 'workers') {
+        showToast(`🔴 Занятые жители: ${userData.workers_used}\nРаботают на существующих зданиях`);
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('🔥 main.js загружен');
