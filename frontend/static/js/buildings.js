@@ -103,7 +103,7 @@ function generateBuildingCardHTML(id) {
         }
     } else {
         statusClass = 'available';
-        statusBadge = `<span class="building-status built">🏗️ Ур. ${level}</span>`;
+        statusBadge = `<span class="building-status built">Ур. ${level}</span>`;
     }
     
     const currentIncome = getBuildingIncome(id, level);
@@ -119,7 +119,7 @@ function generateBuildingCardHTML(id) {
         }
         if (currentIncome.populationGrowth) parts.push(`👥+${currentIncome.populationGrowth * count}`);
         if (parts.length > 0) {
-            incomeText = `<div class="building-income">📊 Доход: ${parts.join(' ')}/ч</div>`;
+            incomeText = `<div class="building-income">📊 ${parts.join(' ')}/ч</div>`;
         }
     }
     
@@ -145,18 +145,12 @@ function generateBuildingCardHTML(id) {
             nextIncomeText = `<div class="building-next-income">📈 Ур.${level+1}: ${parts.join(' ')}/ч</div>`;
         }
         
-        let reqText = '';
-        if (!isTownHallLevelEnough(id, level + 1)) {
-            const reqLevel = config.requiredTownHall ? config.requiredTownHall[level] : level + 1;
-            reqText = ` (треб. ратуша ${reqLevel})`;
-        }
-        
         let btnClass = canUpgradeNow ? 'building-upgrade-btn available' : 'building-upgrade-btn unavailable';
         
         upgradeBtn = `
             <button class="${btnClass}" onclick="upgradeBuilding('${id}')" 
                     ${!canUpgradeNow ? 'disabled' : ''}>
-                Улучшить до Ур.${level+1}${reqText} (🪙${cost.gold} 🪵${cost.wood}${cost.stone > 0 ? ` ⛰️${cost.stone}` : ''})
+                Улучшить до Ур.${level+1}
             </button>
         `;
     } else if (level === 0 && isTownHallLevelEnough(id, 1)) {
@@ -186,35 +180,34 @@ function generateBuildingCardHTML(id) {
             ${incomePreview}
             <button class="${btnClass}" onclick="buildBuilding('${id}')" 
                     ${!canBuildNow ? 'disabled' : ''}>
-                Построить (🪙${cost.gold} 🪵${cost.wood})
+                Построить
             </button>
         `;
     }
     
-   return `
-    <div class="building-card ${statusClass}">
-        <div class="building-icon">${config.icon}</div>
-        <div class="building-info">
-            <div class="building-header">
-                <span class="building-name">${config.name}</span>
-                ${statusBadge}
+    return `
+        <div class="building-card ${statusClass}" onclick="showUpgradeModal('${id}')">
+            <div class="building-icon">${config.icon}</div>
+            <div class="building-info">
+                <div class="building-header">
+                    <span class="building-name">${config.name}</span>
+                    ${statusBadge}
+                </div>
+                
+                ${level > 0 ? `<div class="building-level-badge">${level}</div>` : ''}
+                
+                <div class="construction-progress" id="progress-${id}" style="display: none;">
+                    <div class="construction-bar" id="progress-bar-${id}"></div>
+                    <div class="construction-text" id="progress-text-${id}"></div>
+                </div>
+                
+                ${bonusText}
+                ${incomeText}
+                ${nextIncomeText}
+                ${upgradeBtn}
             </div>
-            
-            <!-- Бейдж уровня (справа в кружке) -->
-            ${level > 0 ? `<div class="building-level-badge">${level}</div>` : ''}
-            
-            <!-- Шкала строительства для всех зданий -->
-            <div class="construction-progress" id="progress-${id}" style="display: none;">
-                <div class="construction-bar" id="progress-bar-${id}"></div>
-            </div>
-            
-            ${bonusText}
-            ${incomeText}
-            ${nextIncomeText}
-            ${upgradeBtn}
         </div>
-    </div>
-`;
+    `;
 }
 
 // Показать модальное окно улучшения
