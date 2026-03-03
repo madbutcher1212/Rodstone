@@ -974,3 +974,251 @@ input {
 .btn-cancel:hover {
     background: #e0e0e0;
 }
+/* Карточка здания в стиле ратуши */
+.building-card {
+    background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+    border: 2px solid #d0d0d0;
+    border-radius: 16px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+}
+
+.building-card.available {
+    border-color: #4CAF50;
+    background: linear-gradient(135deg, #e8f5e8, #d0e8d0);
+}
+
+.building-card.unavailable {
+    opacity: 0.7;
+    border-color: #999;
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+}
+
+.building-card.locked {
+    border-color: #ff9800;
+    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    opacity: 0.9;
+}
+
+.building-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.building-icon {
+    font-size: 48px;
+    min-width: 60px;
+    text-align: center;
+}
+
+.building-info {
+    flex: 1;
+}
+
+.building-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.building-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.building-status {
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: #f0f0f0;
+    color: #666;
+    font-weight: bold;
+}
+
+.building-status.built {
+    background: #4CAF50;
+    color: white;
+}
+
+.building-status.locked {
+    background: #ff9800;
+    color: white;
+}
+
+.building-level-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    background: #b5946e;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+
+.building-income {
+    font-size: 14px;
+    color: #4CAF50;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.building-next-income {
+    font-size: 12px;
+    color: #ff9800;
+    margin-bottom: 4px;
+}
+
+.building-bonus {
+    font-size: 13px;
+    color: #ff9800;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.building-upgrade-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    width: fit-content;
+    transition: all 0.2s;
+    margin-top: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.building-upgrade-btn.available {
+    background: #4CAF50;
+}
+
+.building-upgrade-btn.available:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.building-upgrade-btn.unavailable {
+    background: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
+.building-upgrade-btn.unavailable:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.building-lock-text {
+    font-size: 12px;
+    color: #ff9800;
+    font-weight: bold;
+    margin-top: 4px;
+}
+
+/* Шкала строительства */
+.construction-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 24px;
+    background: #333;
+    border-radius: 0 0 16px 16px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.construction-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    width: 0%;
+    transition: width 1s linear;
+    z-index: 1;
+}
+
+.construction-text {
+    position: relative;
+    z-index: 2;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    white-space: nowrap;
+    padding: 0 8px;
+}
+
+/* Секции построек */
+.buildings-section {
+    background: #f8f8f8;
+    border-radius: 16px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.buildings-section.collapsed .buildings-grid {
+    display: none;
+}
+
+.section-header {
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #f0f0f0, #e8e8e8);
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+}
+
+.section-header:hover {
+    background: linear-gradient(135deg, #e8e8e8, #e0e0e0);
+}
+
+.section-arrow {
+    font-size: 16px;
+    transition: transform 0.2s;
+    color: #666;
+}
+
+.buildings-section:not(.collapsed) .section-arrow {
+    transform: rotate(90deg);
+}
+
+.section-title {
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
+}
+
+.buildings-grid {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
