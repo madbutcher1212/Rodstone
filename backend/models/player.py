@@ -32,7 +32,6 @@ class Player:
         query = supabase.table("players").select("*").eq("telegram_id", telegram_id)
         
         # Если нужна блокировка, добавляем FOR UPDATE
-        # В Supabase это делается через header
         if lock:
             # Используем сырой SQL для блокировки
             result = supabase.rpc(
@@ -68,7 +67,9 @@ class Player:
             'level': 1,
             'town_hall_level': 1,
             'population_current': 10,
-            'population_max': 10,  # будет пересчитано
+            'population_max': 10,
+            'workers_used': 0,  # НОВОЕ: занятые жители
+            'workers_free': 10,  # НОВОЕ: свободные жители (равны населению в начале)
             'buildings': json.dumps(initial_buildings),
             'last_collection': now
         }
@@ -140,8 +141,6 @@ class Player:
         """
         supabase = get_supabase()
         
-        # Начинаем транзакцию
-        # В Supabase это делается через RPC
         try:
             # Блокируем строку
             player = Player.find_by_telegram_id(telegram_id, lock=True)
