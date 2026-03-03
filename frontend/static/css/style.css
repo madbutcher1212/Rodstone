@@ -100,7 +100,6 @@ body {
     text-overflow: ellipsis;
 }
 
-/* Верхний бар с ресурсами (ОДИН БЛОК) */
 .resources-bar {
     display: flex;
     gap: 6px;
@@ -180,7 +179,7 @@ body {
 /* Контейнер для ресурсов города (всегда видимы) */
 .city-resources-container {
     position: sticky;
-    top: 90px;
+    top: 110px;
     z-index: 50;
     background: #f8f8f8;
     padding: 8px 0;
@@ -274,6 +273,11 @@ body {
     margin-bottom: 4px;
 }
 
+.town-hall-level {
+    font-size: 14px;
+    color: #8b6b42;
+}
+
 .town-hall-level-badge {
     width: 40px;
     height: 40px;
@@ -302,7 +306,7 @@ body {
     transition: background 0.2s;
 }
 
-/* Карточка здания в стиле ратуши */
+/* ===== НОВЫЕ СТИЛИ ДЛЯ КАРТОЧЕК ЗДАНИЙ ===== */
 .building-card {
     background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
     border: 2px solid #d0d0d0;
@@ -533,7 +537,7 @@ body {
     gap: 15px;
 }
 
-/* Стили для модального окна улучшения */
+/* ===== НОВЫЕ СТИЛИ ДЛЯ МОДАЛЬНОГО ОКНА ===== */
 .overlay {
     position: fixed;
     top: 0;
@@ -733,6 +737,10 @@ body {
     margin-bottom: 2px;
 }
 
+.tab-label {
+    font-size: 11px;
+}
+
 /* Пустые вкладки */
 .empty-tab {
     text-align: center;
@@ -814,7 +822,7 @@ body {
     color: #333;
 }
 
-/* Аватар модалка */
+/* Модальные окна */
 .avatar-modal {
     max-width: 400px;
 }
