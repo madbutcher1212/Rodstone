@@ -137,15 +137,15 @@ function generateBuildingCardHTML(id) {
     }
     
     return `
-        <div class="building-card ${statusClass}" onclick="showUpgradeModal('${id}')">
-            <div class="building-icon">${config.icon}</div>
-            <div class="building-info">
-                <div class="building-header">
-                    <span class="building-name">${config.name}</span>
-                    ${statusBadge}
-                </div>
-                
-                ${level > 0 ? `<div class="building-level-badge">${level}</div>` : ''}
+    <div class="building-card ${statusClass}" onclick="showUpgradeModal('${id}')">
+        <div class="building-icon">${config.icon}</div>
+        <div class="building-info">
+            <div class="building-header">
+                <span class="building-name">${config.name}</span>
+                ${statusBadge}
+            </div>
+            
+            ${level > 0 ? `<div class="building-level-badge">${level}</div>` : ''}
                 
                 <div class="construction-progress" id="progress-${id}" style="display: none;">
                     <div class="construction-bar" id="progress-bar-${id}"></div>
@@ -254,11 +254,13 @@ function showUpgradeModal(buildingId) {
     const incomeText = incomeParts.length > 0 ? incomeParts.join(' ') : 'нет дохода';
     
     // Для жилого района показываем бонус к лимиту вместо дохода
-    let bonusText = '';
-    if (buildingId === 'house' && level > 0) {
-        const nextBonus = config.populationBonus[level];
-        bonusText = `<div class="income-value">👥 +${nextBonus} лимит</div>`;
-    }
+let incomeDisplay = '';
+if (buildingId === 'house') {
+    const nextBonus = config.populationBonus[level]; // бонус на СЛЕДУЮЩЕМ уровне
+    incomeDisplay = `<div class="income-value">👥 +${nextBonus} лимит</div>`;
+} else {
+    incomeDisplay = `<div class="income-value">${incomeText}/ч</div>`;
+}
     
     const modal = document.getElementById('upgradeModal');
     modal.innerHTML = `
@@ -268,9 +270,9 @@ function showUpgradeModal(buildingId) {
         
         <div class="upgrade-content">
             <div class="upgrade-income">
-                <div class="income-label">${buildingId === 'house' ? 'Бонус на ' + nextLevel + ' уровне:' : 'Прибыль на ' + nextLevel + ' уровне:'}</div>
-                ${buildingId === 'house' ? bonusText : `<div class="income-value">${incomeText}/ч</div>`}
-            </div>
+    <div class="income-label">${buildingId === 'house' ? 'Бонус на ' + nextLevel + ' уровне:' : 'Прибыль на ' + nextLevel + ' уровне:'}</div>
+    ${incomeDisplay}
+</div>
             
             <div class="upgrade-cost">
                 <div class="cost-label">Стоимость:</div>
