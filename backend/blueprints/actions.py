@@ -111,29 +111,33 @@ def game_action(telegram_user):
             full_hours = int(hours_passed)
             total_gold = total_wood = total_food = total_stone = 0
             current_pop = population_current
-            # Временная переменная для расчета еды в цикле
-            temp_food = food
+            # Текущий баланс еды для расчета
+            current_food_balance = food
 
             for _ in range(full_hours):
                 inc, growth = calculate_hourly_income_and_growth(
-                    buildings, town_hall_level, current_pop, population_max, temp_food
+                    buildings, town_hall_level, current_pop, population_max, current_food_balance
                 )
+                
                 total_gold += inc["gold"]
                 total_wood += inc["wood"]
-                total_food += inc["food"]
                 total_stone += inc["stone"]
+                
+                # Расчет изменения еды
+                food_change = inc["food"] - current_food_balance
+                total_food += food_change
                 
                 # Рост населения с учётом лимита
                 available_space = population_max - current_pop
                 actual_growth = min(growth, available_space)
                 current_pop += actual_growth
                 
-                # Обновляем временную еду для следующего часа
-                temp_food += inc["food"]
+                # Обновляем баланс еды для следующего часа
+                current_food_balance = inc["food"]
 
             gold += total_gold
             wood += total_wood
-            food += total_food  # ТОЛЬКО ОДИН РАЗ!
+            food += total_food  # Добавляем только изменение
             stone += total_stone
             population_current = current_pop
             last_collection = now
@@ -144,6 +148,7 @@ def game_action(telegram_user):
                           last_collection=last_collection)
 
             print(f"✅ Сбор: +{total_gold}🪙 +{total_wood}🪵 +{total_food}🌾 +{total_stone}⛰️ за {full_hours}ч")
+            print(f"📊 Население: {population_current}/{population_max}, Еда: {food}")
         else:
             print(f"⏳ Сбор слишком рано, прошло {hours_passed:.2f}ч")
 
