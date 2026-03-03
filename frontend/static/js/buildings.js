@@ -325,17 +325,6 @@ function showUpgradeModal(buildingId) {
     modal.innerHTML = `
         <div class="upgrade-header">
             <div class="upgrade-title">${level === 0 ? '🏗️ Построить' : '⬆️ Улучшить'} ${config.name}</div>
-            <div class="upgrade-levels">
-                <div class="level-item">
-                    <span class="level-label">Текущий</span>
-                    <span class="level-value">${level || 0}</span>
-                </div>
-                <div class="level-arrow">→</div>
-                <div class="level-item">
-                    <span class="level-label">Новый</span>
-                    <span class="level-value">${nextLevel}</span>
-                </div>
-            </div>
         </div>
         
         <div class="upgrade-content">
