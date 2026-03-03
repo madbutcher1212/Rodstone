@@ -288,50 +288,52 @@ if (buildingId === 'house') {
     
     const modal = document.getElementById('upgradeModal');
     modal.innerHTML = `
-        <div class="upgrade-header">
-            <div class="upgrade-title">${level === 0 ? '🏗️ Построить' : '⬆️ Улучшить'} ${config.name} до ${nextLevel} уровня</div>
+    <div class="upgrade-header">
+        <div class="upgrade-title">${level === 0 ? '🏗️ Построить' : '⬆️ Улучшить'} ${config.name} до ${nextLevel} уровня</div>
+    </div>
+    
+    <div class="upgrade-content">
+        <div class="upgrade-income">
+            <div class="income-label">${buildingId === 'house' ? 'Бонус на ' + nextLevel + ' уровне:' : 'Прибыль на ' + nextLevel + ' уровне:'}</div>
+            ${incomeDisplay}
         </div>
         
-        <div class="upgrade-content">
-            <div class="upgrade-income">
-    <div class="income-label">${buildingId === 'house' ? 'Бонус на ' + nextLevel + ' уровне:' : 'Прибыль на ' + nextLevel + ' уровне:'}</div>
-    ${incomeDisplay}
-</div>
-            
-            <div class="upgrade-cost">
-                <div class="cost-label">Стоимость:</div>
-                <div class="cost-resources">
-                    <div class="cost-item ${userData.gold >= cost.gold ? 'enough' : 'not-enough'}">
-                        <span class="cost-icon">🪙</span>
-                        <span class="cost-amount">${cost.gold}</span>
-                    </div>
-                    ${cost.wood > 0 ? `
-                    <div class="cost-item ${userData.wood >= cost.wood ? 'enough' : 'not-enough'}">
-                        <span class="cost-icon">🪵</span>
-                        <span class="cost-amount">${cost.wood}</span>
-                    </div>
-                    ` : ''}
-                    ${cost.stone > 0 ? `
-                    <div class="cost-item ${userData.stone >= cost.stone ? 'enough' : 'not-enough'}">
-                        <span class="cost-icon">⛰️</span>
-                        <span class="cost-amount">${cost.stone}</span>
-                    </div>
-                    ` : ''}
+        ${requirementHtml}  <!-- ← ВСТАВИТЬ СЮДА (ПОСЛЕ upgrade-income) -->
+        
+        <div class="upgrade-cost">
+            <div class="cost-label">Стоимость:</div>
+            <div class="cost-resources">
+                <div class="cost-item ${userData.gold >= cost.gold ? 'enough' : 'not-enough'}">
+                    <span class="cost-icon">🪙</span>
+                    <span class="cost-amount">${cost.gold}</span>
                 </div>
-            </div>
-            
-            <div class="upgrade-actions">
-                <button class="btn-upgrade ${canUpgrade ? 'available' : 'unavailable'}" 
-                        onclick="confirmUpgrade('${buildingId}')"
-                        ${!canUpgrade ? 'disabled' : ''}>
-                    ${level === 0 ? 'Построить' : 'Улучшить'}
-                </button>
-                <button class="btn-cancel" onclick="closeUpgradeModal()">
-                    Отмена
-                </button>
+                ${cost.wood > 0 ? `
+                <div class="cost-item ${userData.wood >= cost.wood ? 'enough' : 'not-enough'}">
+                    <span class="cost-icon">🪵</span>
+                    <span class="cost-amount">${cost.wood}</span>
+                </div>
+                ` : ''}
+                ${cost.stone > 0 ? `
+                <div class="cost-item ${userData.stone >= cost.stone ? 'enough' : 'not-enough'}">
+                    <span class="cost-icon">⛰️</span>
+                    <span class="cost-amount">${cost.stone}</span>
+                </div>
+                ` : ''}
             </div>
         </div>
-    `;
+        
+        <div class="upgrade-actions">
+            <button class="btn-upgrade ${canUpgrade ? 'available' : 'unavailable'}" 
+                    onclick="confirmUpgrade('${buildingId}')"
+                    ${!canUpgrade ? 'disabled' : ''}>
+                ${level === 0 ? 'Построить' : 'Улучшить'}
+            </button>
+            <button class="btn-cancel" onclick="closeUpgradeModal()">
+                Отмена
+            </button>
+        </div>
+    </div>
+`;
     
     document.getElementById('upgradeOverlay').style.display = 'flex';
     selectedBuildingForUpgrade = buildingId;
