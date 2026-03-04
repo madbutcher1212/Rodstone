@@ -42,12 +42,6 @@ function initSocket(telegramId) {
             if (progressContainer) {
                 progressContainer.style.display = 'none';
             }
-            
-            // Обновляем отображение уровня
-            const levelBadge = document.getElementById('levelBadge');
-            if (levelBadge) {
-                levelBadge.textContent = data.new_level;
-            }
         } else {
             const building = buildings.find(b => b.id === data.building_id);
             if (building) {
