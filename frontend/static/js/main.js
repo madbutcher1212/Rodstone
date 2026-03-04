@@ -14,8 +14,8 @@ let userData = {
     townHallLevel: 1,
     population_current: 10,
     population_max: 20,
-    workers_used: 0,      // НОВОЕ: занятые жители
-    workers_free: 10,      // НОВОЕ: свободные жители
+    workers_used: 0,
+    workers_free: 10,
     lastCollection: null
 };
 
@@ -34,6 +34,16 @@ tg.expand();
 tg.ready();
 
 // ============================================
+// Функция обновления шкалы загрузки
+// ============================================
+function updateLoadingProgress(percent) {
+    const progressBar = document.getElementById('loadingProgress');
+    if (progressBar) {
+        progressBar.style.width = `${percent}%`;
+    }
+}
+
+// ============================================
 // Функция обновления шкал строительства для всех зданий
 // ============================================
 async function updateConstructionProgress() {
@@ -43,10 +53,16 @@ async function updateConstructionProgress() {
 
 async function login() {
     try {
+        updateLoadingProgress(10); // Начало авторизации
+        
         const result = await authRequest();
+        updateLoadingProgress(50); // Данные получены
+        
         console.log('📦 Ответ сервера:', result);
         
         if (result && result.success) {
+            updateLoadingProgress(70); // Начало обработки данных
+            
             userData.id = result.user?.id || null;
             userData.username = result.user?.username || '';
             userData.game_login = result.user?.game_login || '';
@@ -60,8 +76,8 @@ async function login() {
             userData.townHallLevel = result.user?.townHallLevel || 1;
             userData.population_current = result.user?.population_current || 10;
             userData.population_max = result.user?.population_max || 20;
-            userData.workers_used = result.user?.workers_used || 0;      // НОВОЕ
-            userData.workers_free = result.user?.workers_free || 10;      // НОВОЕ
+            userData.workers_used = result.user?.workers_used || 0;
+            userData.workers_free = result.user?.workers_free || 10;
             userData.lastCollection = result.user?.lastCollection || Date.now();
             
             buildings = result.buildings || [
@@ -69,6 +85,8 @@ async function login() {
                 { id: 'farm', level: 1 },
                 { id: 'lumber', level: 1 }
             ];
+            
+            updateLoadingProgress(85); // Обновление UI
             
             updateUserInfo();
             updateAvatar();
@@ -79,6 +97,8 @@ async function login() {
                 initSocket(userData.id);
             }
             
+            updateLoadingProgress(95); // Финальные проверки
+            
             const overlay = document.getElementById('overlay');
             if (overlay) {
                 if (!userData.game_login || userData.game_login === '' || userData.game_login === 'EMPTY') {
@@ -87,10 +107,18 @@ async function login() {
                     overlay.style.display = 'none';
                 }
             }
+            
+            updateLoadingProgress(100); // Готово
+            
+            // Небольшая задержка для красоты
+            setTimeout(() => {
+                document.body.classList.add('game-loaded');
+            }, 500);
         }
     } catch (error) {
         console.error('Ошибка авторизации:', error);
         showToast('⚠️ Ошибка загрузки');
+        document.body.classList.add('game-loaded');
     }
 }
 
@@ -210,6 +238,7 @@ function updateWorkersDisplay() {
         workersElement.textContent = userData.workers_used;
     }
 }
+
 function showWorkerInfo(type) {
     if (type === 'free') {
         showToast(`🟢 Свободные жители: ${userData.workers_free}`);
@@ -246,6 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
     setInterval(async () => {
         await checkAutoCollection();
     }, 10000);
+
+    // Проверка таймеров и обновление шкал (раз в 3 секунды) - УДАЛЕН
     
     switchTab('city');
 });
