@@ -15,7 +15,7 @@ BUILDINGS_CONFIG = {
         ],
         "population_bonus": [20, 20, 40, 100, 250],
         "income": [{}, {}, {}, {}, {}],
-        "requiredTownHall": [1, 2, 3, 4, 5]
+        "requiredTownHall": [1, 2, 3, 4, 5]  # Добавлено
     },
     "tavern": {
         "name": "Корчма",
@@ -37,7 +37,7 @@ BUILDINGS_CONFIG = {
             {"gold": 30, "food": -22, "populationGrowth": 4},
             {"gold": 70, "food": -50, "populationGrowth": 5}
         ],
-        "requiredTownHall": [2, 3, 4, 5, 5]
+        "requiredTownHall": [2, 3, 4, 5, 5]  # Уже есть
     },
     "bath": {
         "name": "Купели",
@@ -59,7 +59,7 @@ BUILDINGS_CONFIG = {
             {"gold": 20, "populationGrowth": 3},
             {"gold": 50, "populationGrowth": 3}
         ],
-        "requiredTownHall": [3, 4, 4, 5, 5]
+        "requiredTownHall": [3, 4, 4, 5, 5]  # Уже есть
     },
     "farm": {
         "name": "Ферма",
@@ -81,7 +81,7 @@ BUILDINGS_CONFIG = {
             {"food": 120},
             {"food": 260}
         ],
-        "requiredTownHall": [1, 2, 3, 4, 5]
+        "requiredTownHall": [1, 2, 3, 4, 5]  # Уже есть
     },
     "lumber": {
         "name": "Лесопилка",
@@ -103,7 +103,7 @@ BUILDINGS_CONFIG = {
             {"wood": 100},
             {"wood": 200}
         ],
-        "requiredTownHall": [1, 2, 3, 4, 5]
+        "requiredTownHall": [1, 2, 3, 4, 5]  # Уже есть
     },
     "quarry": {
         "name": "Каменоломня",
@@ -125,7 +125,7 @@ BUILDINGS_CONFIG = {
             {"stone": 80},
             {"stone": 160}
         ],
-        "requiredTownHall": [2, 3, 4, 5, 5]
+        "requiredTownHall": [2, 3, 4, 5, 5]  # Уже есть
     }
 }
 
