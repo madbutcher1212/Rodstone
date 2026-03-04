@@ -11,7 +11,11 @@ function showExactValue(resource) {
         gold: userData.gold,
         wood: userData.wood,
         stone: userData.stone,
+        iron: userData.iron || 0,
+        coal: userData.coal || 0,
         food: userData.food,
+        leather: userData.leather || 0,
+        horses: userData.horses || 0,
         ore: userData.ore || 0,
         rodstone: userData.rodstone || 0,
         population: `${userData.population_current}/${userData.population_max}`
@@ -20,7 +24,11 @@ function showExactValue(resource) {
         gold: 'Золото',
         wood: 'Древесина',
         stone: 'Камень',
+        iron: 'Железо',
+        coal: 'Уголь',
         food: 'Еда',
+        leather: 'Шкуры',
+        horses: 'Лошади',
         ore: 'Руда',
         rodstone: 'Родстоун',
         population: 'Население'
@@ -34,6 +42,10 @@ function calculateHourlyIncome() {
         wood: 0,
         food: 0,
         stone: 0,
+        iron: 0,
+        coal: 0,
+        leather: 0,
+        horses: 0,
         ore: 0,
         rodstone: 0,
         populationGrowth: 0
@@ -48,8 +60,11 @@ function calculateHourlyIncome() {
             income.wood += inc.wood || 0;
             income.food += inc.food || 0;
             income.stone += inc.stone || 0;
+            income.iron += inc.iron || 0;
+            income.coal += inc.coal || 0;
+            income.leather += inc.leather || 0;
+            income.horses += inc.horses || 0;
             income.populationGrowth += inc.populationGrowth || 0;
-            // ore и rodstone пока не добываются
         }
     });
 
@@ -77,32 +92,30 @@ function updateResourcesDisplay() {
         populationDisplay.textContent = `${userData.population_current}/${userData.population_max}`;
     }
 
-    // Ресурсы в городе (компактно: еда, дерево, камень, руда)
-    const foodDisplay = document.getElementById('foodDisplay');
-    if (foodDisplay) foodDisplay.textContent = formatNumber(userData.food);
-    
+    // Ресурсы в городе (строительные: дерево, камень, железо, уголь)
     const woodDisplay = document.getElementById('woodDisplay');
     if (woodDisplay) woodDisplay.textContent = formatNumber(userData.wood);
     
     const stoneDisplay = document.getElementById('stoneDisplay');
     if (stoneDisplay) stoneDisplay.textContent = formatNumber(userData.stone);
     
-    const oreDisplay = document.getElementById('oreDisplay');
-    if (oreDisplay) oreDisplay.textContent = formatNumber(userData.ore || 0);
+    const ironDisplay = document.getElementById('ironDisplay');
+    if (ironDisplay) ironDisplay.textContent = formatNumber(userData.iron || 0);
+    
+    const coalDisplay = document.getElementById('coalDisplay');
+    if (coalDisplay) coalDisplay.textContent = formatNumber(userData.coal || 0);
+    
+    // Ресурсы в городе (жизни: еда, шкуры, лошади)
+    const foodDisplay = document.getElementById('foodDisplay');
+    if (foodDisplay) foodDisplay.textContent = formatNumber(userData.food);
+    
+    const leatherDisplay = document.getElementById('leatherDisplay');
+    if (leatherDisplay) leatherDisplay.textContent = formatNumber(userData.leather || 0);
+    
+    const horsesDisplay = document.getElementById('horsesDisplay');
+    if (horsesDisplay) horsesDisplay.textContent = formatNumber(userData.horses || 0);
 
     // Доходы в городе
-    const foodProd = income.food;
-    const foodCons = userData.population_current;
-    const foodBal = foodProd - foodCons;
-    
-    const foodIncome2 = document.getElementById('foodIncome2');
-    if (foodIncome2) {
-        foodIncome2.textContent = 
-            foodBal > 0 ? `+${formatNumber(foodBal)}` : 
-            foodBal < 0 ? `${formatNumber(foodBal)}` : '0';
-        foodIncome2.className = foodBal < 0 ? 'resource-income-negative' : 'resource-income-small';
-    }
-    
     const woodIncome2 = document.getElementById('woodIncome2');
     if (woodIncome2) {
         woodIncome2.textContent = `+${formatNumber(income.wood)}`;
@@ -115,10 +128,40 @@ function updateResourcesDisplay() {
         stoneIncome2.className = 'resource-income-small';
     }
     
-    const oreIncome2 = document.getElementById('oreIncome2');
-    if (oreIncome2) {
-        oreIncome2.textContent = `0`;
-        oreIncome2.className = 'resource-income-small';
+    const ironIncome2 = document.getElementById('ironIncome2');
+    if (ironIncome2) {
+        ironIncome2.textContent = `+${formatNumber(income.iron)}`;
+        ironIncome2.className = 'resource-income-small';
+    }
+    
+    const coalIncome2 = document.getElementById('coalIncome2');
+    if (coalIncome2) {
+        coalIncome2.textContent = `+${formatNumber(income.coal)}`;
+        coalIncome2.className = 'resource-income-small';
+    }
+    
+    const foodProd = income.food;
+    const foodCons = userData.population_current;
+    const foodBal = foodProd - foodCons;
+    
+    const foodIncome2 = document.getElementById('foodIncome2');
+    if (foodIncome2) {
+        foodIncome2.textContent = 
+            foodBal > 0 ? `+${formatNumber(foodBal)}` : 
+            foodBal < 0 ? `${formatNumber(foodBal)}` : '0';
+        foodIncome2.className = foodBal < 0 ? 'resource-income-negative' : 'resource-income-small';
+    }
+    
+    const leatherIncome2 = document.getElementById('leatherIncome2');
+    if (leatherIncome2) {
+        leatherIncome2.textContent = `+${formatNumber(income.leather)}`;
+        leatherIncome2.className = 'resource-income-small';
+    }
+    
+    const horsesIncome2 = document.getElementById('horsesIncome2');
+    if (horsesIncome2) {
+        horsesIncome2.textContent = `+${formatNumber(income.horses)}`;
+        horsesIncome2.className = 'resource-income-small';
     }
 
     // Рост населения
