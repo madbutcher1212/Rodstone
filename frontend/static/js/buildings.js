@@ -398,14 +398,7 @@ function updateTownHallDisplay() {
     const badge = document.getElementById('townHallLevelBadge');
     if (badge) {
         badge.textContent = userData.townHallLevel;
-    }
-    
-    // Обновляем уровень игрока (справа от ника)
-    const levelBadge = document.getElementById('levelBadge');
-    if (levelBadge) {
-        levelBadge.textContent = userData.townHallLevel;
-    }
-    
+    } 
     // Обновляем кнопку
     const btn = document.getElementById('townHallUpgradeBtn');
     if (btn) {
