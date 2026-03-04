@@ -45,31 +45,34 @@ body {
     z-index: 2;
 }
 
-/* ===== ВЕРХНИЙ БАР ===== */
+/* Верхний бар */
 .top-bar-fixed {
     position: sticky;
     top: 0;
-    background: transparent;  /* Прозрачный фон под твою картинку */
-    padding: 8px 12px 4px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 12px 16px 8px;
+    border-bottom: none;
     z-index: 100;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
 .top-bar {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 .avatar {
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: linear-gradient(135deg, #667eea, #764ba2);
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     overflow: hidden;
     flex-shrink: 0;
@@ -85,56 +88,56 @@ body {
 .user-info {
     flex: 1;
     min-width: 0;
-    max-width: 120px;
+    max-width: 140px;
 }
 
 .name-level {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
 }
 
 .user-name {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
     color: #333;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 80px;
+    max-width: 100px;
 }
 
 .level-badge {
     background: #ffd700;
     color: #333;
-    padding: 2px 6px;
-    border-radius: 12px;
-    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 13px;
     font-weight: bold;
     flex-shrink: 0;
 }
 
 .user-login {
-    font-size: 10px;
+    font-size: 12px;
     color: #666;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-/* Resources bar - компактный */
+/* Resources bar - двухэтажная структура */
 .resources-bar {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    background: rgba(240, 240, 240, 0.9);
-    backdrop-filter: blur(2px);
-    padding: 4px 8px;
-    border-radius: 16px;
-    font-size: 10px;
+    gap: 4px;
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
     font-weight: bold;
     flex-shrink: 0;
-    min-width: 140px;
+    min-width: 160px;
+    border: none;
 }
 
 /* Верхний ряд - монеты и родстоун */
@@ -142,7 +145,7 @@ body {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    gap: 8px;
+    gap: 12px;
 }
 
 /* Нижний ряд - население и свободные/занятые */
@@ -150,7 +153,7 @@ body {
     display: flex;
     justify-content: space-between;
     width: 100%;
-    gap: 8px;
+    gap: 12px;
     align-items: center;
 }
 
@@ -158,35 +161,35 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
     white-space: nowrap;
 }
 
 .resource-value {
     display: flex;
     align-items: center;
-    gap: 1px;
+    gap: 2px;
     color: #333;
-    font-weight: bold;
 }
 
 .resource-income {
-    font-size: 8px;
+    font-size: 9px;
     color: #4CAF50;
     white-space: nowrap;
-    margin-left: 1px;
+    margin-left: 2px;
     background: rgba(255,255,255,0.5);
-    padding: 1px 3px;
-    border-radius: 8px;
+    padding: 2px 4px;
+    border-radius: 10px;
 }
 
 .resource-income-negative {
-    font-size: 8px;
+    font-size: 9px;
     color: #ff4444;
+    margin-top: 2px;
     white-space: nowrap;
     background: rgba(255,255,255,0.5);
-    padding: 1px 3px;
-    border-radius: 8px;
+    padding: 2px 4px;
+    border-radius: 10px;
 }
 
 /* Блок населения */
@@ -194,25 +197,29 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
 }
 
 /* Блок свободных/занятых */
 .workers-block {
     display: flex;
-    gap: 4px;
+    gap: 8px;
 }
 
 .population-free, .population-workers {
     display: flex;
     align-items: center;
-    gap: 1px;
+    gap: 2px;
     cursor: pointer;
-    padding: 1px 3px;
-    border-radius: 8px;
+    padding: 2px 6px;
+    border-radius: 12px;
     transition: all 0.2s;
     background: rgba(255,255,255,0.3);
-    font-size: 9px;
+}
+
+.population-free:hover, .population-workers:hover {
+    background: rgba(255,255,255,0.5);
+    transform: scale(1.05);
 }
 
 .population-free {
@@ -224,30 +231,30 @@ body {
 }
 
 .worker-icon {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     vertical-align: middle;
 }
 
-/* ===== ТАЙМЕР ===== */
+/* Таймер */
 .income-timer {
-    background: rgba(240, 240, 240, 0.9);
-    backdrop-filter: blur(2px);
-    border-radius: 20px;
-    padding: 6px 12px;
-    margin-top: 6px;
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    border-radius: 30px;
+    padding: 10px 16px;
+    margin-top: 10px;
     text-align: center;
-    font-size: 11px;
+    font-size: 13px;
     color: #333;
     font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .timer-progress {
     width: 100%;
-    height: 3px;
+    height: 6px;
     background: rgba(0,0,0,0.1);
-    border-radius: 2px;
-    margin-top: 4px;
+    border-radius: 3px;
+    margin-top: 8px;
     overflow: hidden;
 }
 
@@ -256,16 +263,17 @@ body {
     background: linear-gradient(90deg, #4CAF50, #8BC34A);
     width: 0%;
     transition: width 1s linear;
+    border-radius: 3px;
 }
 
-/* ===== КОНТЕНТ ===== */
+/* Контент с прокруткой */
 .content-scrollable {
     flex: 1;
     overflow-y: auto;
-    padding: 0 12px 12px;
+    padding: 0 16px 16px;
 }
 
-/* ===== КОМПАКТНЫЙ БАР РЕСУРСОВ ГОРОДА ===== */
+/* ===== УМЕНЬШЕННЫЙ БАР РЕСУРСОВ ГОРОДА ===== */
 .city-resources-container {
     position: sticky;
     top: 0;
@@ -275,7 +283,7 @@ body {
     margin-bottom: 8px;
     border-radius: 0 0 12px 12px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    border-bottom: 1px solid #ffd700;
+    border-bottom: 2px solid #ffd700;
 }
 
 /* Верхний ряд - 4 ресурса */
@@ -283,7 +291,7 @@ body {
     display: flex;
     justify-content: space-around;
     gap: 2px;
-    margin-bottom: 3px;
+    margin-bottom: 4px;
 }
 
 /* Нижний ряд - 3 ресурса */
@@ -293,75 +301,111 @@ body {
     gap: 4px;
 }
 
-/* Карточка ресурса - очень компактная */
+/* Карточка ресурса */
 .city-resource-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(5px);
     border-radius: 8px;
-    padding: 3px 2px;
-    min-width: 48px;
+    padding: 4px 2px;
+    min-width: 52px;
     cursor: pointer;
-    transition: all 0.1s ease;
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    transition: all 0.2s ease;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.city-resource-item:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #ffd700;
 }
 
 /* Иконка ресурса */
 .resource-icon {
-    font-size: 14px;
-    margin-bottom: 1px;
+    font-size: 16px;
+    margin-bottom: 2px;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
 
 /* Значение ресурса */
 .city-resource-item .resource-value {
-    font-size: 11px;
+    font-size: 12px;
     font-weight: bold;
     color: white;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
     margin-bottom: 1px;
 }
 
 /* Доход в час */
 .resource-income-small {
-    font-size: 7px;
+    font-size: 8px;
     font-weight: bold;
     color: #4CAF50;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
     background: rgba(0,0,0,0.3);
-    padding: 1px 2px;
-    border-radius: 4px;
-    border: 1px solid rgba(76, 175, 80, 0.2);
+    padding: 1px 3px;
+    border-radius: 6px;
+    border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
 .resource-income-negative {
-    font-size: 7px;
+    font-size: 8px;
     font-weight: bold;
     color: #ff4444;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
     background: rgba(0,0,0,0.3);
-    padding: 1px 2px;
-    border-radius: 4px;
+    padding: 1px 3px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 68, 68, 0.3);
 }
 
-/* ===== РАТУША ===== */
+/* Адаптация под маленькие экраны */
+@media (max-width: 380px) {
+    .city-resource-item {
+        min-width: 46px;
+        padding: 3px 1px;
+    }
+    
+    .resource-icon {
+        font-size: 14px;
+    }
+    
+    .city-resource-item .resource-value {
+        font-size: 11px;
+    }
+    
+    .resources-bottom {
+        gap: 2px;
+    }
+}
+
+/* Ратуша */
 .town-hall {
     background: linear-gradient(135deg, #f5e6d3, #e6d5b8);
-    border: 2px solid #b5946e;
-    border-radius: 20px;
-    padding: 12px;
+    border: 3px solid #b5946e;
+    border-radius: 16px;
+    padding: 15px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 15px;
     cursor: pointer;
-    margin-bottom: 12px;
-    margin-top: 5px;
+    margin-bottom: 15px;
+    margin-top: 10px;
     transition: all 0.2s;
     position: relative;
     overflow: hidden;
 }
 
+.town-hall:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
 .town-hall-icon {
-    font-size: 40px;
+    font-size: 48px;
 }
 
 .town-hall-info {
@@ -369,21 +413,27 @@ body {
 }
 
 .town-hall-name {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     color: #5d3a1a;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
 }
 
 .town-hall-income {
-    font-size: 12px;
+    font-size: 14px;
     color: #4CAF50;
     font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.town-hall-level {
+    font-size: 14px;
+    color: #8b6b42;
 }
 
 .town-hall-level-badge {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     background: #b5946e;
     color: white;
     border-radius: 50%;
@@ -391,8 +441,8 @@ body {
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 16px;
-    border: 1px solid #ffd700;
+    font-size: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 .town-hall-upgrade-btn {
@@ -400,33 +450,56 @@ body {
     color: white;
     border: none;
     border-radius: 20px;
-    padding: 6px 12px;
-    font-size: 11px;
+    padding: 8px 16px;
+    font-size: 13px;
     font-weight: bold;
     cursor: pointer;
     width: 100%;
-    margin: 6px 0;
+    margin: 10px 0;
+    transition: background 0.2s;
 }
 
-/* ===== КАРТОЧКИ ЗДАНИЙ ===== */
+/* Карточки зданий */
 .building-card {
-    background: linear-gradient(135deg, #ffffff, #f5f5f5);
-    border: 1px solid #d0d0d0;
+    background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+    border: 2px solid #d0d0d0;
     border-radius: 16px;
-    padding: 10px;
+    padding: 15px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 15px;
     cursor: pointer;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     transition: all 0.2s;
     position: relative;
     overflow: hidden;
 }
 
+.building-card.available {
+    border-color: #4CAF50;
+    background: linear-gradient(135deg, #e8f5e8, #d0e8d0);
+}
+
+.building-card.unavailable {
+    opacity: 0.7;
+    border-color: #999;
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+}
+
+.building-card.locked {
+    border-color: #ff9800;
+    background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+    opacity: 0.9;
+}
+
+.building-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
 .building-icon {
-    font-size: 36px;
-    min-width: 45px;
+    font-size: 48px;
+    min-width: 60px;
     text-align: center;
 }
 
@@ -434,16 +507,23 @@ body {
     flex: 1;
 }
 
+.building-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
 .building-name {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: bold;
     color: #333;
 }
 
 .building-status {
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 12px;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 20px;
     background: #f0f0f0;
     color: #666;
     font-weight: bold;
@@ -454,12 +534,17 @@ body {
     color: white;
 }
 
+.building-status.locked {
+    background: #ff9800;
+    color: white;
+}
+
 .building-level-badge {
     position: absolute;
-    top: 8px;
-    right: 8px;
-    width: 28px;
-    height: 28px;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
     background: #b5946e;
     color: white;
     border-radius: 50%;
@@ -467,42 +552,63 @@ body {
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 14px;
-    border: 1px solid #ffd700;
+    font-size: 18px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    z-index: 10;
 }
 
 .building-income {
-    font-size: 11px;
+    font-size: 14px;
     color: #4CAF50;
     font-weight: bold;
+    margin-bottom: 4px;
 }
 
 .building-bonus {
-    font-size: 11px;
+    font-size: 13px;
     color: #ff9800;
     font-weight: bold;
+    margin-bottom: 4px;
 }
 
 .building-upgrade-btn {
     background: #4CAF50;
     color: white;
     border: none;
-    border-radius: 16px;
-    padding: 4px 10px;
-    font-size: 10px;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
     font-weight: bold;
     cursor: pointer;
     width: fit-content;
-    margin-top: 4px;
+    transition: all 0.2s;
+    margin-top: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* ===== ШКАЛА СТРОИТЕЛЬСТВА ===== */
+.building-upgrade-btn.available {
+    background: #4CAF50;
+}
+
+.building-upgrade-btn.available:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.building-upgrade-btn.unavailable {
+    background: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
+/* Шкала строительства */
 .construction-progress {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 16px;
+    height: 24px;
     background: #333;
     border-radius: 0 0 16px 16px;
     overflow: hidden;
@@ -526,37 +632,43 @@ body {
     position: relative;
     z-index: 2;
     color: white;
-    font-size: 9px;
+    font-size: 12px;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     white-space: nowrap;
-    padding: 0 4px;
+    padding: 0 8px;
 }
 
-/* ===== СЕКЦИИ ПОСТРОЕК ===== */
+/* Секции построек */
 .buildings-section {
-    background: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(2px);
+    background: #f8f8f8;
     border-radius: 16px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     overflow: hidden;
-    border: 1px solid rgba(255, 215, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.buildings-section.collapsed .buildings-grid {
+    display: none;
 }
 
 .section-header {
-    padding: 10px;
+    padding: 15px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: linear-gradient(135deg, #f8f8f8, #e8e8e8);
+    gap: 10px;
+    background: linear-gradient(135deg, #f0f0f0, #e8e8e8);
     font-weight: bold;
     border-bottom: 1px solid #ddd;
-    font-size: 13px;
+}
+
+.section-header:hover {
+    background: linear-gradient(135deg, #e8e8e8, #e0e0e0);
 }
 
 .section-arrow {
-    font-size: 14px;
+    font-size: 16px;
     transition: transform 0.2s;
     color: #666;
 }
@@ -565,14 +677,20 @@ body {
     transform: rotate(90deg);
 }
 
-.buildings-grid {
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.section-title {
+    font-size: 16px;
+    color: #333;
+    font-weight: bold;
 }
 
-/* ===== МОДАЛЬНОЕ ОКНО ===== */
+.buildings-grid {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Модальное окно улучшения */
 .overlay {
     position: fixed;
     top: 0;
@@ -590,120 +708,128 @@ body {
     background: white;
     border-radius: 20px;
     width: 90%;
-    max-width: 320px;
+    max-width: 350px;
     max-height: 80vh;
     overflow-y: auto;
 }
 
+.upgrade-modal {
+    max-width: 340px;
+    padding: 0;
+    overflow: hidden;
+}
+
 .upgrade-header {
     background: linear-gradient(135deg, #667eea, #764ba2);
-    padding: 16px;
+    padding: 20px;
     color: white;
 }
 
 .upgrade-title {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
     text-align: center;
 }
 
 .upgrade-content {
-    padding: 16px;
+    padding: 20px;
 }
 
 .upgrade-income {
     background: #f5f5f5;
     border-radius: 12px;
-    padding: 10px;
-    margin-bottom: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
     text-align: center;
 }
 
 .income-label {
-    font-size: 11px;
+    font-size: 13px;
     color: #666;
-    margin-bottom: 3px;
+    margin-bottom: 5px;
 }
 
 .income-value {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: bold;
     color: #4CAF50;
-}
-
-.upgrade-requirement {
-    background: #f5f5f5;
-    border-radius: 12px;
-    padding: 8px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    justify-content: center;
-    font-size: 12px;
 }
 
 .upgrade-cost {
     background: #f5f5f5;
     border-radius: 12px;
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 15px;
+    margin-bottom: 20px;
 }
 
 .cost-label {
-    font-size: 11px;
+    font-size: 13px;
     color: #666;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     text-align: center;
 }
 
 .cost-resources {
     display: flex;
     justify-content: center;
-    gap: 8px;
+    gap: 15px;
     flex-wrap: wrap;
 }
 
 .cost-item {
     display: flex;
     align-items: center;
-    gap: 3px;
-    padding: 4px 8px;
-    border-radius: 16px;
+    gap: 5px;
+    padding: 8px 12px;
+    border-radius: 20px;
     background: white;
-    min-width: 60px;
+    min-width: 70px;
     justify-content: center;
-    font-size: 12px;
-    border: 1px solid transparent;
 }
 
 .cost-item.enough {
-    border-color: #4CAF50;
+    border: 2px solid #4CAF50;
 }
 
 .cost-item.not-enough {
-    border-color: #ff4444;
+    border: 2px solid #ff4444;
     opacity: 0.7;
+}
+
+.cost-icon {
+    font-size: 16px;
+}
+
+.cost-amount {
+    font-weight: bold;
+    font-size: 14px;
 }
 
 .upgrade-actions {
     display: flex;
-    gap: 8px;
+    gap: 10px;
 }
 
-.btn-upgrade, .btn-cancel {
-    flex: 1;
-    padding: 10px;
+.btn-upgrade {
+    flex: 2;
+    padding: 12px;
     border: none;
-    border-radius: 20px;
+    border-radius: 12px;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
 .btn-upgrade.available {
     background: #4CAF50;
     color: white;
+}
+
+.btn-upgrade.available:hover {
+    background: #45a049;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
 }
 
 .btn-upgrade.unavailable {
@@ -713,48 +839,299 @@ body {
 }
 
 .btn-cancel {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
     background: #f0f0f0;
     color: #666;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
-/* ===== НИЖНИЕ ВКЛАДКИ ===== */
+.btn-cancel:hover {
+    background: #e0e0e0;
+}
+
+.upgrade-requirement {
+    background: #f5f5f5;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+}
+
+.upgrade-requirement.enough {
+    border: 2px solid #4CAF50;
+}
+
+.upgrade-requirement.not-enough {
+    border: 2px solid #ff4444;
+}
+
+.requirement-icon {
+    font-size: 20px;
+}
+
+.requirement-text {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* Нижние вкладки */
 .tabs {
     display: flex;
     justify-content: space-around;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(5px);
+    background: #f8f8f8;
     border-radius: 30px;
     padding: 4px;
-    margin: 10px;
+    margin: 16px;
     position: sticky;
     bottom: 0;
     z-index: 99;
-    border: 1px solid rgba(255,215,0,0.3);
 }
 
 .tab {
     flex: 1;
     text-align: center;
-    padding: 6px 2px;
-    border-radius: 25px;
-    font-size: 10px;
+    padding: 8px 4px;
+    border-radius: 30px;
+    font-size: 12px;
     color: #666;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .tab.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: #667eea;
     color: white;
 }
 
 .tab-icon {
-    font-size: 14px;
+    font-size: 16px;
     display: block;
-    margin-bottom: 1px;
+    margin-bottom: 2px;
 }
 
-/* ===== ЗАГРУЗОЧНЫЙ ЭКРАН ===== */
+/* Пустые вкладки */
+.empty-tab {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    font-size: 14px;
+    background: #f9f9f9;
+    border-radius: 12px;
+}
+
+/* Кланы */
+.clan-section {
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+/* Настройки */
+.settings-section {
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.settings-section h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.settings-block {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.settings-block h4 {
+    margin-bottom: 10px;
+    color: #666;
+}
+
+.avatar-block {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.settings-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #667eea;
+    object-fit: cover;
+}
+
+.name-change {
+    display: flex;
+    gap: 10px;
+}
+
+.name-change input {
+    flex: 1;
+}
+
+.user-id-block {
+    text-align: center;
+    padding: 10px;
+    color: #666;
+    font-size: 13px;
+}
+
+.user-id-label {
+    color: #999;
+    margin-right: 5px;
+}
+
+.user-id-value {
+    font-weight: bold;
+    color: #333;
+}
+
+/* Аватар модалка */
+.avatar-modal {
+    max-width: 400px;
+}
+
+.avatar-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    margin: 0 auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 36px;
+    overflow: hidden;
+}
+
+.avatar-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.avatar-option {
+    text-align: center;
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.avatar-option.selected {
+    border-color: #4CAF50;
+    background: #e8f5e8;
+    transform: scale(1.02);
+}
+
+.avatar-option-img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 5px;
+    object-fit: cover;
+}
+
+.avatar-option-name {
+    font-weight: bold;
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.avatar-option-price {
+    font-size: 12px;
+    color: #ff9800;
+    margin-bottom: 5px;
+}
+
+.avatar-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.avatar-actions .btn {
+    flex: 1;
+}
+
+/* Кнопки */
+.btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn:hover {
+    background: #45a049;
+}
+
+.btn-secondary {
+    background: #999;
+}
+
+.btn-secondary:hover {
+    background: #777;
+}
+
+/* Поля ввода */
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    display: none;
+    z-index: 3000;
+}
+
+.empty-message {
+    text-align: center;
+    padding: 20px;
+    color: #999;
+    background: white;
+    border-radius: 12px;
+}
+
+/* Загрузочный экран */
 .loading-screen {
     position: fixed;
     top: 0;
@@ -783,33 +1160,39 @@ body {
     position: relative;
     z-index: 10000;
     width: 80%;
-    max-width: 280px;
+    max-width: 300px;
     text-align: center;
-    bottom: -25vh;
+    bottom: -30vh;
 }
 
 .loading-text {
     color: white;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
-    margin-bottom: 8px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    margin-bottom: 10px;
+    letter-spacing: 2px;
 }
 
 .loading-progress-bar {
     width: 100%;
-    height: 4px;
+    height: 6px;
     background: rgba(255,255,255,0.2);
-    border-radius: 2px;
+    border-radius: 3px;
     overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
 .loading-progress-fill {
     width: 0%;
     height: 100%;
     background: linear-gradient(90deg, #ffd700, #ffaa00);
+    border-radius: 3px;
     transition: width 0.3s ease;
+    box-shadow: 0 0 10px #ffd700;
 }
 
+/* Когда игра загружена - скрываем загрузочный экран */
 .game-loaded .loading-screen {
     display: none;
 }
