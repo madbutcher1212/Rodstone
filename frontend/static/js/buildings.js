@@ -28,8 +28,8 @@ function getUpgradeCost(buildingId, currentLevel) {
         return TOWN_HALL_UPGRADE_COST[currentLevel + 1] || { gold: 0, wood: 0, stone: 0 };
     }
     const config = window.BUILDINGS_CONFIG?.[buildingId];
-    if (!config || currentLevel >= config.maxLevel) return { gold: 0, wood: 0, stone: 0 };
-    return config.upgradeCosts?.[currentLevel - 1] || { gold: 0, wood: 0, stone: 0 };
+    if (!config || currentLevel >= config.max_level) return { gold: 0, wood: 0, stone: 0 };
+    return config.upgrade_costs?.[currentLevel - 1] || { gold: 0, wood: 0, stone: 0 };
 }
 
 // Проверить, достаточно ли уровня ратуши
@@ -54,13 +54,13 @@ function canUpgrade(buildingId, currentLevel) {
     if (!config) return false;
     
     if (currentLevel === 0) {
-        const cost = config.baseCost;
+        const cost = config.base_cost;
         return isTownHallLevelEnough(buildingId, 1) && 
                userData.gold >= cost.gold && 
                userData.wood >= cost.wood;
     }
     
-    if (currentLevel >= config.maxLevel) return false;
+    if (currentLevel >= config.max_level) return false;
     if (!isTownHallLevelEnough(buildingId, currentLevel + 1)) return false;
     
     const cost = getUpgradeCost(buildingId, currentLevel);
@@ -82,8 +82,8 @@ function generateBuildingCardHTML(id) {
     let incomeText = '';
     
     // Бонус для жилого района
-    if (id === 'house' && level > 0 && config.populationBonus) {
-        const totalBonus = config.populationBonus.slice(0, level).reduce((a, b) => a + b, 0);
+    if (id === 'house' && level > 0 && config.population_bonus) {
+        const totalBonus = config.population_bonus.slice(0, level).reduce((a, b) => a + b, 0);
         bonusText = `<div class="building-bonus">👥 +${totalBonus} лимит</div>`;
     }
     
@@ -122,7 +122,7 @@ function generateBuildingCardHTML(id) {
     
     // Кнопка улучшения
     let upgradeBtn = '';
-    if (level > 0 && level < config.maxLevel && config.upgradeCosts) {
+    if (level > 0 && level < config.max_level && config.upgrade_costs) {
         upgradeBtn = `
             <button class="building-upgrade-btn available" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
                 Улучшить до Ур.${level + 1}
@@ -236,7 +236,7 @@ function showUpgradeModal(buildingId) {
     const level = getBuildingLevel(buildingId);
     const nextLevel = level + 1;
     const nextIncome = config.income?.[level] || {};
-    const cost = level === 0 ? config.baseCost : (config.upgradeCosts?.[level - 1] || { gold: 0, wood: 0, stone: 0 });
+    const cost = level === 0 ? config.base_cost : (config.upgrade_costs?.[level - 1] || { gold: 0, wood: 0, stone: 0 });
 
     // ОТЛАДКА: проверим требования к ратуше
     console.log('🪵 Здание:', buildingId, 'Текущий уровень:', level);
@@ -285,8 +285,8 @@ function showUpgradeModal(buildingId) {
     
     // Для жилого района показываем бонус к лимиту вместо дохода
     let incomeDisplay = '';
-    if (buildingId === 'house' && config.populationBonus) {
-        const nextBonus = config.populationBonus[level];
+    if (buildingId === 'house' && config.population_bonus) {
+        const nextBonus = config.population_bonus[level];
         incomeDisplay = `<div class="income-value">👥 +${nextBonus} лимит</div>`;
     } else {
         incomeDisplay = `<div class="income-value">${incomeText}/ч</div>`;
