@@ -62,14 +62,18 @@ class Player:
             'owned_avatars': json.dumps(['male_free', 'female_free']),
             'gold': 100,
             'wood': 50,
-            'food': 50,
             'stone': 0,
+            'iron': 0,        
+            'coal': 0,        
+            'food': 50,
+            'leather': 0,     
+            'horses': 0,     
             'level': 1,
             'town_hall_level': 1,
             'population_current': 10,
             'population_max': 10,
-            'workers_used': 0,  # НОВОЕ: занятые жители
-            'workers_free': 10,  # НОВОЕ: свободные жители (равны населению в начале)
+            'workers_used': 0,  # занятые жители
+            'workers_free': 10,  # свободные жители (равны населению в начале)
             'buildings': json.dumps(initial_buildings),
             'last_collection': now
         }
