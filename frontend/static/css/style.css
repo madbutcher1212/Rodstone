@@ -273,113 +273,102 @@ body {
     padding: 0 16px 16px;
 }
 
-/* ===== УМЕНЬШЕННЫЙ БАР РЕСУРСОВ ГОРОДА ===== */
+/* ===== СУПЕР-КОМПАКТНЫЙ БАР РЕСУРСОВ ГОРОДА (ВСЕ В ОДИН РЯД) ===== */
 .city-resources-container {
     position: sticky;
     top: 0;
     z-index: 50;
     background: linear-gradient(135deg, #2a2a40 0%, #1e1e2f 100%);
-    padding: 6px 4px;
+    padding: 4px 6px;
     margin-bottom: 8px;
-    border-radius: 0 0 12px 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    border-bottom: 2px solid #ffd700;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    border-bottom: 1px solid #ffd700;
 }
 
-/* Верхний ряд - 4 ресурса */
-.resources-top {
+/* Ряд со всеми ресурсами */
+.city-resources-row {
     display: flex;
     justify-content: space-around;
+    align-items: center;
     gap: 2px;
-    margin-bottom: 4px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 2px 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Скрываем скроллбар для Firefox */
 }
 
-/* Нижний ряд - 3 ресурса */
-.resources-bottom {
-    display: flex;
-    justify-content: center;
-    gap: 4px;
+.city-resources-row::-webkit-scrollbar {
+    display: none; /* Скрываем скроллбар для Chrome/Safari */
 }
 
-/* Карточка ресурса */
+/* Карточка ресурса - горизонтальная */
 .city-resource-item {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
-    border-radius: 8px;
-    padding: 4px 2px;
-    min-width: 52px;
+    backdrop-filter: blur(3px);
+    border-radius: 12px;
+    padding: 3px 6px;
     cursor: pointer;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    gap: 3px;
+    white-space: nowrap;
     transition: all 0.2s ease;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    flex-shrink: 0;
 }
 
 .city-resource-item:hover {
-    transform: translateY(-2px);
     background: rgba(255, 255, 255, 0.15);
     border-color: #ffd700;
+    transform: translateY(-1px);
 }
 
 /* Иконка ресурса */
 .resource-icon {
-    font-size: 16px;
-    margin-bottom: 2px;
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+    font-size: 12px;
+    margin: 0;
+    filter: drop-shadow(0 1px 1px rgba(0,0,0,0.3));
 }
 
 /* Значение ресурса */
 .city-resource-item .resource-value {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: bold;
     color: white;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-    margin-bottom: 1px;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.5);
+    margin: 0;
 }
 
 /* Доход в час */
 .resource-income-small {
-    font-size: 8px;
+    font-size: 7px;
     font-weight: bold;
     color: #4CAF50;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
     background: rgba(0,0,0,0.3);
     padding: 1px 3px;
-    border-radius: 6px;
-    border: 1px solid rgba(76, 175, 80, 0.3);
+    border-radius: 8px;
+    margin-left: 1px;
+    border: 1px solid rgba(76, 175, 80, 0.2);
 }
 
 .resource-income-negative {
-    font-size: 8px;
+    font-size: 7px;
     font-weight: bold;
     color: #ff4444;
-    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
     background: rgba(0,0,0,0.3);
     padding: 1px 3px;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 68, 68, 0.3);
+    border-radius: 8px;
+    margin-left: 1px;
+    border: 1px solid rgba(255, 68, 68, 0.2);
 }
 
-/* Адаптация под маленькие экраны */
-@media (max-width: 380px) {
-    .city-resource-item {
-        min-width: 46px;
-        padding: 3px 1px;
-    }
-    
-    .resource-icon {
-        font-size: 14px;
-    }
-    
-    .city-resource-item .resource-value {
-        font-size: 11px;
-    }
-    
-    .resources-bottom {
-        gap: 2px;
-    }
+/* Убираем старые классы рядов */
+.resources-top, .resources-bottom {
+    all: unset;
+    display: contents;
 }
 
 /* Ратуша */
