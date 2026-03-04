@@ -4,6 +4,7 @@ import json
 from models.player import Player
 from models.building_config import BUILDINGS_CONFIG, calculate_population_max
 from utils.telegram import verify_telegram_data
+from resource_calculator import update_player_resources
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -29,6 +30,9 @@ def auth():
         now = int(time.time() * 1000)
 
         if player_data:
+            # ОБНОВЛЯЕМ РЕСУРСЫ ПЕРЕД ОТПРАВКОЙ
+            player_data = update_player_resources(player_data, now)
+            
             buildings = []
             if player_data.get('buildings'):
                 try:
@@ -65,8 +69,8 @@ def auth():
                     'townHallLevel': player_data.get('town_hall_level', 1),
                     'population_current': player_data.get('population_current', 10),
                     'population_max': max_pop,
-                    'workers_used': player_data.get('workers_used', 0),  # НОВОЕ
-                    'workers_free': player_data.get('workers_free', player_data.get('population_current', 10)),  # НОВОЕ
+                    'workers_used': player_data.get('workers_used', 0),
+                    'workers_free': player_data.get('workers_free', player_data.get('population_current', 10)),
                     'lastCollection': player_data.get('last_collection', now)
                 },
                 'buildings': buildings,
@@ -95,10 +99,11 @@ def auth():
                 'town_hall_level': 1,
                 'population_current': 10,
                 'population_max': max_pop,
-                'workers_used': 0,  # НОВОЕ
-                'workers_free': 10,  # НОВОЕ
+                'workers_used': 0,
+                'workers_free': 10,
                 'buildings': json.dumps(initial_buildings),
-                'last_collection': now
+                'last_collection': now,
+                'last_calculated': now  # НОВОЕ ПОЛЕ
             }
 
             Player.create(telegram_id, username, initial_buildings)
@@ -119,8 +124,8 @@ def auth():
                     'townHallLevel': 1,
                     'population_current': 10,
                     'population_max': max_pop,
-                    'workers_used': 0,  # НОВОЕ
-                    'workers_free': 10,  # НОВОЕ
+                    'workers_used': 0,
+                    'workers_free': 10,
                     'lastCollection': now
                 },
                 'buildings': initial_buildings,
