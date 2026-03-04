@@ -95,8 +95,12 @@ def game_action(telegram_user):
         state = {
             'gold': gold,
             'wood': wood,
-            'food': food,
             'stone': stone,
+            'iron': iron,        
+            'coal': coal,        
+            'food': food,
+            'leather': leather,  
+            'horses': horses,    
             'level': level,
             'townHallLevel': town_hall_level,
             'population_current': population_current,
