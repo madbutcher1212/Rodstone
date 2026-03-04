@@ -62,19 +62,14 @@ async function login() {
         
         if (result && result.success) {
             updateLoadingProgress(70); // Начало обработки данных
-            if (result && result.success) {
-    updateLoadingProgress(70); // Начало обработки данных
-    
-    // Сохраняем конфиг с сервера в глобальную переменную
-    if (result.config) {
-        window.BUILDINGS_CONFIG = result.config;
-        console.log('📦 Конфиг загружен с сервера');
-    }
-    
-    userData.id = result.user?.id || null;
-    userData.username = result.user?.username || '';
-    // ... остальная загрузка данных
-}
+            
+            // Сохраняем конфиг с сервера в глобальную переменную
+            if (result.config) {
+                window.BUILDINGS_CONFIG = result.config;
+                console.log('✅ Конфиг загружен с сервера');
+            } else {
+                console.warn('⚠️ Конфиг не пришел с сервера');
+            }
             
             userData.id = result.user?.id || null;
             userData.username = result.user?.username || '';
