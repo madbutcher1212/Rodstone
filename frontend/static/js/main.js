@@ -179,7 +179,6 @@ function updateUserInfo() {
     if (name.length > 12) name = name.substring(0, 12);
     document.getElementById('userName').textContent = name;
     document.getElementById('userLogin').textContent = '@' + (userData.username || 'username');
-    document.getElementById('levelBadge').textContent = userData.level;
     document.getElementById('userTelegramId').textContent = userData.id || '—';
 }
 
