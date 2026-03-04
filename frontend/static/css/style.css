@@ -45,16 +45,17 @@ body {
     z-index: 2;
 }
 
-/* Верхний бар */
+/* Верхний бар с твоей подложкой */
 .top-bar-fixed {
     position: sticky;
     top: 0;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background-image: url('/static/images/top-panel-bg.jpg');
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
     padding: 12px 16px 8px;
-    border-bottom: none;
     z-index: 100;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    width: 100%;
 }
 
 .top-bar {
@@ -63,20 +64,15 @@ body {
     gap: 8px;
 }
 
+/* Аватар - прозрачный, рамка из подложки */
 .avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
     overflow: hidden;
     flex-shrink: 0;
-    border: 1px solid rgba(255,215,0,0.3);
+    background: transparent;
+    border: none;
 }
 
 .avatar-img {
@@ -86,52 +82,55 @@ body {
 }
 
 .user-info {
-    flex: 2;  
+    flex: 2;
     min-width: 0;
-    max-width: 200px;  
+    max-width: 200px;
 }
+
 .name-level {
     display: flex;
     align-items: center;
     gap: 4px;
     width: 100%;
 }
+
 .user-name {
     font-size: 16px;
     font-weight: bold;
-    color: #333;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
     width: 100%;
 }
-.level-badge {
-    display: none; /* Просто скрываем, на случай если используется */
-}
 
 .user-login {
     font-size: 12px;
-    color: #666;
+    color: rgba(255,255,255,0.8);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
 }
 
-/* Resources bar - двухэтажная структура */
+/* Блок ресурсов - прозрачный */
 .resources-bar {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
-    padding: 8px 8px;  
-    border-radius: 20px;
+    gap: 2px;
+    background: transparent;
+    padding: 4px 8px;
+    border-radius: 16px;
     font-size: 12px;
     font-weight: bold;
     flex-shrink: 0;
-    min-width: 140px; 
+    min-width: 140px;
     border: none;
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
 /* Верхний ряд - монеты и родстоун */
@@ -155,7 +154,7 @@ body {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 2px;  
+    gap: 2px;
     white-space: nowrap;
 }
 
@@ -163,15 +162,16 @@ body {
     display: flex;
     align-items: center;
     gap: 2px;
-    color: #333;
+    color: #fff;
+    font-weight: bold;
 }
 
 .resource-income {
     font-size: 8px;
-    color: #4CAF50;
+    color: #ffd700;
     white-space: nowrap;
     margin-left: 2px;
-    background: rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.3);
     padding: 1px 3px;
     border-radius: 10px;
 }
@@ -179,9 +179,8 @@ body {
 .resource-income-negative {
     font-size: 8px;
     color: #ff4444;
-    margin-top: 2px;
     white-space: nowrap;
-    background: rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.3);
     padding: 1px 3px;
     border-radius: 10px;
 }
@@ -208,11 +207,11 @@ body {
     padding: 2px 6px;
     border-radius: 12px;
     transition: all 0.2s;
-    background: rgba(255,255,255,0.3);
+    background: rgba(0,0,0,0.2);
 }
 
 .population-free:hover, .population-workers:hover {
-    background: rgba(255,255,255,0.5);
+    background: rgba(0,0,0,0.4);
     transform: scale(1.05);
 }
 
@@ -228,45 +227,47 @@ body {
     width: 12px;
     height: 12px;
     vertical-align: middle;
+    filter: brightness(0) invert(1);
 }
 
-/* Таймер */
+/* Таймер - прозрачный */
 .income-timer {
-    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
-    border-radius: 20px;  
-    padding: 4px 10px; 
-    margin-top: 6px;  
+    background: transparent;
+    border-radius: 16px;
+    padding: 4px 10px;
+    margin-top: 6px;
     text-align: center;
-    font-size: 10px;  
-    color: #333;
+    font-size: 10px;
+    color: #fff;
     font-weight: bold;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.1); 
-    line-height: 1.3;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    border: none;
+    box-shadow: none;
 }
 
-/* Прогресс-бар таймера */
 .timer-progress {
     width: 100%;
     height: 3px;
-    background: rgba(0,0,0,0.1);
+    background: rgba(255,255,255,0.2);
     border-radius: 2px;
     margin-top: 3px;
     overflow: hidden;
 }
-/* Заполнение прогресс-бара */
+
 .timer-progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, #4CAF50, #8BC34A);
+    background: linear-gradient(90deg, #ffd700, #ffaa00);
     width: 0%;
     transition: width 1s linear;
     border-radius: 2px;
 }
-/* Отображение времени */
+
 #timerDisplay {
+    color: #fff;
     font-size: 11px;
     font-weight: bold;
-    color: #2a2a40;
 }
+
 /* Контент с прокруткой */
 .content-scrollable {
     flex: 1;
@@ -274,7 +275,7 @@ body {
     padding: 0 16px 16px;
 }
 
-/* ===== БАР РЕСУРСОВ ГОРОДА (ОДНА СТРОКА, ПРИБЫЛЬ ПОД РЕСУРСОМ) ===== */
+/* ===== БАР РЕСУРСОВ ГОРОДА ===== */
 .city-resources-container {
     position: sticky;
     top: 0;
@@ -288,7 +289,7 @@ body {
     width: 100%;
 }
 
-/* Ряд со всеми ресурсами - ОДНА СТРОКА */
+/* Ряд со всеми ресурсами - одна строка */
 .city-resources-row {
     display: flex;
     justify-content: space-between;
@@ -298,25 +299,22 @@ body {
     width: 100%;
 }
 
-/* Карточка ресурса - вертикальная (прибыль снизу) */
+/* Карточка ресурса */
 .city-resource-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(3px);
-    border-radius: 10px;  
-    padding: 5px 1px;  
-    min-width: 44px;  
+    border-radius: 10px;
+    padding: 5px 1px;
+    min-width: 44px;
     cursor: pointer;
     border: 1px solid rgba(255, 215, 0, 0.2);
-    gap: 1px;  
+    gap: 1px;
     transition: all 0.2s ease;
     flex: 1 0 44px;
-    max-width: 48px; 
-}
-.city-resource-item:last-child {
-    flex: 1 0 44px;
+    max-width: 48px;
 }
 
 .city-resource-item:hover {
@@ -327,14 +325,14 @@ body {
 
 /* Иконка ресурса */
 .resource-icon {
-    font-size: 15px;  
+    font-size: 15px;
     margin: 0;
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
 
 /* Значение ресурса */
 .city-resource-item .resource-value {
-    font-size: 11px; 
+    font-size: 11px;
     font-weight: bold;
     color: white;
     text-shadow: 0 1px 2px rgba(0,0,0,0.5);
@@ -342,20 +340,18 @@ body {
     line-height: 1.2;
 }
 
-
-/* Доход в час - под значением */
+/* Доход в час */
 .resource-income-small {
-    font-size: 6px;  
+    font-size: 6px;
     font-weight: bold;
     color: #4CAF50;
     background: rgba(0,0,0,0.3);
-    padding: 1px 2px; 
+    padding: 1px 2px;
     border-radius: 5px;
     margin-top: 1px;
     border: 1px solid rgba(76, 175, 80, 0.2);
     line-height: 1.2;
 }
-
 
 .resource-income-negative {
     font-size: 6px;
@@ -370,13 +366,15 @@ body {
 }
 
 /* Равномерное распределение */
-.city-resource-item:nth-child(1) { flex-grow: 1; }
-.city-resource-item:nth-child(2) { flex-grow: 1; }
-.city-resource-item:nth-child(3) { flex-grow: 1; }
-.city-resource-item:nth-child(4) { flex-grow: 1; }
-.city-resource-item:nth-child(5) { flex-grow: 1; }
-.city-resource-item:nth-child(6) { flex-grow: 1; }
-.city-resource-item:nth-child(7) { flex-grow: 1; }
+.city-resource-item:nth-child(1),
+.city-resource-item:nth-child(2),
+.city-resource-item:nth-child(3),
+.city-resource-item:nth-child(4),
+.city-resource-item:nth-child(5),
+.city-resource-item:nth-child(6),
+.city-resource-item:nth-child(7) {
+    flex: 1 0 44px;
+}
 
 /* Ратуша */
 .town-hall {
@@ -420,11 +418,6 @@ body {
     color: #4CAF50;
     font-weight: bold;
     margin-bottom: 4px;
-}
-
-.town-hall-level {
-    font-size: 14px;
-    color: #8b6b42;
 }
 
 .town-hall-level-badge {
