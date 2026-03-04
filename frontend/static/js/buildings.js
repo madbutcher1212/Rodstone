@@ -234,32 +234,38 @@ function showUpgradeModal(buildingId) {
     const nextLevel = level + 1;
     const nextIncome = config.income?.[level] || {};
     const cost = level === 0 ? config.baseCost : config.upgradeCosts[level - 1];
- // Проверка требования к ратуше
-const requiredTownHall = config.requiredTownHall?.[level] || 1;
-const townHallEnough = userData.townHallLevel >= requiredTownHall;
 
-// Формируем строку с требованием ратуши
-let requirementHtml = '';
-if (!townHallEnough) {
-    requirementHtml = `
-        <div class="upgrade-requirement not-enough">
-            <span class="requirement-icon">🏛️</span>
-            <span class="requirement-text">Требуется ратуша ${requiredTownHall} уровня</span>
-        </div>
-    `;
-} else {
-    requirementHtml = `
-        <div class="upgrade-requirement enough">
-            <span class="requirement-icon">🏛️</span>
-            <span class="requirement-text">Ратуша ${requiredTownHall} уровня ✅</span>
-        </div>
-    `;
-}
+    // ОТЛАДКА: проверим требования к ратуше
+    console.log('🪵 Здание:', buildingId, 'Текущий уровень:', level);
+    console.log('📊 requiredTownHall массив:', config.requiredTownHall);
+    console.log('🎯 Требование для уровня', level + 1, ':', config.requiredTownHall?.[level]);
+    
+    // Проверка требования к ратуше
+    const requiredTownHall = config.requiredTownHall?.[level] || 1;
+    const townHallEnough = userData.townHallLevel >= requiredTownHall;
+    
+    // Формируем строку с требованием ратуши
+    let requirementHtml = '';
+    if (!townHallEnough) {
+        requirementHtml = `
+            <div class="upgrade-requirement not-enough">
+                <span class="requirement-icon">🏛️</span>
+                <span class="requirement-text">Требуется ратуша ${requiredTownHall} уровня</span>
+            </div>
+        `;
+    } else {
+        requirementHtml = `
+            <div class="upgrade-requirement enough">
+                <span class="requirement-icon">🏛️</span>
+                <span class="requirement-text">Ратуша ${requiredTownHall} уровня ✅</span>
+            </div>
+        `;
+    }
     
     const canUpgrade = userData.gold >= cost.gold && 
-                  userData.wood >= cost.wood && 
-                  userData.stone >= (cost.stone || 0) &&
-                  townHallEnough;  // ← ДОБАВЛЕНА ПРОВЕРКА РАТУШИ
+                      userData.wood >= cost.wood && 
+                      userData.stone >= (cost.stone || 0) &&
+                      townHallEnough;
     
     // Формируем строку с доходом
     let incomeParts = [];
@@ -274,66 +280,63 @@ if (!townHallEnough) {
     
     const incomeText = incomeParts.length > 0 ? incomeParts.join(' ') : 'нет дохода';
     
-  // Для жилого района показываем бонус к лимиту вместо дохода
-let incomeDisplay = '';
-if (buildingId === 'house') {
-    // Для улучшения показываем бонус СЛЕДУЮЩЕГО уровня
-    const nextBonus = config.populationBonus[level]; // level = текущий уровень
-    // populationBonus[level] дает бонус следующего уровня
-    // потому что в массиве индекс 0 = 1 ур, индекс 1 = 2 ур и т.д.
-    incomeDisplay = `<div class="income-value">👥 +${nextBonus} лимит</div>`;
-} else {
-    incomeDisplay = `<div class="income-value">${incomeText}/ч</div>`;
-}
+    // Для жилого района показываем бонус к лимиту вместо дохода
+    let incomeDisplay = '';
+    if (buildingId === 'house') {
+        const nextBonus = config.populationBonus[level];
+        incomeDisplay = `<div class="income-value">👥 +${nextBonus} лимит</div>`;
+    } else {
+        incomeDisplay = `<div class="income-value">${incomeText}/ч</div>`;
+    }
     
     const modal = document.getElementById('upgradeModal');
     modal.innerHTML = `
-    <div class="upgrade-header">
-        <div class="upgrade-title">${level === 0 ? '🏗️ Построить' : '⬆️ Улучшить'} ${config.name} до ${nextLevel} уровня</div>
-    </div>
-    
-    <div class="upgrade-content">
-        <div class="upgrade-income">
-            <div class="income-label">${buildingId === 'house' ? 'Бонус на ' + nextLevel + ' уровне:' : 'Прибыль на ' + nextLevel + ' уровне:'}</div>
-            ${incomeDisplay}
+        <div class="upgrade-header">
+            <div class="upgrade-title">${level === 0 ? '🏗️ Построить' : '⬆️ Улучшить'} ${config.name} до ${nextLevel} уровня</div>
         </div>
         
-        ${requirementHtml}  <!-- ← ВСТАВИТЬ СЮДА (ПОСЛЕ upgrade-income) -->
-        
-        <div class="upgrade-cost">
-            <div class="cost-label">Стоимость:</div>
-            <div class="cost-resources">
-                <div class="cost-item ${userData.gold >= cost.gold ? 'enough' : 'not-enough'}">
-                    <span class="cost-icon">🪙</span>
-                    <span class="cost-amount">${cost.gold}</span>
+        <div class="upgrade-content">
+            <div class="upgrade-income">
+                <div class="income-label">${buildingId === 'house' ? 'Бонус на ' + nextLevel + ' уровне:' : 'Прибыль на ' + nextLevel + ' уровне:'}</div>
+                ${incomeDisplay}
+            </div>
+            
+            ${requirementHtml}
+            
+            <div class="upgrade-cost">
+                <div class="cost-label">Стоимость:</div>
+                <div class="cost-resources">
+                    <div class="cost-item ${userData.gold >= cost.gold ? 'enough' : 'not-enough'}">
+                        <span class="cost-icon">🪙</span>
+                        <span class="cost-amount">${cost.gold}</span>
+                    </div>
+                    ${cost.wood > 0 ? `
+                    <div class="cost-item ${userData.wood >= cost.wood ? 'enough' : 'not-enough'}">
+                        <span class="cost-icon">🪵</span>
+                        <span class="cost-amount">${cost.wood}</span>
+                    </div>
+                    ` : ''}
+                    ${cost.stone > 0 ? `
+                    <div class="cost-item ${userData.stone >= cost.stone ? 'enough' : 'not-enough'}">
+                        <span class="cost-icon">⛰️</span>
+                        <span class="cost-amount">${cost.stone}</span>
+                    </div>
+                    ` : ''}
                 </div>
-                ${cost.wood > 0 ? `
-                <div class="cost-item ${userData.wood >= cost.wood ? 'enough' : 'not-enough'}">
-                    <span class="cost-icon">🪵</span>
-                    <span class="cost-amount">${cost.wood}</span>
-                </div>
-                ` : ''}
-                ${cost.stone > 0 ? `
-                <div class="cost-item ${userData.stone >= cost.stone ? 'enough' : 'not-enough'}">
-                    <span class="cost-icon">⛰️</span>
-                    <span class="cost-amount">${cost.stone}</span>
-                </div>
-                ` : ''}
+            </div>
+            
+            <div class="upgrade-actions">
+                <button class="btn-upgrade ${canUpgrade ? 'available' : 'unavailable'}" 
+                        onclick="confirmUpgrade('${buildingId}')"
+                        ${!canUpgrade ? 'disabled' : ''}>
+                    ${level === 0 ? 'Построить' : 'Улучшить'}
+                </button>
+                <button class="btn-cancel" onclick="closeUpgradeModal()">
+                    Отмена
+                </button>
             </div>
         </div>
-        
-        <div class="upgrade-actions">
-            <button class="btn-upgrade ${canUpgrade ? 'available' : 'unavailable'}" 
-                    onclick="confirmUpgrade('${buildingId}')"
-                    ${!canUpgrade ? 'disabled' : ''}>
-                ${level === 0 ? 'Построить' : 'Улучшить'}
-            </button>
-            <button class="btn-cancel" onclick="closeUpgradeModal()">
-                Отмена
-            </button>
-        </div>
-    </div>
-`;
+    `;
     
     document.getElementById('upgradeOverlay').style.display = 'flex';
     selectedBuildingForUpgrade = buildingId;
