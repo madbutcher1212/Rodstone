@@ -257,6 +257,7 @@ body {
 }
 
 /* Контейнер для ресурсов города */
+/* Контейнер для ресурсов города */
 .city-resources-container {
     position: sticky;
     top: 0;
@@ -267,27 +268,38 @@ body {
     border-bottom: 1px solid #ddd;
 }
 
-.city-resources {
+/* Ряды ресурсов */
+.city-resources-row {
     display: flex;
-    justify-content: space-between;
-    background: #f0f0f0;
-    border-radius: 12px;
-    padding: 6px 8px;
-    gap: 4px;
+    justify-content: center;
+    gap: 15px;
+    padding: 4px 0;
     flex-wrap: wrap;
 }
 
+/* Для верхнего ряда (4 элемента) */
+.resources-top {
+    margin-bottom: 2px;
+}
+
+/* Для нижнего ряда (3 элемента) */
+.resources-bottom {
+    margin-top: 2px;
+}
+
+/* Элемент ресурса */
 .city-resource-item {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: 4px;
     font-size: 12px;
     font-weight: bold;
     cursor: pointer;
-    padding: 2px 4px;
+    padding: 4px 8px;
     border-radius: 6px;
-    min-width: 60px;
+    min-width: 70px;
     justify-content: center;
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .city-resource-item:hover {
@@ -298,7 +310,7 @@ body {
     font-size: 14px;
 }
 
-.city-resource-item .resource-value {
+.resource-value {
     color: #333;
     font-size: 12px;
 }
@@ -306,7 +318,7 @@ body {
 .resource-income-small {
     font-size: 9px;
     color: #4CAF50;
-    margin-left: 1px;
+    margin-left: 2px;
 }
 
 /* Ратуша */
