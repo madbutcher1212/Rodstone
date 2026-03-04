@@ -88,13 +88,14 @@ body {
 .user-info {
     flex: 1;
     min-width: 0;
-    max-width: 140px;
+    max-width: 160px; 
 }
 
 .name-level {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
+    width: 100%;
 }
 
 .user-name {
@@ -104,17 +105,12 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 100px;
+    max-width: 100%; 
+    width: 100%;
 }
 
 .level-badge {
-    background: #ffd700;
-    color: #333;
-    padding: 2px 8px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: bold;
-    flex-shrink: 0;
+    display: none; /* Просто скрываем, на случай если используется */
 }
 
 .user-login {
@@ -123,6 +119,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    width: 100%;
 }
 
 /* Resources bar - двухэтажная структура */
