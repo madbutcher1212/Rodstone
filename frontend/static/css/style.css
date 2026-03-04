@@ -311,7 +311,11 @@ body {
     border: 1px solid rgba(255, 215, 0, 0.2);
     gap: 1px;  
     transition: all 0.2s ease;
-    flex: 0 1 auto;
+    flex: 1 0 44px;
+    max-width: 48px; 
+}
+.city-resource-item:last-child {
+    flex: 1 0 44px;
 }
 
 .city-resource-item:hover {
