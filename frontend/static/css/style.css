@@ -1121,3 +1121,13 @@ input {
 .game-loaded .loading-screen {
     display: none;
 }
+.city-resources-row {
+    display: flex;
+    justify-content: space-between;
+    background: #f0f0f0;
+    border-radius: 12px;
+    padding: 6px 8px;
+    gap: 4px;
+    margin-bottom: 5px;
+    flex-wrap: wrap;
+}
