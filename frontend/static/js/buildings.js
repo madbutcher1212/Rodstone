@@ -17,7 +17,7 @@ function getBuildingIncome(buildingId, level) {
     if (buildingId === 'townhall') {
         return { gold: TOWN_HALL_INCOME[level] || 0 };
     }
-    const config = BUILDINGS_CONFIG[buildingId];
+    const config = window.BUILDINGS_CONFIG?.[buildingId];
     if (!config || level === 0 || !config.income) return {};
     return config.income[level - 1] || {};
 }
@@ -27,7 +27,7 @@ function getUpgradeCost(buildingId, currentLevel) {
     if (buildingId === 'townhall') {
         return TOWN_HALL_UPGRADE_COST[currentLevel + 1] || { gold: 0, wood: 0, stone: 0 };
     }
-    const config = BUILDINGS_CONFIG[buildingId];
+    const config = window.BUILDINGS_CONFIG?.[buildingId];
     if (!config || currentLevel >= config.maxLevel) return { gold: 0, wood: 0, stone: 0 };
     return config.upgradeCosts[currentLevel - 1] || { gold: 0, wood: 0, stone: 0 };
 }
@@ -35,7 +35,7 @@ function getUpgradeCost(buildingId, currentLevel) {
 // Проверить, достаточно ли уровня ратуши
 function isTownHallLevelEnough(buildingId, targetLevel) {
     if (buildingId === 'townhall') return true;
-    const config = BUILDINGS_CONFIG[buildingId];
+    const config = window.BUILDINGS_CONFIG?.[buildingId];
     if (!config || !config.requiredTownHall) return true;
     return userData.townHallLevel >= config.requiredTownHall[targetLevel - 1];
 }
@@ -50,7 +50,7 @@ function canUpgrade(buildingId, currentLevel) {
                userData.stone >= cost.stone;
     }
     
-    const config = BUILDINGS_CONFIG[buildingId];
+    const config = window.BUILDINGS_CONFIG?.[buildingId];
     if (!config) return false;
     
     if (currentLevel === 0) {
@@ -71,7 +71,7 @@ function canUpgrade(buildingId, currentLevel) {
 
 // Генерация HTML для карточки здания
 function generateBuildingCardHTML(id) {
-    const config = BUILDINGS_CONFIG[id];
+    const config = window.BUILDINGS_CONFIG?.[id];
     if (!config) return '';
     
     const level = getBuildingLevel(id);
@@ -227,8 +227,11 @@ function showUpgradeModal(buildingId) {
     }
     
     // Для обычных зданий
-    const config = BUILDINGS_CONFIG[buildingId];
-    if (!config) return;
+    const config = window.BUILDINGS_CONFIG?.[buildingId];
+    if (!config) {
+        console.error('❌ Конфиг не найден для здания:', buildingId);
+        return;
+    }
     
     const level = getBuildingLevel(buildingId);
     const nextLevel = level + 1;
@@ -444,8 +447,8 @@ function updateCityUI() {
     updateTownHallDisplay();
     
     let socialHtml = generateBuildingCardHTML('house');
-    if (BUILDINGS_CONFIG['tavern']) socialHtml += generateBuildingCardHTML('tavern');
-    if (BUILDINGS_CONFIG['bath']) socialHtml += generateBuildingCardHTML('bath');
+    if (window.BUILDINGS_CONFIG?.['tavern']) socialHtml += generateBuildingCardHTML('tavern');
+    if (window.BUILDINGS_CONFIG?.['bath']) socialHtml += generateBuildingCardHTML('bath');
     document.getElementById('socialBuildings').innerHTML = socialHtml;
     
     let economicHtml = '';
