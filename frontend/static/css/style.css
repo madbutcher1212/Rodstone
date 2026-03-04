@@ -52,7 +52,7 @@ body {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     padding: 12px 16px 8px;
-    border-bottom: 2px solid #ffd700;
+    border-bottom: none;  
     z-index: 100;
     box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
@@ -126,7 +126,6 @@ body {
     text-overflow: ellipsis;
 }
 
-/* Resources bar - двухэтажная структура */
 .resources-bar {
     display: flex;
     flex-direction: column;
@@ -138,7 +137,7 @@ body {
     font-weight: bold;
     flex-shrink: 0;
     min-width: 160px;
-    border: 1px solid #ffd700;
+    border: none;  /* Убрали желтую рамку */
 }
 
 /* Верхний ряд - монеты и родстоун */
@@ -276,32 +275,32 @@ body {
     padding: 0 16px 16px;
 }
 
-/* ===== КРАСИВЫЙ БАР РЕСУРСОВ ГОРОДА ===== */
+/* ===== БАР РЕСУРСОВ ГОРОДА ===== */
 .city-resources-container {
     position: sticky;
     top: 0;
     z-index: 50;
     background: linear-gradient(135deg, #2a2a40 0%, #1e1e2f 100%);
-    padding: 16px 12px;
-    margin-bottom: 20px;
-    border-radius: 0 0 30px 30px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    border-bottom: 3px solid #ffd700;
+    padding: 10px 8px;  
+    margin-bottom: 12px; 
+    border-radius: 0 0 20px 20px;  
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    border-bottom: 2px solid #ffd700;
 }
 
 /* Верхний ряд - 4 ресурса */
 .resources-top {
     display: flex;
     justify-content: space-around;
-    gap: 8px;
-    margin-bottom: 12px;
+    gap: 4px;  
+    margin-bottom: 6px;  
 }
 
 /* Нижний ряд - 3 ресурса */
 .resources-bottom {
     display: flex;
     justify-content: center;
-    gap: 16px;
+    gap: 8px; 
 }
 
 /* Карточка ресурса */
@@ -311,13 +310,13 @@ body {
     align-items: center;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(5px);
-    border-radius: 20px;
-    padding: 10px 8px;
-    min-width: 75px;
+    border-radius: 12px;  
+    padding: 6px 4px; 
+    min-width: 65px;  
     cursor: pointer;
     transition: all 0.2s ease;
     border: 1px solid rgba(255, 215, 0, 0.3);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 .city-resource-item:hover {
@@ -329,29 +328,28 @@ body {
 
 /* Иконка ресурса */
 .resource-icon {
-    font-size: 26px;
-    margin-bottom: 4px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    font-size: 20px; 
+    margin-bottom: 2px;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
 
 /* Значение ресурса */
 .city-resource-item .resource-value {
-    font-size: 16px;
+    font-size: 14px;  
     font-weight: bold;
     color: white;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-    margin-bottom: 2px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    margin-bottom: 1px;
 }
-
 /* Доход в час */
 .resource-income-small {
-    font-size: 11px;
+    font-size: 9px;  
     font-weight: bold;
     color: #4CAF50;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
     background: rgba(0,0,0,0.3);
-    padding: 2px 8px;
-    border-radius: 12px;
+    padding: 1px 4px; 
+    border-radius: 8px;
     border: 1px solid rgba(76, 175, 80, 0.3);
 }
 
