@@ -297,9 +297,19 @@ body {
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 6px;
-    min-width: 70px;
+    width: 80px;  /* Фиксированная ширина вместо min-width */
     justify-content: center;
     background: rgba(255, 255, 255, 0.5);
+}
+
+/* Для верхнего ряда */
+.resources-top .city-resource-item {
+    width: 80px;
+}
+
+/* Для нижнего ряда - та же ширина */
+.resources-bottom .city-resource-item {
+    width: 80px;
 }
 
 .city-resource-item:hover {
