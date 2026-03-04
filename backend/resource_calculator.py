@@ -27,6 +27,11 @@ def calculate_resources_for_period(player_data, start_time, end_time):
     time_passed_ms = end_time - start_time
     hours_passed = time_passed_ms / (60 * 60 * 1000)
     
+    # ЗАЩИТА: максимум 720 часов (30 дней)
+    if hours_passed > 720:
+        print(f"⚠️ Слишком большой период: {hours_passed:.0f} часов, обрезаем до 720")
+        hours_passed = 720
+    
     if hours_passed < 0.0167:  # меньше минуты
         return player_data
     
@@ -43,15 +48,23 @@ def calculate_resources_for_period(player_data, start_time, end_time):
             current_food      # меняется каждый час!
         )
         
-        # Обновляем ВСЕ ресурсы
-        current_gold += inc.get('gold', 0)
-        current_wood += inc.get('wood', 0)
-        current_food += inc.get('food', 0)  # может быть отрицательным
-        current_stone += inc.get('stone', 0)
-        current_iron += inc.get('iron', 0)
-        current_coal += inc.get('coal', 0)
-        current_leather += inc.get('leather', 0)
-        current_horses += inc.get('horses', 0)
+        # Обновляем ВСЕ ресурсы с проверкой наличия ключей
+        if 'gold' in inc:
+            current_gold += inc['gold']
+        if 'wood' in inc:
+            current_wood += inc['wood']
+        if 'food' in inc:
+            current_food += inc['food']  # может быть отрицательным
+        if 'stone' in inc:
+            current_stone += inc['stone']
+        if 'iron' in inc:
+            current_iron += inc['iron']
+        if 'coal' in inc:
+            current_coal += inc['coal']
+        if 'leather' in inc:
+            current_leather += inc['leather']
+        if 'horses' in inc:
+            current_horses += inc['horses']
         
         # Еда не может быть ниже 0
         if current_food < 0:
@@ -63,7 +76,9 @@ def calculate_resources_for_period(player_data, start_time, end_time):
         if current_pop > population_max:
             current_pop = population_max
         
-        print(f"⏰ Час {hour+1}: население={current_pop}, еда={current_food:.1f}")
+        # Логируем только раз в 24 часа, чтобы не спамить
+        if hour % 24 == 0:
+            print(f"⏰ День {(hour//24)+1}: население={current_pop}, еда={current_food:.0f}")
     
     # ОСТАТОК МИНУТ - пропорционально (без роста населения)
     if remaining_minutes > 1:  # больше минуты
@@ -77,15 +92,23 @@ def calculate_resources_for_period(player_data, start_time, end_time):
         
         minute_multiplier = remaining_minutes / 60
         
-        # Обновляем ВСЕ ресурсы пропорционально
-        current_gold += int(inc.get('gold', 0) * minute_multiplier)
-        current_wood += int(inc.get('wood', 0) * minute_multiplier)
-        current_food += inc.get('food', 0) * minute_multiplier
-        current_stone += int(inc.get('stone', 0) * minute_multiplier)
-        current_iron += int(inc.get('iron', 0) * minute_multiplier)
-        current_coal += int(inc.get('coal', 0) * minute_multiplier)
-        current_leather += int(inc.get('leather', 0) * minute_multiplier)
-        current_horses += int(inc.get('horses', 0) * minute_multiplier)
+        # Обновляем ВСЕ ресурсы пропорционально с проверкой
+        if 'gold' in inc:
+            current_gold += int(inc['gold'] * minute_multiplier)
+        if 'wood' in inc:
+            current_wood += int(inc['wood'] * minute_multiplier)
+        if 'food' in inc:
+            current_food += inc['food'] * minute_multiplier
+        if 'stone' in inc:
+            current_stone += int(inc['stone'] * minute_multiplier)
+        if 'iron' in inc:
+            current_iron += int(inc['iron'] * minute_multiplier)
+        if 'coal' in inc:
+            current_coal += int(inc['coal'] * minute_multiplier)
+        if 'leather' in inc:
+            current_leather += int(inc['leather'] * minute_multiplier)
+        if 'horses' in inc:
+            current_horses += int(inc['horses'] * minute_multiplier)
         
         if current_food < 0:
             current_food = 0
@@ -114,8 +137,15 @@ def update_player_resources(player, current_time=None):
     
     last_calc = player.get('last_calculated', player.get('last_collection', current_time))
     
+    # Защита: если last_calc в будущем или 0 - ставим текущее время
+    if last_calc > current_time or last_calc == 0:
+        print(f"⚠️ last_calc={last_calc} некорректно, устанавливаем current_time")
+        last_calc = current_time
+        player['last_calculated'] = current_time
+    
     # Если прошло меньше минуты - ничего не делаем
-    if current_time - last_calc < 60 * 1000:  # 1 минута
+    time_diff = current_time - last_calc
+    if time_diff < 60 * 1000:  # 1 минута
         return player
     
     # Рассчитываем ресурсы за прошедшее время
