@@ -239,33 +239,40 @@ body {
 /* Таймер */
 .income-timer {
     background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
-    border-radius: 30px;
-    padding: 10px 16px;
-    margin-top: 10px;
+    border-radius: 20px;  
+    padding: 4px 10px; 
+    margin-top: 6px;  
     text-align: center;
-    font-size: 13px;
+    font-size: 10px;  
     color: #333;
     font-weight: bold;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1); 
+    line-height: 1.3;
 }
 
+/* Прогресс-бар таймера */
 .timer-progress {
     width: 100%;
-    height: 6px;
+    height: 3px;
     background: rgba(0,0,0,0.1);
-    border-radius: 3px;
-    margin-top: 8px;
+    border-radius: 2px;
+    margin-top: 3px;
     overflow: hidden;
 }
-
+/* Заполнение прогресс-бара */
 .timer-progress-bar {
     height: 100%;
     background: linear-gradient(90deg, #4CAF50, #8BC34A);
     width: 0%;
     transition: width 1s linear;
-    border-radius: 3px;
+    border-radius: 2px;
 }
-
+/* Отображение времени */
+#timerDisplay {
+    font-size: 11px;
+    font-weight: bold;
+    color: #2a2a40;
+}
 /* Контент с прокруткой */
 .content-scrollable {
     flex: 1;
