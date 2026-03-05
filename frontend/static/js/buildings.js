@@ -69,7 +69,7 @@ function canUpgrade(buildingId, currentLevel) {
            userData.stone >= cost.stone;
 }
 
-// Генерация HTML для карточки здания
+// Генерация HTML для карточки здания (КОМПАКТНАЯ ДЛЯ СЕТКИ 4x4)
 function generateBuildingCardHTML(id) {
     const config = window.BUILDINGS_CONFIG?.[id];
     if (!config) return '';
@@ -77,60 +77,55 @@ function generateBuildingCardHTML(id) {
     const level = getBuildingLevel(id);
     
     let statusClass = '';
-    let statusBadge = '';
-    let bonusText = '';
-    let incomeText = '';
+    let incomeHtml = '';
+    let bonusHtml = '';
     
-    // Бонус для жилого района
-    if (id === 'house' && level > 0 && config.population_bonus) {
-        const totalBonus = config.population_bonus.slice(0, level).reduce((a, b) => a + b, 0);
-        bonusText = `<div class="building-bonus">👥 +${totalBonus} лимит</div>`;
-    }
-    
-    // Статус здания
+    // Статус здания (только цвет, без текстового бейджа)
     if (level === 0) {
-        if (!isTownHallLevelEnough(id, 1)) {
-            statusClass = 'locked';
-            const reqLevel = config.requiredTownHall ? config.requiredTownHall[0] : 1;
-            statusBadge = `<span class="building-status locked">🔒 Требуется ратуша ${reqLevel}</span>`;
-        } else {
-            statusClass = 'unavailable';
-            statusBadge = '<span class="building-status">🚫 Не построено</span>';
-        }
+        statusClass = 'unavailable';
     } else {
         statusClass = 'available';
-        statusBadge = `<span class="building-status built">Ур. ${level}</span>`;
     }
     
-    // Текущий доход
+    // Доход (компактно)
     if (level > 0 && config.income) {
         const currentIncome = getBuildingIncome(id, level);
         let parts = [];
-        if (currentIncome.gold) parts.push(`<img src="/static/icons/gold.png" class="income-icon">+${currentIncome.gold}`);
-        if (currentIncome.wood) parts.push(`<img src="/static/icons/wood.png" class="income-icon">+${currentIncome.wood}`);
-        if (currentIncome.stone) parts.push(`<img src="/static/icons/stone.png" class="income-icon">+${currentIncome.stone}`);
+        if (currentIncome.gold) parts.push(`<img src="/static/icons/gold.png" class="income-icon">${currentIncome.gold}`);
+        if (currentIncome.wood) parts.push(`<img src="/static/icons/wood.png" class="income-icon">${currentIncome.wood}`);
+        if (currentIncome.stone) parts.push(`<img src="/static/icons/stone.png" class="income-icon">${currentIncome.stone}`);
         if (currentIncome.food) {
             if (currentIncome.food > 0) parts.push(`<img src="/static/icons/food.png" class="income-icon">+${currentIncome.food}`);
             else if (currentIncome.food < 0) parts.push(`<img src="/static/icons/food.png" class="income-icon">${currentIncome.food}`);
         }
+        if (currentIncome.iron) parts.push(`<img src="/static/icons/iron.png" class="income-icon">${currentIncome.iron}`);
+        if (currentIncome.coal) parts.push(`<img src="/static/icons/coal.png" class="income-icon">${currentIncome.coal}`);
+        if (currentIncome.leather) parts.push(`<img src="/static/icons/leather.png" class="income-icon">${currentIncome.leather}`);
+        if (currentIncome.horses) parts.push(`<img src="/static/icons/horses.png" class="income-icon">${currentIncome.horses}`);
         if (currentIncome.populationGrowth) parts.push(`👥+${currentIncome.populationGrowth}`);
         
         if (parts.length > 0) {
-            incomeText = `<div class="building-income">📊 ${parts.join(' ')}/ч</div>`;
+            incomeHtml = `<div class="building-income">${parts.slice(0, 2).join(' ')}</div>`;
         }
     }
     
-    // Кнопка улучшения
+    // Бонус для жилого района
+    if (id === 'house' && level > 0 && config.population_bonus) {
+        const totalBonus = config.population_bonus.slice(0, level).reduce((a, b) => a + b, 0);
+        bonusHtml = `<div class="building-bonus">👥+${totalBonus}</div>`;
+    }
+    
+    // Кнопка улучшения (маленькая)
     let upgradeBtn = '';
-    if (level > 0 && level < config.max_level && config.upgrade_costs) {
+    if (level > 0 && level < config.max_level) {
         upgradeBtn = `
-            <button class="building-upgrade-btn available" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
-                🔨 Улучшить до Ур.${level + 1}
+            <button class="upgrade-btn-small" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
+                🔨 Ур.${level + 1}
             </button>
         `;
     } else if (level === 0 && isTownHallLevelEnough(id, 1)) {
         upgradeBtn = `
-            <button class="building-upgrade-btn available" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
+            <button class="upgrade-btn-small" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
                 🔨 Построить
             </button>
         `;
@@ -139,24 +134,16 @@ function generateBuildingCardHTML(id) {
     return `
     <div class="building-card ${statusClass}" onclick="showUpgradeModal('${id}')">
         <div class="building-icon">${config.icon}</div>
-        <div class="building-info">
-            <div class="building-header">
-                <span class="building-name">${config.name}</span>
-            </div>
-            
-            ${level > 0 ? `<div class="building-level-badge">${level}</div>` : ''}
-            
-            <div class="construction-progress" id="progress-${id}" style="display: none;">
-                <div class="construction-bar" id="progress-bar-${id}"></div>
-                <div class="construction-text" id="progress-text-${id}"></div>
-            </div>
-            
-            ${bonusText}
-            ${incomeText}
-            ${upgradeBtn}
+        <div class="building-name">${config.name}</div>
+        ${level > 0 ? `<div class="building-level">${level}</div>` : '<div class="building-level">-</div>'}
+        ${bonusHtml}
+        ${incomeHtml}
+        ${upgradeBtn}
+        <div class="construction-progress" id="progress-${id}" style="display: none;">
+            <div class="construction-bar" id="progress-bar-${id}"></div>
         </div>
     </div>
-`;
+    `;
 }
 
 // Показать модальное окно улучшения
@@ -274,6 +261,10 @@ function showUpgradeModal(buildingId) {
         if (nextIncome.food > 0) incomeParts.push(`<img src="/static/icons/food.png" class="income-icon">+${nextIncome.food}`);
         else if (nextIncome.food < 0) incomeParts.push(`<img src="/static/icons/food.png" class="income-icon">${nextIncome.food}`);
     }
+    if (nextIncome.iron) incomeParts.push(`<img src="/static/icons/iron.png" class="income-icon">+${nextIncome.iron}`);
+    if (nextIncome.coal) incomeParts.push(`<img src="/static/icons/coal.png" class="income-icon">+${nextIncome.coal}`);
+    if (nextIncome.leather) incomeParts.push(`<img src="/static/icons/leather.png" class="income-icon">+${nextIncome.leather}`);
+    if (nextIncome.horses) incomeParts.push(`<img src="/static/icons/horses.png" class="income-icon">+${nextIncome.horses}`);
     if (nextIncome.populationGrowth) incomeParts.push(`👥+${nextIncome.populationGrowth}`);
     
     const incomeText = incomeParts.length > 0 ? incomeParts.join(' ') : 'нет дохода';
@@ -330,6 +321,18 @@ function showUpgradeModal(buildingId) {
                     <div class="cost-item ${userData.coal >= cost.coal ? 'enough' : 'not-enough'}">
                         <img src="/static/icons/coal.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.coal}</span>
+                    </div>
+                    ` : ''}
+                    ${cost.leather > 0 ? `
+                    <div class="cost-item ${userData.leather >= cost.leather ? 'enough' : 'not-enough'}">
+                        <img src="/static/icons/leather.png" class="cost-icon-img">
+                        <span class="cost-amount">${cost.leather}</span>
+                    </div>
+                    ` : ''}
+                    ${cost.horses > 0 ? `
+                    <div class="cost-item ${userData.horses >= cost.horses ? 'enough' : 'not-enough'}">
+                        <img src="/static/icons/horses.png" class="cost-icon-img">
+                        <span class="cost-amount">${cost.horses}</span>
                     </div>
                     ` : ''}
                 </div>
@@ -441,21 +444,51 @@ function updateTownHallDisplay() {
     }
 }
 
-// Обновление UI города
+// Обновление UI города с сеткой 4x4
 function updateCityUI() {
     updateResourcesDisplay();
     updateTownHallDisplay();
     
-    let socialHtml = generateBuildingCardHTML('house');
-    if (window.BUILDINGS_CONFIG?.['tavern']) socialHtml += generateBuildingCardHTML('tavern');
-    if (window.BUILDINGS_CONFIG?.['bath']) socialHtml += generateBuildingCardHTML('bath');
-    document.getElementById('socialBuildings').innerHTML = socialHtml;
+    // Производство (8 зданий)
+    let productionHtml = '';
+    productionHtml += generateBuildingCardHTML('farm');
+    productionHtml += generateBuildingCardHTML('lumber');
+    productionHtml += generateBuildingCardHTML('quarry');
+    productionHtml += generateBuildingCardHTML('hunting_lodge');
+    productionHtml += generateBuildingCardHTML('mines');
+    productionHtml += generateBuildingCardHTML('ranch');
+    productionHtml += generateBuildingCardHTML('fishing_wharf');
+    productionHtml += generateBuildingCardHTML('forge');
+    document.getElementById('productionBuildings').innerHTML = productionHtml;
     
+    // Военные (7 зданий)
+    let militaryHtml = '';
+    militaryHtml += generateBuildingCardHTML('armorer');
+    militaryHtml += generateBuildingCardHTML('weaponsmith');
+    militaryHtml += generateBuildingCardHTML('foal_farm');
+    militaryHtml += generateBuildingCardHTML('barracks');
+    militaryHtml += generateBuildingCardHTML('shooting_range');
+    militaryHtml += generateBuildingCardHTML('stables');
+    militaryHtml += generateBuildingCardHTML('military_academy');
+    document.getElementById('militaryBuildings').innerHTML = militaryHtml;
+    
+    // Экономические (4 здания)
     let economicHtml = '';
-    economicHtml += generateBuildingCardHTML('farm');
-    economicHtml += generateBuildingCardHTML('lumber');
-    economicHtml += generateBuildingCardHTML('quarry');
+    economicHtml += generateBuildingCardHTML('market');
+    economicHtml += generateBuildingCardHTML('pottery');
+    economicHtml += generateBuildingCardHTML('guilds');
+    economicHtml += generateBuildingCardHTML('weaving_workshop');
     document.getElementById('economicBuildings').innerHTML = economicHtml;
+    
+    // Социальные (6 зданий)
+    let socialHtml = '';
+    socialHtml += generateBuildingCardHTML('house');
+    socialHtml += generateBuildingCardHTML('tavern');
+    socialHtml += generateBuildingCardHTML('bath');
+    socialHtml += generateBuildingCardHTML('chapel');
+    socialHtml += generateBuildingCardHTML('almshouse');
+    socialHtml += generateBuildingCardHTML('infirmary');
+    document.getElementById('socialBuildings').innerHTML = socialHtml;
 }
 
 function toggleSection(section) {
