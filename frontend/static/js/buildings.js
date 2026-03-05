@@ -106,12 +106,12 @@ function generateBuildingCardHTML(id) {
     if (level > 0 && config.income) {
         const currentIncome = getBuildingIncome(id, level);
         let parts = [];
-        if (currentIncome.gold) parts.push(`🪙+${currentIncome.gold}`);
-        if (currentIncome.wood) parts.push(`🪵+${currentIncome.wood}`);
-        if (currentIncome.stone) parts.push(`⛰️+${currentIncome.stone}`);
+        if (currentIncome.gold) parts.push(`<img src="/static/icons/gold.png" class="income-icon">+${currentIncome.gold}`);
+        if (currentIncome.wood) parts.push(`<img src="/static/icons/wood.png" class="income-icon">+${currentIncome.wood}`);
+        if (currentIncome.stone) parts.push(`<img src="/static/icons/stone.png" class="income-icon">+${currentIncome.stone}`);
         if (currentIncome.food) {
-            if (currentIncome.food > 0) parts.push(`🌾+${currentIncome.food}`);
-            else if (currentIncome.food < 0) parts.push(`🌾${currentIncome.food}`);
+            if (currentIncome.food > 0) parts.push(`<img src="/static/icons/food.png" class="income-icon">+${currentIncome.food}`);
+            else if (currentIncome.food < 0) parts.push(`<img src="/static/icons/food.png" class="income-icon">${currentIncome.food}`);
         }
         if (currentIncome.populationGrowth) parts.push(`👥+${currentIncome.populationGrowth}`);
         
@@ -125,13 +125,13 @@ function generateBuildingCardHTML(id) {
     if (level > 0 && level < config.max_level && config.upgrade_costs) {
         upgradeBtn = `
             <button class="building-upgrade-btn available" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
-                Улучшить до Ур.${level + 1}
+                🔨 Улучшить до Ур.${level + 1}
             </button>
         `;
     } else if (level === 0 && isTownHallLevelEnough(id, 1)) {
         upgradeBtn = `
             <button class="building-upgrade-btn available" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
-                Построить
+                🔨 Построить
             </button>
         `;
     }
@@ -161,7 +161,7 @@ function generateBuildingCardHTML(id) {
 
 // Показать модальное окно улучшения
 function showUpgradeModal(buildingId) {
-    console.log('🏗️ Открытие модалки для:', buildingId);
+    console.log('🔨 Открытие модалки для:', buildingId);
     
     // Для ратуши
     if (buildingId === 'townhall') {
@@ -183,25 +183,25 @@ function showUpgradeModal(buildingId) {
             <div class="upgrade-content">
                 <div class="upgrade-income">
                     <div class="income-label">Прибыль на ${nextLevel} уровне:</div>
-                    <div class="income-value">🪙 +${nextIncome}/ч</div>
+                    <div class="income-value"><img src="/static/icons/gold.png" class="income-icon"> +${nextIncome}/ч</div>
                 </div>
                 
                 <div class="upgrade-cost">
                     <div class="cost-label">Стоимость улучшения:</div>
                     <div class="cost-resources">
                         <div class="cost-item ${userData.gold >= cost.gold ? 'enough' : 'not-enough'}">
-                            <span class="cost-icon">🪙</span>
+                            <img src="/static/icons/gold.png" class="cost-icon-img">
                             <span class="cost-amount">${cost.gold}</span>
                         </div>
                         ${cost.wood > 0 ? `
                         <div class="cost-item ${userData.wood >= cost.wood ? 'enough' : 'not-enough'}">
-                            <span class="cost-icon">🪵</span>
+                            <img src="/static/icons/wood.png" class="cost-icon-img">
                             <span class="cost-amount">${cost.wood}</span>
                         </div>
                         ` : ''}
                         ${cost.stone > 0 ? `
                         <div class="cost-item ${userData.stone >= cost.stone ? 'enough' : 'not-enough'}">
-                            <span class="cost-icon">⛰️</span>
+                            <img src="/static/icons/stone.png" class="cost-icon-img">
                             <span class="cost-amount">${cost.stone}</span>
                         </div>
                         ` : ''}
@@ -212,7 +212,7 @@ function showUpgradeModal(buildingId) {
                     <button class="btn-upgrade ${canUpgrade ? 'available' : 'unavailable'}" 
                             onclick="confirmUpgrade('townhall')"
                             ${!canUpgrade ? 'disabled' : ''}>
-                        Улучшить
+                        🔨 Улучшить
                     </button>
                     <button class="btn-cancel" onclick="closeUpgradeModal()">
                         Отмена
@@ -238,11 +238,6 @@ function showUpgradeModal(buildingId) {
     const nextIncome = config.income?.[level] || {};
     const cost = level === 0 ? config.base_cost : (config.upgrade_costs?.[level - 1] || { gold: 0, wood: 0, stone: 0 });
 
-    // ОТЛАДКА: проверим требования к ратуше
-    console.log('🪵 Здание:', buildingId, 'Текущий уровень:', level);
-    console.log('📊 requiredTownHall массив:', config.requiredTownHall);
-    console.log('🎯 Требование для уровня', level + 1, ':', config.requiredTownHall?.[level]);
-    
     // Проверка требования к ратуше
     const requiredTownHall = config.requiredTownHall?.[level] || 1;
     const townHallEnough = userData.townHallLevel >= requiredTownHall;
@@ -270,14 +265,14 @@ function showUpgradeModal(buildingId) {
                       userData.stone >= (cost.stone || 0) &&
                       townHallEnough;
     
-    // Формируем строку с доходом
+    // Формируем строку с доходом (с иконками)
     let incomeParts = [];
-    if (nextIncome.gold) incomeParts.push(`🪙+${nextIncome.gold}`);
-    if (nextIncome.wood) incomeParts.push(`🪵+${nextIncome.wood}`);
-    if (nextIncome.stone) incomeParts.push(`⛰️+${nextIncome.stone}`);
+    if (nextIncome.gold) incomeParts.push(`<img src="/static/icons/gold.png" class="income-icon">+${nextIncome.gold}`);
+    if (nextIncome.wood) incomeParts.push(`<img src="/static/icons/wood.png" class="income-icon">+${nextIncome.wood}`);
+    if (nextIncome.stone) incomeParts.push(`<img src="/static/icons/stone.png" class="income-icon">+${nextIncome.stone}`);
     if (nextIncome.food) {
-        if (nextIncome.food > 0) incomeParts.push(`🌾+${nextIncome.food}`);
-        else if (nextIncome.food < 0) incomeParts.push(`🌾${nextIncome.food}`);
+        if (nextIncome.food > 0) incomeParts.push(`<img src="/static/icons/food.png" class="income-icon">+${nextIncome.food}`);
+        else if (nextIncome.food < 0) incomeParts.push(`<img src="/static/icons/food.png" class="income-icon">${nextIncome.food}`);
     }
     if (nextIncome.populationGrowth) incomeParts.push(`👥+${nextIncome.populationGrowth}`);
     
@@ -295,7 +290,7 @@ function showUpgradeModal(buildingId) {
     const modal = document.getElementById('upgradeModal');
     modal.innerHTML = `
         <div class="upgrade-header">
-            <div class="upgrade-title">${level === 0 ? '🏗️ Построить' : '⬆️ Улучшить'} ${config.name} до ${nextLevel} уровня</div>
+            <div class="upgrade-title">${level === 0 ? '🔨 Построить' : '🔨 Улучшить'} ${config.name} до ${nextLevel} уровня</div>
         </div>
         
         <div class="upgrade-content">
@@ -310,19 +305,31 @@ function showUpgradeModal(buildingId) {
                 <div class="cost-label">Стоимость:</div>
                 <div class="cost-resources">
                     <div class="cost-item ${userData.gold >= cost.gold ? 'enough' : 'not-enough'}">
-                        <span class="cost-icon">🪙</span>
+                        <img src="/static/icons/gold.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.gold}</span>
                     </div>
                     ${cost.wood > 0 ? `
                     <div class="cost-item ${userData.wood >= cost.wood ? 'enough' : 'not-enough'}">
-                        <span class="cost-icon">🪵</span>
+                        <img src="/static/icons/wood.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.wood}</span>
                     </div>
                     ` : ''}
                     ${cost.stone > 0 ? `
                     <div class="cost-item ${userData.stone >= cost.stone ? 'enough' : 'not-enough'}">
-                        <span class="cost-icon">⛰️</span>
+                        <img src="/static/icons/stone.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.stone}</span>
+                    </div>
+                    ` : ''}
+                    ${cost.iron > 0 ? `
+                    <div class="cost-item ${userData.iron >= cost.iron ? 'enough' : 'not-enough'}">
+                        <img src="/static/icons/iron.png" class="cost-icon-img">
+                        <span class="cost-amount">${cost.iron}</span>
+                    </div>
+                    ` : ''}
+                    ${cost.coal > 0 ? `
+                    <div class="cost-item ${userData.coal >= cost.coal ? 'enough' : 'not-enough'}">
+                        <img src="/static/icons/coal.png" class="cost-icon-img">
+                        <span class="cost-amount">${cost.coal}</span>
                     </div>
                     ` : ''}
                 </div>
@@ -332,7 +339,7 @@ function showUpgradeModal(buildingId) {
                 <button class="btn-upgrade ${canUpgrade ? 'available' : 'unavailable'}" 
                         onclick="confirmUpgrade('${buildingId}')"
                         ${!canUpgrade ? 'disabled' : ''}>
-                    ${level === 0 ? 'Построить' : 'Улучшить'}
+                    ${level === 0 ? '🔨 Построить' : '🔨 Улучшить'}
                 </button>
                 <button class="btn-cancel" onclick="closeUpgradeModal()">
                     Отмена
@@ -386,7 +393,7 @@ async function upgradeTownHallConfirm() {
 // Обновление отображения ратуши
 function updateTownHallDisplay() {
     const income = TOWN_HALL_INCOME[userData.townHallLevel] || 0;
-    document.getElementById('townHallIncome').textContent = `+${income} 🪙/ч`;
+    document.getElementById('townHallIncome').innerHTML = `+${income} <img src="/static/icons/gold.png" class="income-icon">/ч`;
     
     // Скрываем элемент с текстом "Уровень X/5"
     const levelElement = document.getElementById('townHallLevel');
