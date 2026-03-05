@@ -121,64 +121,64 @@ def game_action(telegram_user):
             state.update(additional_state)
         return jsonify({'success': True, 'state': state})
 
-# ===== СБОР РЕСУРСОВ =====
-if action == 'collect':
-    now = int(time.time() * 1000)
-    time_passed = now - last_collection
-    hours_passed = time_passed / (60 * 60 * 1000)
+    # ===== СБОР РЕСУРСОВ =====
+    if action == 'collect':
+        now = int(time.time() * 1000)
+        time_passed = now - last_collection
+        hours_passed = time_passed / (60 * 60 * 1000)
 
-    if hours_passed >= 1:
-        full_hours = int(hours_passed)
-        total_gold = total_wood = total_food = total_stone = 0
-        total_iron = total_coal = total_leather = total_horses = 0
-        current_pop = population_current
-        current_food = food
+        if hours_passed >= 1:
+            full_hours = int(hours_passed)
+            total_gold = total_wood = total_food = total_stone = 0
+            total_iron = total_coal = total_leather = total_horses = 0
+            current_pop = population_current
+            current_food = food
 
-        for _ in range(full_hours):
-            inc, growth = calculate_hourly_income_and_growth(
-                buildings, town_hall_level, current_pop, population_max, current_food
-            )
-            
-            total_gold += inc.get('gold', 0)
-            total_wood += inc.get('wood', 0)
-            total_food += inc.get('food', 0)
-            total_stone += inc.get('stone', 0)
-            total_iron += inc.get('iron', 0)
-            total_coal += inc.get('coal', 0)
-            total_leather += inc.get('leather', 0)
-            total_horses += inc.get('horses', 0)
-            
-            # Рост населения с учётом лимита
-            available_space = population_max - current_pop
-            actual_growth = min(growth, available_space)
-            current_pop += actual_growth
-            
-            current_food += inc.get('food', 0)
+            for _ in range(full_hours):
+                inc, growth = calculate_hourly_income_and_growth(
+                    buildings, town_hall_level, current_pop, population_max, current_food
+                )
+                
+                total_gold += inc.get('gold', 0)
+                total_wood += inc.get('wood', 0)
+                total_food += inc.get('food', 0)
+                total_stone += inc.get('stone', 0)
+                total_iron += inc.get('iron', 0)
+                total_coal += inc.get('coal', 0)
+                total_leather += inc.get('leather', 0)
+                total_horses += inc.get('horses', 0)
+                
+                # Рост населения с учётом лимита
+                available_space = population_max - current_pop
+                actual_growth = min(growth, available_space)
+                current_pop += actual_growth
+                
+                current_food += inc.get('food', 0)
 
-        gold += total_gold
-        wood += total_wood
-        food += total_food
-        stone += total_stone
-        iron += total_iron
-        coal += total_coal
-        leather += total_leather
-        horses += total_horses
-        population_current = current_pop
-        last_collection = now
+            gold += total_gold
+            wood += total_wood
+            food += total_food
+            stone += total_stone
+            iron += total_iron
+            coal += total_coal
+            leather += total_leather
+            horses += total_horses
+            population_current = current_pop
+            last_collection = now
 
-        Player.update(player_id,
-                      gold=gold, wood=wood, food=food, stone=stone,
-                      iron=iron, coal=coal, leather=leather, horses=horses,
-                      population_current=population_current,
-                      last_collection=last_collection,
-                      last_calculated=now)
+            Player.update(player_id,
+                          gold=gold, wood=wood, food=food, stone=stone,
+                          iron=iron, coal=coal, leather=leather, horses=horses,
+                          population_current=population_current,
+                          last_collection=last_collection,
+                          last_calculated=now)
 
-        print(f"✅ СБОР: +{total_gold}🪙 +{total_wood}🪵 +{total_stone}⛰️ +{total_food}🌾 +{total_iron}⚙️ +{total_coal}🔥 +{total_leather}🦌 +{total_horses}🐎 за {full_hours}ч")
-    else:
-        print(f"⏳ Сбор слишком рано, прошло {hours_passed:.2f}ч")
+            print(f"✅ СБОР: +{total_gold}🪙 +{total_wood}🪵 +{total_stone}⛰️ +{total_food}🌾 +{total_iron}⚙️ +{total_coal}🔥 +{total_leather}🦌 +{total_horses}🐎 за {full_hours}ч")
+        else:
+            print(f"⏳ Сбор слишком рано, прошло {hours_passed:.2f}ч")
 
-    return build_response()
-    
+        return build_response()
+
     # ===== ПОСТРОЙКА =====
     if action == 'build':
         building_id = action_data.get('building_id')
