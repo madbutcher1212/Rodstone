@@ -79,12 +79,20 @@ function generateBuildingCardHTML(id) {
     let statusClass = '';
     let incomeHtml = '';
     let bonusHtml = '';
+    let levelHtml = '';
     
     // Статус здания (только цвет, без текстового бейджа)
     if (level === 0) {
         statusClass = 'unavailable';
     } else {
         statusClass = 'available';
+    }
+    
+    // Отображение уровня
+    if (level > 0) {
+        levelHtml = `<div class="building-level">${level}</div>`;
+    } else {
+        levelHtml = `<div class="building-level">-</div>`;
     }
     
     // Доход (компактно)
@@ -135,7 +143,7 @@ function generateBuildingCardHTML(id) {
     <div class="building-card ${statusClass}" onclick="showUpgradeModal('${id}')">
         <div class="building-icon">${config.icon}</div>
         <div class="building-name">${config.name}</div>
-        ${level > 0 ? `<div class="building-level">${level}</div>` : '<div class="building-level">-</div>'}
+        ${levelHtml}
         ${bonusHtml}
         ${incomeHtml}
         ${upgradeBtn}
@@ -444,12 +452,12 @@ function updateTownHallDisplay() {
     }
 }
 
-// Обновление UI города с сеткой 4x4
+// Обновление UI города с сеткой 4x4 и правильным порядком
 function updateCityUI() {
     updateResourcesDisplay();
     updateTownHallDisplay();
     
-    // Производство (8 зданий)
+    // 1. ПРОИЗВОДСТВО (8 зданий)
     let productionHtml = '';
     productionHtml += generateBuildingCardHTML('farm');
     productionHtml += generateBuildingCardHTML('lumber');
@@ -458,9 +466,10 @@ function updateCityUI() {
     productionHtml += generateBuildingCardHTML('mines');
     productionHtml += generateBuildingCardHTML('ranch');
     productionHtml += generateBuildingCardHTML('fishing_wharf');
-    productionHtml += generateBuildingCardHTML('forge');
+    productionHtml += generateBuildingCardHTML('charcoal_kiln');
     document.getElementById('productionBuildings').innerHTML = productionHtml;
-        // Социальные (6 зданий)
+    
+    // 2. СОЦИАЛЬНЫЕ (6 зданий)
     let socialHtml = '';
     socialHtml += generateBuildingCardHTML('house');
     socialHtml += generateBuildingCardHTML('tavern');
@@ -469,14 +478,16 @@ function updateCityUI() {
     socialHtml += generateBuildingCardHTML('almshouse');
     socialHtml += generateBuildingCardHTML('infirmary');
     document.getElementById('socialBuildings').innerHTML = socialHtml;
-      // Экономические (4 здания)
+    
+    // 3. ЭКОНОМИЧЕСКИЕ (4 здания)
     let economicHtml = '';
     economicHtml += generateBuildingCardHTML('market');
     economicHtml += generateBuildingCardHTML('pottery');
     economicHtml += generateBuildingCardHTML('guilds');
     economicHtml += generateBuildingCardHTML('weaving_workshop');
     document.getElementById('economicBuildings').innerHTML = economicHtml;
-        // Военные (7 зданий)
+    
+    // 4. ВОЕННЫЕ (7 зданий)
     let militaryHtml = '';
     militaryHtml += generateBuildingCardHTML('armorer');
     militaryHtml += generateBuildingCardHTML('weaponsmith');
@@ -486,8 +497,6 @@ function updateCityUI() {
     militaryHtml += generateBuildingCardHTML('stables');
     militaryHtml += generateBuildingCardHTML('military_academy');
     document.getElementById('militaryBuildings').innerHTML = militaryHtml;
-    
-
 }
 
 function toggleSection(section) {
