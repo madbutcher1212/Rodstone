@@ -169,34 +169,41 @@
                         <button class="building-upgrade-btn" id="townHallUpgradeBtn" onclick="showUpgradeModal('townhall')">Улучшить</button>
                     </div>
                     
-                    <!-- Социальные постройки -->
-                    <div class="buildings-section collapsed" id="socialSection">
-                        <div class="section-header" onclick="toggleSection('social')">
-                            <span class="section-arrow">▶</span>
-                            <span class="section-title">🏘️ Социальные постройки</span>
-                        </div>
-                        <div class="buildings-grid" id="socialBuildings"></div>
-                    </div>
-                    
-                    <!-- Экономические постройки -->
-                    <div class="buildings-section collapsed" id="economicSection">
-                        <div class="section-header" onclick="toggleSection('economic')">
-                            <span class="section-arrow">▶</span>
-                            <span class="section-title">⚒️ Экономические постройки</span>
-                        </div>
-                        <div class="buildings-grid" id="economicBuildings"></div>
-                    </div>
-                    
-                    <!-- Военные постройки -->
-                    <div class="buildings-section collapsed" id="militarySection">
-                        <div class="section-header" onclick="toggleSection('military')">
-                            <span class="section-arrow">▶</span>
-                            <span class="section-title">⚔️ Военные постройки</span>
-                        </div>
-                        <div class="buildings-grid" id="militaryBuildings">
-                            <div class="empty-message">Скоро будут доступны</div>
-                        </div>
-                    </div>
+            <div class="buildings-section" id="productionSection">
+        <div class="section-header" onclick="toggleSection('production')">
+            <span class="section-arrow">▶</span>
+            <span class="section-title">⚒️ Производство</span>
+        </div>
+        <div class="buildings-grid grid-4" id="productionBuildings"></div>
+    </div>
+    
+    <!-- Военные -->
+    <div class="buildings-section" id="militarySection">
+        <div class="section-header" onclick="toggleSection('military')">
+            <span class="section-arrow">▶</span>
+            <span class="section-title">⚔️ Военные</span>
+        </div>
+        <div class="buildings-grid grid-4" id="militaryBuildings"></div>
+    </div>
+    
+    <!-- Экономические -->
+    <div class="buildings-section" id="economicSection">
+        <div class="section-header" onclick="toggleSection('economic')">
+            <span class="section-arrow">▶</span>
+            <span class="section-title">💰 Экономические</span>
+        </div>
+        <div class="buildings-grid grid-4" id="economicBuildings"></div>
+    </div>
+    
+    <!-- Социальные -->
+    <div class="buildings-section" id="socialSection">
+        <div class="section-header" onclick="toggleSection('social')">
+            <span class="section-arrow">▶</span>
+            <span class="section-title">🏘️ Социальные</span>
+        </div>
+        <div class="buildings-grid grid-4" id="socialBuildings"></div>
+    </div>
+</div>
                 </div>
                 
                 <!-- Армия -->
