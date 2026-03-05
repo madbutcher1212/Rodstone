@@ -121,7 +121,7 @@ def game_action(telegram_user):
             state.update(additional_state)
         return jsonify({'success': True, 'state': state})
 
-    # ===== СБОР РЕСУРСОВ =====
+# ===== СБОР РЕСУРСОВ =====
 if action == 'collect':
     now = int(time.time() * 1000)
     time_passed = now - last_collection
@@ -178,6 +178,7 @@ if action == 'collect':
         print(f"⏳ Сбор слишком рано, прошло {hours_passed:.2f}ч")
 
     return build_response()
+    
     # ===== ПОСТРОЙКА =====
     if action == 'build':
         building_id = action_data.get('building_id')
