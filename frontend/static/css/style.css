@@ -1181,6 +1181,73 @@ input {
     transition: width 0.3s ease;
     box-shadow: 0 0 10px #ffd700;
 }
+/* Сетка для зданий */
+.buildings-grid.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    padding: 12px;
+}
+
+/* Компактная карточка здания */
+.building-card {
+    background: linear-gradient(135deg, #2a2a40, #1e1e2f);
+    border: 1px solid #ffd700;
+    border-radius: 12px;
+    padding: 8px 4px;
+    text-align: center;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.building-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(255,215,0,0.2);
+}
+
+.building-icon {
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.building-name {
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.building-level {
+    font-size: 10px;
+    color: #ffd700;
+    margin: 2px 0;
+}
+
+.building-income {
+    font-size: 9px;
+    color: #4CAF50;
+    margin: 2px 0;
+}
+
+.upgrade-btn-small {
+    background: #4CAF50;
+    border: none;
+    border-radius: 12px;
+    padding: 2px 6px;
+    font-size: 8px;
+    color: white;
+    cursor: pointer;
+    margin-top: 4px;
+    width: 100%;
+}
+
+.upgrade-btn-small:hover {
+    background: #45a049;
+}
 
 /* Когда игра загружена - скрываем загрузочный экран */
 .game-loaded .loading-screen {
