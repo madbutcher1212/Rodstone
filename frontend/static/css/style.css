@@ -1301,5 +1301,27 @@ input {
         width: 16px;
         height: 16px;
     }
+    .building-level {
+    color: #ffd700;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 2px 0;
+}
+
+.building-income {
+    color: #4CAF50;
+    font-size: 11px;
+    margin: 2px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+}
+
+.income-icon {
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+}
 }
 
