@@ -1185,3 +1185,37 @@ input {
 .game-loaded .loading-screen {
     display: none;
 }
+/* Стили для иконок ресурсов */
+.resource-icon-img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    vertical-align: middle;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* Для маленьких иконок в баре города */
+.city-resource-item .resource-icon-img {
+    width: 18px;
+    height: 18px;
+    margin-bottom: 2px;
+}
+
+/* Для иконок рабочих */
+.worker-icon {
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+}
+
+/* Адаптация под маленькие экраны */
+@media (max-width: 380px) {
+    .resource-icon-img {
+        width: 18px;
+        height: 18px;
+    }
+    .city-resource-item .resource-icon-img {
+        width: 16px;
+        height: 16px;
+    }
+}
