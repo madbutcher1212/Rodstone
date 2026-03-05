@@ -460,8 +460,23 @@ function updateCityUI() {
     productionHtml += generateBuildingCardHTML('fishing_wharf');
     productionHtml += generateBuildingCardHTML('forge');
     document.getElementById('productionBuildings').innerHTML = productionHtml;
-    
-    // Военные (7 зданий)
+        // Социальные (6 зданий)
+    let socialHtml = '';
+    socialHtml += generateBuildingCardHTML('house');
+    socialHtml += generateBuildingCardHTML('tavern');
+    socialHtml += generateBuildingCardHTML('bath');
+    socialHtml += generateBuildingCardHTML('chapel');
+    socialHtml += generateBuildingCardHTML('almshouse');
+    socialHtml += generateBuildingCardHTML('infirmary');
+    document.getElementById('socialBuildings').innerHTML = socialHtml;
+      // Экономические (4 здания)
+    let economicHtml = '';
+    economicHtml += generateBuildingCardHTML('market');
+    economicHtml += generateBuildingCardHTML('pottery');
+    economicHtml += generateBuildingCardHTML('guilds');
+    economicHtml += generateBuildingCardHTML('weaving_workshop');
+    document.getElementById('economicBuildings').innerHTML = economicHtml;
+        // Военные (7 зданий)
     let militaryHtml = '';
     militaryHtml += generateBuildingCardHTML('armorer');
     militaryHtml += generateBuildingCardHTML('weaponsmith');
@@ -472,23 +487,7 @@ function updateCityUI() {
     militaryHtml += generateBuildingCardHTML('military_academy');
     document.getElementById('militaryBuildings').innerHTML = militaryHtml;
     
-    // Экономические (4 здания)
-    let economicHtml = '';
-    economicHtml += generateBuildingCardHTML('market');
-    economicHtml += generateBuildingCardHTML('pottery');
-    economicHtml += generateBuildingCardHTML('guilds');
-    economicHtml += generateBuildingCardHTML('weaving_workshop');
-    document.getElementById('economicBuildings').innerHTML = economicHtml;
-    
-    // Социальные (6 зданий)
-    let socialHtml = '';
-    socialHtml += generateBuildingCardHTML('house');
-    socialHtml += generateBuildingCardHTML('tavern');
-    socialHtml += generateBuildingCardHTML('bath');
-    socialHtml += generateBuildingCardHTML('chapel');
-    socialHtml += generateBuildingCardHTML('almshouse');
-    socialHtml += generateBuildingCardHTML('infirmary');
-    document.getElementById('socialBuildings').innerHTML = socialHtml;
+
 }
 
 function toggleSection(section) {
