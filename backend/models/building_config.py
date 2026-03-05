@@ -219,27 +219,27 @@ BUILDINGS_CONFIG = {
         "requiredTownHall": [2, 3, 4, 5, 5]
     },
     "charcoal_kiln": {
-     "name": "Жаровня",
-     "icon": "🔥",
-     "section": "production",
-     "max_level": 5,
-     "workers_needed": [1, 2, 2, 3, 3],
-     "base_cost": {"gold": 60, "wood": 80, "stone": 20},
-     "upgrade_costs": [
-        {"gold": 120, "wood": 150, "stone": 40},
-        {"gold": 500, "wood": 400, "stone": 120},
-        {"gold": 1500, "wood": 1000, "stone": 350},
-        {"gold": 5000, "wood": 3500, "stone": 1200}
-    ],
-    "income": [
-        {"coal": 5},
-        {"coal": 12},
-        {"coal": 25},
-        {"coal": 55},
-        {"coal": 120}
-    ],
-    "requiredTownHall": [2, 3, 4, 5, 5]
-}
+        "name": "Жаровня",
+        "icon": "🔥",
+        "section": "production",
+        "max_level": 5,
+        "workers_needed": [1, 2, 2, 3, 3],
+        "base_cost": {"gold": 60, "wood": 80, "stone": 20},
+        "upgrade_costs": [
+            {"gold": 120, "wood": 150, "stone": 40},
+            {"gold": 500, "wood": 400, "stone": 120},
+            {"gold": 1500, "wood": 1000, "stone": 350},
+            {"gold": 5000, "wood": 3500, "stone": 1200}
+        ],
+        "income": [
+            {"coal": 5},
+            {"coal": 12},
+            {"coal": 25},
+            {"coal": 55},
+            {"coal": 120}
+        ],
+        "requiredTownHall": [2, 3, 4, 5, 5]
+    },
 
     # ===== ВОЕННЫЕ =====
     "armorer": {
