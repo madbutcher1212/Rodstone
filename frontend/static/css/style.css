@@ -1185,6 +1185,14 @@ input {
 .game-loaded .loading-screen {
     display: none;
 }
+/* Иконки в модальном окне улучшения */
+.cost-icon-img {
+    width: 10px;  
+    height: 10px; 
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 2px;
+}
 /* Иконки в строке дохода */
 .income-icon {
     width: 16px;
