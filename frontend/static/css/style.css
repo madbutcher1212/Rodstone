@@ -45,17 +45,16 @@ body {
     z-index: 2;
 }
 
-/* Верхний бар с твоей подложкой */
+/* Верхний бар - рабочая версия */
 .top-bar-fixed {
     position: sticky;
     top: 0;
-    background-image: url('/static/images/top-panel-bg.jpg');
-    background-size: 100% 100%;
-    background-position: top center;
-    background-repeat: no-repeat;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
     padding: 12px 16px 8px;
+    border-bottom: none;
     z-index: 100;
-    width: 100%;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
 }
 
 .top-bar {
@@ -64,15 +63,20 @@ body {
     gap: 8px;
 }
 
-/* Аватар - прозрачный, рамка из подложки */
 .avatar {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
     overflow: hidden;
     flex-shrink: 0;
-    background: transparent;
-    border: none;
+    border: 1px solid rgba(255,215,0,0.3);
 }
 
 .avatar-img {
@@ -97,8 +101,7 @@ body {
 .user-name {
     font-size: 16px;
     font-weight: bold;
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    color: #333;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -108,29 +111,26 @@ body {
 
 .user-login {
     font-size: 12px;
-    color: rgba(255,255,255,0.8);
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    color: #666;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
 }
 
-/* Блок ресурсов - прозрачный */
+/* Resources bar - рабочая версия */
 .resources-bar {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    background: transparent;
-    padding: 4px 8px;
-    border-radius: 16px;
+    gap: 4px;
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    padding: 8px 12px;
+    border-radius: 20px;
     font-size: 12px;
     font-weight: bold;
     flex-shrink: 0;
-    min-width: 140px;
+    min-width: 160px;
     border: none;
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
 
 /* Верхний ряд - монеты и родстоун */
@@ -162,16 +162,16 @@ body {
     display: flex;
     align-items: center;
     gap: 2px;
-    color: #fff;
+    color: #333;
     font-weight: bold;
 }
 
 .resource-income {
     font-size: 8px;
-    color: #ffd700;
+    color: #4CAF50;
     white-space: nowrap;
     margin-left: 2px;
-    background: rgba(0,0,0,0.3);
+    background: rgba(255,255,255,0.5);
     padding: 1px 3px;
     border-radius: 10px;
 }
@@ -180,7 +180,7 @@ body {
     font-size: 8px;
     color: #ff4444;
     white-space: nowrap;
-    background: rgba(0,0,0,0.3);
+    background: rgba(255,255,255,0.5);
     padding: 1px 3px;
     border-radius: 10px;
 }
@@ -207,11 +207,11 @@ body {
     padding: 2px 6px;
     border-radius: 12px;
     transition: all 0.2s;
-    background: rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.1);
 }
 
 .population-free:hover, .population-workers:hover {
-    background: rgba(0,0,0,0.4);
+    background: rgba(0,0,0,0.2);
     transform: scale(1.05);
 }
 
@@ -227,44 +227,39 @@ body {
     width: 12px;
     height: 12px;
     vertical-align: middle;
-    filter: brightness(0) invert(1);
 }
 
-/* Таймер - прозрачный */
+/* Таймер - рабочая версия */
 .income-timer {
-    background: transparent;
-    border-radius: 16px;
-    padding: 4px 10px;
-    margin-top: 6px;
+    background: linear-gradient(135deg, #f0f0f0, #e0e0e0);
+    border-radius: 30px;
+    padding: 10px 16px;
+    margin-top: 10px;
     text-align: center;
-    font-size: 10px;
-    color: #fff;
+    font-size: 13px;
+    color: #333;
     font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-    border: none;
-    box-shadow: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .timer-progress {
     width: 100%;
-    height: 3px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 2px;
-    margin-top: 3px;
+    height: 6px;
+    background: rgba(0,0,0,0.1);
+    border-radius: 3px;
+    margin-top: 8px;
     overflow: hidden;
 }
 
 .timer-progress-bar {
     height: 100%;
-    background: linear-gradient(90deg, #ffd700, #ffaa00);
+    background: linear-gradient(90deg, #4CAF50, #8BC34A);
     width: 0%;
     transition: width 1s linear;
-    border-radius: 2px;
+    border-radius: 3px;
 }
 
 #timerDisplay {
-    color: #fff;
-    font-size: 11px;
     font-weight: bold;
 }
 
@@ -275,18 +270,17 @@ body {
     padding: 0 16px 16px;
 }
 
-/* ===== БАР РЕСУРСОВ ГОРОДА ===== */
+/* ===== БАР РЕСУРСОВ ГОРОДА (рабочая версия) ===== */
 .city-resources-container {
     position: sticky;
     top: 0;
     z-index: 50;
     background: linear-gradient(135deg, #2a2a40 0%, #1e1e2f 100%);
-    padding: 8px 6px;
-    margin-bottom: 10px;
-    border-radius: 0 0 16px 16px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    padding: 6px 4px;
+    margin-bottom: 8px;
+    border-radius: 0 0 12px 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     border-bottom: 2px solid #ffd700;
-    width: 100%;
 }
 
 /* Ряд со всеми ресурсами - одна строка */
@@ -306,8 +300,8 @@ body {
     align-items: center;
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(3px);
-    border-radius: 10px;
-    padding: 5px 1px;
+    border-radius: 8px;
+    padding: 4px 2px;
     min-width: 44px;
     cursor: pointer;
     border: 1px solid rgba(255, 215, 0, 0.2);
@@ -348,21 +342,9 @@ body {
     color: #4CAF50;
     background: rgba(0,0,0,0.3);
     padding: 1px 2px;
-    border-radius: 5px;
+    border-radius: 4px;
     margin-top: 1px;
     border: 1px solid rgba(76, 175, 80, 0.2);
-    line-height: 1.2;
-}
-
-.city-resource-item .resource-income-negative {
-    font-size: 6px;
-    font-weight: bold;
-    color: #ff4444;
-    background: rgba(0,0,0,0.3);
-    padding: 1px 2px;
-    border-radius: 5px;
-    margin-top: 1px;
-    border: 1px solid rgba(255, 68, 68, 0.2);
     line-height: 1.2;
 }
 
@@ -408,6 +390,9 @@ body {
     color: #4CAF50;
     font-weight: bold;
     margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .town-hall-level-badge {
@@ -438,15 +423,13 @@ body {
     transition: background 0.2s;
 }
 
-/* Секции построек */
+/* Секции построек - рабочая версия */
 .buildings-section {
-    background: rgba(248, 248, 248, 0.9);
-    backdrop-filter: blur(5px);
+    background: #f8f8f8;
     border-radius: 16px;
     margin-bottom: 15px;
     overflow: hidden;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    border: 1px solid rgba(255, 215, 0, 0.2);
 }
 
 .buildings-section.collapsed .buildings-grid {
@@ -454,7 +437,7 @@ body {
 }
 
 .section-header {
-    padding: 12px 15px;
+    padding: 15px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -486,22 +469,18 @@ body {
 
 /* Сетка для зданий 4x4 */
 .buildings-grid {
-    padding: 12px;
-    display: none;
-}
-
-.buildings-section:not(.collapsed) .buildings-grid {
+    padding: 15px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
 }
 
-/* Компактная карточка здания */
+/* Карточка здания - фиксированная ширина */
 .building-card {
     background: linear-gradient(135deg, #2a2a40, #1e1e2f);
     border: 1px solid #ffd700;
     border-radius: 12px;
-    padding: 8px 4px;
+    padding: 8px 2px;
     text-align: center;
     color: white;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
@@ -510,6 +489,7 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 120px;
+    width: 100%;
 }
 
 .building-card:hover {
@@ -532,8 +512,8 @@ body {
 }
 
 .building-icon {
-    font-size: 28px;
-    margin-bottom: 2px;
+    font-size: 24px;
+    margin-bottom: 4px;
 }
 
 .building-name {
@@ -544,6 +524,7 @@ body {
     text-overflow: ellipsis;
     margin-bottom: 4px;
     color: white;
+    width: 100%;
 }
 
 .building-level {
@@ -554,7 +535,7 @@ body {
 }
 
 .building-income {
-    font-size: 11px;
+    font-size: 10px;
     color: #4CAF50;
     margin: 2px 0;
     display: flex;
@@ -565,17 +546,17 @@ body {
 }
 
 .building-bonus {
-    font-size: 11px;
+    font-size: 10px;
     color: #ff9800;
     margin: 2px 0;
 }
 
-/* Кнопка улучшения маленькая */
+/* Кнопка улучшения */
 .upgrade-btn-small {
     background: #4CAF50;
     border: none;
     border-radius: 12px;
-    padding: 4px 6px;
+    padding: 4px 0;
     font-size: 9px;
     color: white;
     cursor: pointer;
@@ -587,28 +568,6 @@ body {
 
 .upgrade-btn-small:hover {
     background: #45a049;
-    transform: scale(1.02);
-}
-
-.upgrade-btn-small.unavailable {
-    background: #ccc;
-    cursor: not-allowed;
-}
-
-/* Иконки в карточках */
-.income-icon {
-    width: 14px;
-    height: 14px;
-    vertical-align: middle;
-}
-
-/* Иконки в модальном окне */
-.cost-icon-img {
-    width: 14px;
-    height: 14px;
-    object-fit: contain;
-    vertical-align: middle;
-    margin-right: 2px;
 }
 
 /* Шкала строительства */
@@ -648,7 +607,30 @@ body {
     padding: 0 4px;
 }
 
-/* Модальное окно улучшения */
+/* Иконки */
+.income-icon {
+    width: 14px;
+    height: 14px;
+    vertical-align: middle;
+}
+
+.cost-icon-img {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 2px;
+}
+
+.resource-icon-img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    vertical-align: middle;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+/* Модальное окно (сохраняем) */
 .overlay {
     position: fixed;
     top: 0;
@@ -783,7 +765,6 @@ body {
 
 .btn-upgrade.available:hover {
     background: #45a049;
-    transform: scale(1.02);
 }
 
 .btn-upgrade.unavailable {
@@ -842,15 +823,13 @@ body {
 .tabs {
     display: flex;
     justify-content: space-around;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: #f8f8f8;
     border-radius: 30px;
     padding: 4px;
     margin: 16px;
     position: sticky;
     bottom: 0;
     z-index: 99;
-    border: 1px solid #ffd700;
 }
 
 .tab {
@@ -865,7 +844,7 @@ body {
 }
 
 .tab.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: #667eea;
     color: white;
 }
 
@@ -873,236 +852,6 @@ body {
     font-size: 16px;
     display: block;
     margin-bottom: 2px;
-}
-
-/* Пустые вкладки */
-.empty-tab {
-    text-align: center;
-    padding: 40px 20px;
-    color: #999;
-    font-size: 14px;
-    background: rgba(255,255,255,0.9);
-    border-radius: 12px;
-}
-
-/* Кланы */
-.clan-section {
-    background: rgba(255,255,255,0.9);
-    border-radius: 12px;
-    padding: 15px;
-}
-
-/* Настройки */
-.settings-section {
-    background: rgba(255,255,255,0.9);
-    border-radius: 12px;
-    padding: 15px;
-}
-
-.settings-section h3 {
-    margin-bottom: 15px;
-    color: #333;
-}
-
-.settings-block {
-    background: white;
-    border-radius: 12px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.settings-block h4 {
-    margin-bottom: 10px;
-    color: #666;
-}
-
-.avatar-block {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.settings-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    border: 3px solid #667eea;
-    object-fit: cover;
-}
-
-.name-change {
-    display: flex;
-    gap: 10px;
-}
-
-.name-change input {
-    flex: 1;
-}
-
-.user-id-block {
-    text-align: center;
-    padding: 10px;
-    color: #666;
-    font-size: 13px;
-    background: rgba(0,0,0,0.02);
-    border-radius: 20px;
-}
-
-.user-id-label {
-    color: #999;
-    margin-right: 5px;
-}
-
-.user-id-value {
-    font-weight: bold;
-    color: #333;
-}
-
-/* Аватар модалка */
-.avatar-modal {
-    max-width: 400px;
-}
-
-.avatar-preview {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    margin: 0 auto 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 36px;
-    overflow: hidden;
-    border: 3px solid #ffd700;
-}
-
-.avatar-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-    margin: 15px 0;
-}
-
-.avatar-option {
-    text-align: center;
-    padding: 10px;
-    border: 2px solid #ddd;
-    border-radius: 16px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.avatar-option.selected {
-    border-color: #4CAF50;
-    background: #e8f5e8;
-    transform: scale(1.02);
-}
-
-.avatar-option-img {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    margin-bottom: 5px;
-    object-fit: cover;
-}
-
-.avatar-option-name {
-    font-weight: bold;
-    font-size: 13px;
-    margin-bottom: 5px;
-}
-
-.avatar-option-price {
-    font-size: 12px;
-    color: #ff9800;
-    margin-bottom: 5px;
-}
-
-.avatar-actions {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.avatar-actions .btn {
-    flex: 1;
-}
-
-/* Кнопки */
-.btn {
-    background: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 30px;
-    padding: 12px 24px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-.btn:hover {
-    background: #45a049;
-    transform: scale(1.02);
-}
-
-.btn-secondary {
-    background: #999;
-}
-
-.btn-secondary:hover {
-    background: #777;
-}
-
-/* Поля ввода */
-input {
-    width: 100%;
-    padding: 12px;
-    margin: 5px 0;
-    border: 2px solid #ddd;
-    border-radius: 20px;
-    font-size: 14px;
-    transition: all 0.2s;
-}
-
-input:focus {
-    border-color: #667eea;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-/* Утилиты */
-.hidden {
-    display: none !important;
-}
-
-.toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0,0,0,0.9);
-    color: white;
-    padding: 12px 24px;
-    border-radius: 30px;
-    font-size: 14px;
-    display: none;
-    z-index: 3000;
-    backdrop-filter: blur(5px);
-    border: 1px solid #ffd700;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
-
-.empty-message {
-    text-align: center;
-    padding: 30px;
-    color: #999;
-    background: white;
-    border-radius: 24px;
 }
 
 /* Загрузочный экран */
@@ -1166,7 +915,88 @@ input:focus {
     box-shadow: 0 0 10px #ffd700;
 }
 
-/* Когда игра загружена */
 .game-loaded .loading-screen {
     display: none;
+}
+
+/* Остальные стили (настройки, кланы и т.д.) - без изменений */
+.settings-section {
+    background: #f8f8f8;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.settings-section h3 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.settings-block {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.settings-block h4 {
+    margin-bottom: 10px;
+    color: #666;
+}
+
+.avatar-block {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.settings-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid #667eea;
+    object-fit: cover;
+}
+
+.name-change {
+    display: flex;
+    gap: 10px;
+}
+
+.name-change input {
+    flex: 1;
+}
+
+.user-id-block {
+    text-align: center;
+    padding: 10px;
+    color: #666;
+    font-size: 13px;
+}
+
+.user-id-label {
+    color: #999;
+    margin-right: 5px;
+}
+
+.user-id-value {
+    font-weight: bold;
+    color: #333;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 14px;
+    display: none;
+    z-index: 3000;
+}
+
+.hidden {
+    display: none !important;
 }
