@@ -432,15 +432,16 @@ body {
     background: #45a049 !important;
 }
 
-/* Сетка для зданий */
+/* Контейнер для сетки - фиксированные колонки */
 .buildings-grid {
     padding: 12px;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 8px;
+    width: 100%;
 }
 
-/* Компактная карточка здания */
+/* Компактная карточка здания - фиксированная ширина */
 .building-card {
     background: linear-gradient(135deg, #2a2a40, #1e1e2f);
     border: 1px solid #ffd700;
@@ -455,6 +456,8 @@ body {
     flex-direction: column;
     min-height: 120px;
     width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .building-card:hover {
@@ -481,15 +484,22 @@ body {
     margin-bottom: 4px;
 }
 
+/* Название зданий */
 .building-name {
     font-size: 11px;
     font-weight: bold;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 4px;
     color: white;
+    margin-bottom: 4px;
     width: 100%;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+    line-height: 1.3;
+    max-height: 28px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 
 .building-level {
