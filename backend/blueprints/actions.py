@@ -64,6 +64,10 @@ def game_action(telegram_user):
     wood = player['wood']
     food = player['food']
     stone = player['stone']
+    iron = player.get('iron', 0)
+    coal = player.get('coal', 0)
+    leather = player.get('leather', 0)
+    horses = player.get('horses', 0)
     level = player['level']
     town_hall_level = player.get('town_hall_level', 1)
     population_current = player.get('population_current', 10)
