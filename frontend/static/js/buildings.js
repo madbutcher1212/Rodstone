@@ -140,19 +140,19 @@ function generateBuildingCardHTML(id) {
     }
     
     return `
-    <div class="building-card ${statusClass}" onclick="showUpgradeModal('${id}')">
-        <div class="building-icon">${config.icon}</div>
+<div class="building-card ${statusClass}" onclick="showUpgradeModal('${id}')">
+    <div class="building-icon">${config.icon}</div>
+    <div class="building-name-container">
         <div class="building-name">${config.name}</div>
-        ${levelHtml}
-        ${bonusHtml}
-        ${incomeHtml}
-        ${upgradeBtn}
-        <div class="construction-progress" id="progress-${id}" style="display: none;">
-            <div class="construction-bar" id="progress-bar-${id}"></div>
-        </div>
     </div>
-    `;
-}
+    <div class="building-level">${level > 0 ? level : '-'}</div>
+    <div class="building-income">${incomeHtml}</div>
+    ${upgradeBtn}
+    <div class="construction-progress" id="progress-${id}" style="display: none;">
+        <div class="construction-bar" id="progress-bar-${id}"></div>
+    </div>
+</div>
+`;
 
 // Показать модальное окно улучшения
 function showUpgradeModal(buildingId) {
