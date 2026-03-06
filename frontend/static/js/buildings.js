@@ -75,14 +75,26 @@ function generateBuildingCardHTML(id) {
     if (!config) return '';
     
     const level = getBuildingLevel(id);
+    const isLocked = (level === 0 && !isTownHallLevelEnough(id, 1));
     
     let statusClass = '';
     let incomeHtml = '';
     let bonusHtml = '';
     let levelHtml = '';
+    let lockHtml = '';
     
-    // Статус здания (только цвет, без текстового бейджа)
-    if (level === 0) {
+    // Статус здания
+    if (isLocked) {
+        statusClass = 'locked';
+        // Замок и текст требования
+        const reqLevel = config.requiredTownHall ? config.requiredTownHall[0] : 1;
+        lockHtml = `
+            <div class="building-lock">
+                <div class="lock-icon">🔒</div>
+                <div class="lock-text">Ратуша ${reqLevel} ур.</div>
+            </div>
+        `;
+    } else if (level === 0) {
         statusClass = 'unavailable';
     } else {
         statusClass = 'available';
@@ -91,12 +103,12 @@ function generateBuildingCardHTML(id) {
     // Отображение уровня
     if (level > 0) {
         levelHtml = `<div class="building-level">${level}</div>`;
-    } else {
+    } else if (!isLocked) {
         levelHtml = `<div class="building-level">-</div>`;
     }
     
-    // Доход (компактно)
-    if (level > 0 && config.income) {
+    // Доход (только если не заблокировано)
+    if (!isLocked && level > 0 && config.income) {
         const currentIncome = getBuildingIncome(id, level);
         let parts = [];
         if (currentIncome.gold) parts.push(`<img src="/static/icons/gold.png" class="income-icon">+${currentIncome.gold}`);
@@ -117,43 +129,50 @@ function generateBuildingCardHTML(id) {
         }
     }
     
-    // Бонус для жилого района
-    if (id === 'house' && level > 0 && config.population_bonus) {
+    // Бонус для жилого района (только если не заблокировано)
+    if (!isLocked && id === 'house' && level > 0 && config.population_bonus) {
         const totalBonus = config.population_bonus.slice(0, level).reduce((a, b) => a + b, 0);
         bonusHtml = `<div class="building-bonus">👥+${totalBonus}</div>`;
     }
     
-    // Кнопка улучшения (маленькая)
+    // Кнопка улучшения (только если не заблокировано)
     let upgradeBtn = '';
-    if (level > 0 && level < config.max_level) {
-        upgradeBtn = `
-            <button class="upgrade-btn-small" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
-                🔨 Ур.${level + 1}
-            </button>
-        `;
-    } else if (level === 0 && isTownHallLevelEnough(id, 1)) {
-        upgradeBtn = `
-            <button class="upgrade-btn-small" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
-                🔨 Построить
-            </button>
-        `;
+    if (!isLocked) {
+        if (level > 0 && level < config.max_level) {
+            upgradeBtn = `
+                <button class="upgrade-btn-small" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
+                    🔨 Ур.${level + 1}
+                </button>
+            `;
+        } else if (level === 0) {
+            upgradeBtn = `
+                <button class="upgrade-btn-small" onclick="event.stopPropagation(); showUpgradeModal('${id}')">
+                    🔨 Построить
+                </button>
+            `;
+        }
     }
     
+    // Для заблокированных зданий убираем onclick
+    const clickHandler = isLocked ? '' : `onclick="showUpgradeModal('${id}')"`;
+    
     return `
-<div class="building-card ${statusClass}" onclick="showUpgradeModal('${id}')">
+<div class="building-card ${statusClass}" ${clickHandler}>
     <div class="building-icon">${config.icon}</div>
     <div class="building-name-container">
         <div class="building-name">${config.name}</div>
     </div>
-    <div class="building-level">${level > 0 ? level : '-'}</div>
-    <div class="building-income">${incomeHtml}</div>
+    ${!isLocked ? levelHtml : ''}
+    ${bonusHtml}
+    ${!isLocked ? incomeHtml : ''}
+    ${lockHtml}
     ${upgradeBtn}
     <div class="construction-progress" id="progress-${id}" style="display: none;">
         <div class="construction-bar" id="progress-bar-${id}"></div>
     </div>
 </div>
 `;
-    }
+}
 
 // Показать модальное окно улучшения
 function showUpgradeModal(buildingId) {
