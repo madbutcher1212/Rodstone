@@ -153,6 +153,7 @@ function generateBuildingCardHTML(id) {
     </div>
 </div>
 `;
+    }
 
 // Показать модальное окно улучшения
 function showUpgradeModal(buildingId) {
