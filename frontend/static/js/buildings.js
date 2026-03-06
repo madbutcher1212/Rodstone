@@ -479,43 +479,43 @@ function updateCityUI() {
     
     // 1. ПРОИЗВОДСТВО (8 зданий)
     let productionHtml = '';
-    productionHtml += generateBuildingCardHTML('farm');
-    productionHtml += generateBuildingCardHTML('lumber');
-    productionHtml += generateBuildingCardHTML('quarry');
-    productionHtml += generateBuildingCardHTML('hunting_lodge');
-    productionHtml += generateBuildingCardHTML('mines');
-    productionHtml += generateBuildingCardHTML('ranch');
-    productionHtml += generateBuildingCardHTML('fishing_wharf');
-    productionHtml += generateBuildingCardHTML('charcoal_kiln');
+    productionHtml += generateBuildingCardHTML('hunting_lodge');    // Хижина охотника
+    productionHtml += generateBuildingCardHTML('lumber');           // Лагерь лесорубов
+    productionHtml += generateBuildingCardHTML('quarry');           // Каменоломня
+    productionHtml += generateBuildingCardHTML('fishing_wharf');    // Рыбацкая пристань
+    productionHtml += generateBuildingCardHTML('charcoal_kiln');    // Жаровня
+    productionHtml += generateBuildingCardHTML('farm');             // Ферма
+    productionHtml += generateBuildingCardHTML('mines');            // Шахты
+    productionHtml += generateBuildingCardHTML('ranch');            // Скотный двор
     document.getElementById('productionBuildings').innerHTML = productionHtml;
     
-    // 2. СОЦИАЛЬНЫЕ (6 зданий)
+    // 2. СОЦИАЛЬНЫЕ (6 зданий) - новый порядок
     let socialHtml = '';
-    socialHtml += generateBuildingCardHTML('house');
-    socialHtml += generateBuildingCardHTML('tavern');
-    socialHtml += generateBuildingCardHTML('bath');
-    socialHtml += generateBuildingCardHTML('chapel');
-    socialHtml += generateBuildingCardHTML('almshouse');
-    socialHtml += generateBuildingCardHTML('infirmary');
+    socialHtml += generateBuildingCardHTML('house');        // Жилой район
+    socialHtml += generateBuildingCardHTML('tavern');       // Корчма
+    socialHtml += generateBuildingCardHTML('chapel');       // Часовня
+    socialHtml += generateBuildingCardHTML('bath');         // Купели
+    socialHtml += generateBuildingCardHTML('infirmary');    // Лазарет
+    socialHtml += generateBuildingCardHTML('almshouse');    // Богадельня
     document.getElementById('socialBuildings').innerHTML = socialHtml;
     
-    // 3. ЭКОНОМИЧЕСКИЕ (4 здания)
+    // 3. ЭКОНОМИЧЕСКИЕ (4 здания) - новый порядок
     let economicHtml = '';
-    economicHtml += generateBuildingCardHTML('market');
-    economicHtml += generateBuildingCardHTML('pottery');
-    economicHtml += generateBuildingCardHTML('guilds');
-    economicHtml += generateBuildingCardHTML('weaving_workshop');
+    economicHtml += generateBuildingCardHTML('market');              // Рынок
+    economicHtml += generateBuildingCardHTML('pottery');             // Гончарная мастерская
+    economicHtml += generateBuildingCardHTML('weaving_workshop');    // Ткацкая мастерская
+    economicHtml += generateBuildingCardHTML('guilds');              // Гильдии
     document.getElementById('economicBuildings').innerHTML = economicHtml;
     
     // 4. ВОЕННЫЕ (7 зданий)
     let militaryHtml = '';
-    militaryHtml += generateBuildingCardHTML('armorer');
-    militaryHtml += generateBuildingCardHTML('weaponsmith');
-    militaryHtml += generateBuildingCardHTML('foal_farm');
-    militaryHtml += generateBuildingCardHTML('barracks');
-    militaryHtml += generateBuildingCardHTML('shooting_range');
-    militaryHtml += generateBuildingCardHTML('stables');
-    militaryHtml += generateBuildingCardHTML('military_academy');
+    militaryHtml += generateBuildingCardHTML('armorer');        // Бронник
+    militaryHtml += generateBuildingCardHTML('weaponsmith');    // Оружейник
+    militaryHtml += generateBuildingCardHTML('foal_farm');      // Жеребятник
+    militaryHtml += generateBuildingCardHTML('barracks');       // Казармы
+    militaryHtml += generateBuildingCardHTML('shooting_range'); // Стрельбище
+    militaryHtml += generateBuildingCardHTML('stables');        // Конюшни
+    militaryHtml += generateBuildingCardHTML('military_academy');// Военное училище 
     document.getElementById('militaryBuildings').innerHTML = militaryHtml;
 }
 
