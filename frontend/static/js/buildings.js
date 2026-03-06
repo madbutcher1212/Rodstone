@@ -99,17 +99,17 @@ function generateBuildingCardHTML(id) {
     if (level > 0 && config.income) {
         const currentIncome = getBuildingIncome(id, level);
         let parts = [];
-        if (currentIncome.gold) parts.push(`<img src="/static/icons/gold.png" class="income-icon">${currentIncome.gold}`);
-        if (currentIncome.wood) parts.push(`<img src="/static/icons/wood.png" class="income-icon">${currentIncome.wood}`);
-        if (currentIncome.stone) parts.push(`<img src="/static/icons/stone.png" class="income-icon">${currentIncome.stone}`);
+        if (currentIncome.gold) parts.push(`<img src="/static/icons/gold.png" class="income-icon">+${currentIncome.gold}`);
+        if (currentIncome.wood) parts.push(`<img src="/static/icons/wood.png" class="income-icon">+${currentIncome.wood}`);
+        if (currentIncome.stone) parts.push(`<img src="/static/icons/stone.png" class="income-icon">+${currentIncome.stone}`);
         if (currentIncome.food) {
             if (currentIncome.food > 0) parts.push(`<img src="/static/icons/food.png" class="income-icon">+${currentIncome.food}`);
             else if (currentIncome.food < 0) parts.push(`<img src="/static/icons/food.png" class="income-icon">${currentIncome.food}`);
         }
-        if (currentIncome.iron) parts.push(`<img src="/static/icons/iron.png" class="income-icon">${currentIncome.iron}`);
-        if (currentIncome.coal) parts.push(`<img src="/static/icons/coal.png" class="income-icon">${currentIncome.coal}`);
-        if (currentIncome.leather) parts.push(`<img src="/static/icons/leather.png" class="income-icon">${currentIncome.leather}`);
-        if (currentIncome.horses) parts.push(`<img src="/static/icons/horses.png" class="income-icon">${currentIncome.horses}`);
+        if (currentIncome.iron) parts.push(`<img src="/static/icons/iron.png" class="income-icon">+${currentIncome.iron}`);
+        if (currentIncome.coal) parts.push(`<img src="/static/icons/coal.png" class="income-icon">+${currentIncome.coal}`);
+        if (currentIncome.leather) parts.push(`<img src="/static/icons/leather.png" class="income-icon">+${currentIncome.leather}`);
+        if (currentIncome.horses) parts.push(`<img src="/static/icons/horses.png" class="income-icon">+${currentIncome.horses}`);
         if (currentIncome.populationGrowth) parts.push(`👥+${currentIncome.populationGrowth}`);
         
         if (parts.length > 0) {
