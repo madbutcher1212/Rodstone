@@ -211,10 +211,58 @@
 </div>
 
                 
-                <!-- Армия -->
-                <div id="tabArmy" class="tab-pane hidden">
-                    <div class="empty-tab">⚔️ Армия в разработке</div>
+            <!-- Армия -->
+<div id="tabArmy" class="tab-pane hidden">
+    <div class="army-section">
+        <h3>⚔️ Армия</h3>
+        
+        <!-- Информация о жителях -->
+        <div class="workers-info">
+            <div class="worker-stat">
+                <img src="/static/icons/resources/worker-free.png" class="worker-icon">
+                <span>Свободно: <span id="armyFreeWorkers">0</span></span>
+            </div>
+            <div class="worker-stat">
+                <img src="/static/icons/resources/worker-busy.png" class="worker-icon">
+                <span>Занято: <span id="armyBusyWorkers">0</span></span>
+            </div>
+        </div>
+        
+        <!-- Ополчение -->
+        <div class="troop-card">
+            <div class="troop-header">
+                <span class="troop-icon">⚔️</span>
+                <span class="troop-name">Ополчение</span>
+            </div>
+            
+            <div class="troop-stats">
+                <div class="troop-stat">
+                    <span>В наличии:</span>
+                    <span class="troop-count" id="militiaCount">0</span>
                 </div>
+                <div class="troop-stat">
+                    <span>В тренировке:</span>
+                    <span class="troop-training" id="militiaTraining">0</span>
+                </div>
+            </div>
+            
+            <!-- Прогресс тренировки -->
+            <div class="training-progress" id="militiaProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="militiaProgressFill"></div>
+                </div>
+                <div class="progress-time" id="militiaTime"></div>
+            </div>
+            
+            <!-- Кнопки тренировки -->
+            <div class="train-controls">
+                <button class="train-btn" onclick="trainMilitia(1)">➕ 1</button>
+                <button class="train-btn" onclick="trainMilitia(5)">➕ 5</button>
+                <button class="train-btn" onclick="trainMilitia(10)">➕ 10</button>
+            </div>
+        </div>
+    </div>
+</div>
                 
                 <!-- Походы -->
                 <div id="tabCampaign" class="tab-pane hidden">
