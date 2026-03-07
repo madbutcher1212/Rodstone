@@ -372,7 +372,16 @@ body {
 }
 
 .town-hall-icon {
-    font-size: 32px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.town-hall-icon-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 .town-hall-info {
