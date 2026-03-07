@@ -19,6 +19,9 @@ def calculate_resources_for_period(player_data, start_time, end_time):
     current_leather = player_data.get('leather', 0)
     current_horses = player_data.get('horses', 0)
     
+    # Сохраняем текущее количество занятых жителей
+    workers_used = player_data.get('workers_used', 0)
+    
     buildings = json.loads(player_data['buildings']) if isinstance(player_data['buildings'], str) else player_data['buildings']
     town_hall_level = player_data.get('town_hall_level', 1)
     population_max = player_data.get('population_max', 20)
@@ -37,7 +40,18 @@ def calculate_resources_for_period(player_data, start_time, end_time):
     
     if full_hours == 0:
         # Не прошло ни одного полного часа - ничего не начисляем
-        return player_data
+        return {
+            'gold': int(current_gold),
+            'wood': int(current_wood),
+            'stone': int(current_stone),
+            'iron': int(current_iron),
+            'coal': int(current_coal),
+            'food': int(current_food),
+            'leather': int(current_leather),
+            'horses': int(current_horses),
+            'population_current': int(current_pop),
+            'workers_free': int(current_pop - workers_used)
+        }
     
     # ПОЛНЫЕ ЧАСЫ - с прогрессией
     for hour in range(full_hours):
@@ -79,9 +93,12 @@ def calculate_resources_for_period(player_data, start_time, end_time):
         
         # Логируем только раз в 24 часа, чтобы не спамить
         if hour % 24 == 0:
-            print(f"⏰ День {(hour//24)+1}: население={current_pop}, еда={current_food:.0f}")
+            print(f"⏰ День {(hour//24)+1}: население={current_pop}, еда={current_food:.0f}, занято={workers_used}")
     
     # Возвращаем обновленные данные (ВСЕ ресурсы)
+    # ВАЖНО: workers_free пересчитывается как текущее население минус занятые
+    workers_free = current_pop - workers_used
+    
     return {
         'gold': int(current_gold),
         'wood': int(current_wood),
@@ -91,7 +108,8 @@ def calculate_resources_for_period(player_data, start_time, end_time):
         'food': int(current_food),
         'leather': int(current_leather),
         'horses': int(current_horses),
-        'population_current': int(current_pop)
+        'population_current': int(current_pop),
+        'workers_free': int(workers_free)
     }
 
 
@@ -122,6 +140,10 @@ def update_player_resources(player, current_time=None):
     # Обновляем player (ВСЕ ресурсы)
     for key, value in new_resources.items():
         player[key] = value
+    
+    # Убеждаемся что workers_free корректно пересчитан
+    if 'population_current' in player and 'workers_used' in player:
+        player['workers_free'] = player['population_current'] - player['workers_used']
     
     # Обновляем last_calculated, но сдвигаем только на полные часы
     full_hours = int((current_time - last_calc) / (60 * 60 * 1000))
