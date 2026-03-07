@@ -132,7 +132,7 @@ function generateBuildingCardHTML(id) {
     // Бонус для жилого района (только если не заблокировано)
     if (!isLocked && id === 'house' && level > 0 && config.population_bonus) {
         const totalBonus = config.population_bonus.slice(0, level).reduce((a, b) => a + b, 0);
-        bonusHtml = `<div class="building-bonus"><img src="/static/images/resources/population.png" class="income-icon">+${totalBonus}</div>`;
+        bonusHtml = `<div class="building-bonus"><img src="/static/icons/resources/population.png" class="income-icon">+${totalBonus}</div>`;
     }
     
     // Кнопка улучшения (только если не заблокировано)
@@ -198,25 +198,25 @@ function showUpgradeModal(buildingId) {
             <div class="upgrade-content">
                 <div class="upgrade-income">
                     <div class="income-label">Прибыль на ${nextLevel} уровне:</div>
-                    <div class="income-value"><img src="/static/images/resources/gold.png" class="income-icon"> +${nextIncome}/ч</div>
+                    <div class="income-value"><img src="/static/icons/resources/gold.png" class="income-icon"> +${nextIncome}/ч</div>
                 </div>
                 
                 <div class="upgrade-cost">
                     <div class="cost-label">Стоимость улучшения:</div>
                     <div class="cost-resources">
                         <div class="cost-item ${userData.gold >= cost.gold ? 'enough' : 'not-enough'}">
-                            <img src="/static/images/resources/gold.png" class="cost-icon-img">
+                            <img src="/static/icons/resources/gold.png" class="cost-icon-img">
                             <span class="cost-amount">${cost.gold}</span>
                         </div>
                         ${cost.wood > 0 ? `
                         <div class="cost-item ${userData.wood >= cost.wood ? 'enough' : 'not-enough'}">
-                            <img src="/static/images/resources/wood.png" class="cost-icon-img">
+                            <img src="/static/icons/resources/wood.png" class="cost-icon-img">
                             <span class="cost-amount">${cost.wood}</span>
                         </div>
                         ` : ''}
                         ${cost.stone > 0 ? `
                         <div class="cost-item ${userData.stone >= cost.stone ? 'enough' : 'not-enough'}">
-                            <img src="/static/images/resources/stone.png" class="cost-icon-img">
+                            <img src="/static/icons/resources/stone.png" class="cost-icon-img">
                             <span class="cost-amount">${cost.stone}</span>
                         </div>
                         ` : ''}
@@ -282,18 +282,18 @@ function showUpgradeModal(buildingId) {
     
     // Формируем строку с доходом (с иконками)
     let incomeParts = [];
-    if (nextIncome.gold) incomeParts.push(`<img src="/static/images/resources/gold.png" class="income-icon">+${nextIncome.gold}`);
-    if (nextIncome.wood) incomeParts.push(`<img src="/static/images/resources/wood.png" class="income-icon">+${nextIncome.wood}`);
-    if (nextIncome.stone) incomeParts.push(`<img src="/static/images/resources/stone.png" class="income-icon">+${nextIncome.stone}`);
+    if (nextIncome.gold) incomeParts.push(`<img src="/static/icons/resources/gold.png" class="income-icon">+${nextIncome.gold}`);
+    if (nextIncome.wood) incomeParts.push(`<img src="/static/icons/resources/wood.png" class="income-icon">+${nextIncome.wood}`);
+    if (nextIncome.stone) incomeParts.push(`<img src="/static/icons/resources/stone.png" class="income-icon">+${nextIncome.stone}`);
     if (nextIncome.food) {
-        if (nextIncome.food > 0) incomeParts.push(`<img src="/static/images/resources/food.png" class="income-icon">+${nextIncome.food}`);
-        else if (nextIncome.food < 0) incomeParts.push(`<img src="/static/images/resources/food.png" class="income-icon">${nextIncome.food}`);
+        if (nextIncome.food > 0) incomeParts.push(`<img src="/static/icons/resources/food.png" class="income-icon">+${nextIncome.food}`);
+        else if (nextIncome.food < 0) incomeParts.push(`<img src="/static/icons/resources/food.png" class="income-icon">${nextIncome.food}`);
     }
-    if (nextIncome.iron) incomeParts.push(`<img src="/static/images/resources/iron.png" class="income-icon">+${nextIncome.iron}`);
-    if (nextIncome.coal) incomeParts.push(`<img src="/static/images/resources/coal.png" class="income-icon">+${nextIncome.coal}`);
-    if (nextIncome.leather) incomeParts.push(`<img src="/static/images/resources/leather.png" class="income-icon">+${nextIncome.leather}`);
-    if (nextIncome.horses) incomeParts.push(`<img src="/static/images/resources/horses.png" class="income-icon">+${nextIncome.horses}`);
-    if (nextIncome.populationGrowth) incomeParts.push(`<img src="/static/images/resources/population.png" class="income-icon">+${nextIncome.populationGrowth}`);
+    if (nextIncome.iron) incomeParts.push(`<img src="/static/icons/resources/iron.png" class="income-icon">+${nextIncome.iron}`);
+    if (nextIncome.coal) incomeParts.push(`<img src="/static/icons/resources/coal.png" class="income-icon">+${nextIncome.coal}`);
+    if (nextIncome.leather) incomeParts.push(`<img src="/static/icons/resources/leather.png" class="income-icon">+${nextIncome.leather}`);
+    if (nextIncome.horses) incomeParts.push(`<img src="/static/icons/resources/horses.png" class="income-icon">+${nextIncome.horses}`);
+    if (nextIncome.populationGrowth) incomeParts.push(`<img src="/static/icons/resources/population.png" class="income-icon">+${nextIncome.populationGrowth}`);
     
     const incomeText = incomeParts.length > 0 ? incomeParts.join(' ') : 'нет дохода';
     
@@ -301,7 +301,7 @@ function showUpgradeModal(buildingId) {
     let incomeDisplay = '';
     if (buildingId === 'house' && config.population_bonus) {
         const nextBonus = config.population_bonus[level];
-        incomeDisplay = `<div class="income-value"><img src="/static/images/resources/population.png" class="income-icon"> +${nextBonus} лимит</div>`;
+        incomeDisplay = `<div class="income-value"><img src="/static/icons/resources/population.png" class="income-icon"> +${nextBonus} лимит</div>`;
     } else {
         incomeDisplay = `<div class="income-value">${incomeText}/ч</div>`;
     }
@@ -324,42 +324,42 @@ function showUpgradeModal(buildingId) {
                 <div class="cost-label">Стоимость:</div>
                 <div class="cost-resources">
                     <div class="cost-item ${userData.gold >= cost.gold ? 'enough' : 'not-enough'}">
-                        <img src="/static/images/resources/gold.png" class="cost-icon-img">
+                        <img src="/static/icons/resources/gold.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.gold}</span>
                     </div>
                     ${cost.wood > 0 ? `
                     <div class="cost-item ${userData.wood >= cost.wood ? 'enough' : 'not-enough'}">
-                        <img src="/static/images/resources/wood.png" class="cost-icon-img">
+                        <img src="/static/icons/resources/wood.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.wood}</span>
                     </div>
                     ` : ''}
                     ${cost.stone > 0 ? `
                     <div class="cost-item ${userData.stone >= cost.stone ? 'enough' : 'not-enough'}">
-                        <img src="/static/images/resources/stone.png" class="cost-icon-img">
+                        <img src="/static/icons/resources/stone.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.stone}</span>
                     </div>
                     ` : ''}
                     ${cost.iron > 0 ? `
                     <div class="cost-item ${userData.iron >= cost.iron ? 'enough' : 'not-enough'}">
-                        <img src="/static/images/resources/iron.png" class="cost-icon-img">
+                        <img src="/static/icons/resources/iron.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.iron}</span>
                     </div>
                     ` : ''}
                     ${cost.coal > 0 ? `
                     <div class="cost-item ${userData.coal >= cost.coal ? 'enough' : 'not-enough'}">
-                        <img src="/static/images/resources/coal.png" class="cost-icon-img">
+                        <img src="/static/icons/resources/coal.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.coal}</span>
                     </div>
                     ` : ''}
                     ${cost.leather > 0 ? `
                     <div class="cost-item ${userData.leather >= cost.leather ? 'enough' : 'not-enough'}">
-                        <img src="/static/images/resources/leather.png" class="cost-icon-img">
+                        <img src="/static/icons/resources/leather.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.leather}</span>
                     </div>
                     ` : ''}
                     ${cost.horses > 0 ? `
                     <div class="cost-item ${userData.horses >= cost.horses ? 'enough' : 'not-enough'}">
-                        <img src="/static/images/resources/horses.png" class="cost-icon-img">
+                        <img src="/static/icons/resources/horses.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.horses}</span>
                     </div>
                     ` : ''}
@@ -424,7 +424,7 @@ async function upgradeTownHallConfirm() {
 // Обновление отображения ратуши
 function updateTownHallDisplay() {
     const income = TOWN_HALL_INCOME[userData.townHallLevel] || 0;
-    document.getElementById('townHallIncome').innerHTML = `+${income} <img src="/static/images/resources/gold.png" class="income-icon">/ч`;
+    document.getElementById('townHallIncome').innerHTML = `+${income} <img src="/static/icons/resources/gold.png" class="income-icon">/ч`;
     
     // Скрываем элемент с текстом "Уровень X/5"
     const levelElement = document.getElementById('townHallLevel');
