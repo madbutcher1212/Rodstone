@@ -2,6 +2,7 @@
 import time
 import json
 from models.building_config import calculate_hourly_income_and_growth
+from models.player import Player
 
 def calculate_resources_for_period(player_data, start_time, end_time):
     """
@@ -40,6 +41,7 @@ def calculate_resources_for_period(player_data, start_time, end_time):
     
     if full_hours == 0:
         # Не прошло ни одного полного часа - ничего не начисляем
+        workers_free = current_pop - workers_used
         return {
             'gold': int(current_gold),
             'wood': int(current_wood),
@@ -50,7 +52,7 @@ def calculate_resources_for_period(player_data, start_time, end_time):
             'leather': int(current_leather),
             'horses': int(current_horses),
             'population_current': int(current_pop),
-            'workers_free': int(current_pop - workers_used)
+            'workers_free': int(workers_free)
         }
     
     # ПОЛНЫЕ ЧАСЫ - с прогрессией
@@ -95,8 +97,7 @@ def calculate_resources_for_period(player_data, start_time, end_time):
         if hour % 24 == 0:
             print(f"⏰ День {(hour//24)+1}: население={current_pop}, еда={current_food:.0f}, занято={workers_used}")
     
-    # Возвращаем обновленные данные (ВСЕ ресурсы)
-    # ВАЖНО: workers_free пересчитывается как текущее население минус занятые
+    # Возвращаем обновленные данные
     workers_free = current_pop - workers_used
     
     return {
@@ -137,16 +138,35 @@ def update_player_resources(player, current_time=None):
     # Рассчитываем ресурсы за прошедшее время (только полные часы)
     new_resources = calculate_resources_for_period(player, last_calc, current_time)
     
-    # Обновляем player (ВСЕ ресурсы)
+    # Обновляем player в памяти
     for key, value in new_resources.items():
         player[key] = value
     
-    # Убеждаемся что workers_free корректно пересчитан
-    if 'population_current' in player and 'workers_used' in player:
-        player['workers_free'] = player['population_current'] - player['workers_used']
+    # Пересчитываем workers_free для надежности
+    workers_free = player['population_current'] - player.get('workers_used', 0)
+    player['workers_free'] = workers_free
     
     # Обновляем last_calculated, но сдвигаем только на полные часы
     full_hours = int((current_time - last_calc) / (60 * 60 * 1000))
-    player['last_calculated'] = last_calc + (full_hours * 60 * 60 * 1000)
+    new_last_calc = last_calc + (full_hours * 60 * 60 * 1000)
+    player['last_calculated'] = new_last_calc
+    
+    # СОХРАНЯЕМ ВСЕ ИЗМЕНЕНИЯ В БД!
+    Player.update(
+        player['id'],
+        gold=player['gold'],
+        wood=player['wood'],
+        stone=player['stone'],
+        iron=player['iron'],
+        coal=player['coal'],
+        food=player['food'],
+        leather=player['leather'],
+        horses=player['horses'],
+        population_current=player['population_current'],
+        workers_free=player['workers_free'],
+        last_calculated=player['last_calculated']
+    )
+    
+    print(f"💾 Ресурсы сохранены в БД для игрока {player['id']}: население={player['population_current']}, свободно={player['workers_free']}, занято={player.get('workers_used', 0)}")
     
     return player
