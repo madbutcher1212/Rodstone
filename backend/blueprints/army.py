@@ -29,6 +29,9 @@ def train_troops(telegram_user):
     troop_type = data.get('troop_type', 'militia')
     count = data.get('count', 1)
     
+    if count not in [1, 5, 10]:
+        return jsonify({'success': False, 'error': 'Invalid count'}), 400
+    
     telegram_id = str(telegram_user['id'])
     print(f"⚔️ Тренировка {count} {troop_type} для {telegram_id}")
     
@@ -51,7 +54,7 @@ def train_troops(telegram_user):
         }), 400
     
     # Время тренировки: 10 секунд для теста
-    training_time = 10 * 1000  # 10 секунд
+    training_time = 10 * 1000
     end_time = current_time + training_time
     
     # Получаем текущие войска
@@ -86,22 +89,26 @@ def train_troops(telegram_user):
         'in_training': in_training
     })
 
-@army_bp.route('/status', methods=['GET'])
+@army_bp.route('/status', methods=['POST'])
 @require_telegram
 def army_status(telegram_user):
     """Статус армии"""
     telegram_id = str(telegram_user['id'])
-    player = Player.find_by_telegram_id(telegram_id)
+    print(f"📊 Запрос статуса армии от {telegram_id}")
     
+    player = Player.find_by_telegram_id(telegram_id)
     if not player:
         return jsonify({'success': False, 'error': 'Player not found'}), 404
     
-    troops = Player.get_troops(player['id'])
+    # Обновляем ресурсы перед проверкой
     current_time = int(time.time() * 1000)
+    player = update_player_resources(player, current_time)
+    
+    troops = Player.get_troops(player['id'])
     
     # Проверяем завершенные тренировки
     for troop in troops:
-        if troop.get('training_end') and troop['training_end'] <= current_time:
+        if troop.get('training_end') and troop['training_end'] <= current_time and troop['in_training'] > 0:
             # Тренировка завершена
             new_count = troop['count'] + troop['in_training']
             Player.update_troops(
@@ -114,6 +121,7 @@ def army_status(telegram_user):
             troop['count'] = new_count
             troop['in_training'] = 0
             troop['training_end'] = None
+            print(f"✅ Тренировка {troop['troop_type']} завершена")
     
     return jsonify({
         'success': True,
