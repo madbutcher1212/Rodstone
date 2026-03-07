@@ -111,18 +111,18 @@ function generateBuildingCardHTML(id) {
         const currentIncome = getBuildingIncome(id, level);
         let parts = [];
         
-        if (currentIncome.gold) parts.push(`<img src="/static/images/resources/gold.png" class="income-icon">+${currentIncome.gold}`);
-        if (currentIncome.wood) parts.push(`<img src="/static/images/resources/wood.png" class="income-icon">+${currentIncome.wood}`);
-        if (currentIncome.stone) parts.push(`<img src="/static/images/resources/stone.png" class="income-icon">+${currentIncome.stone}`);
+        if (currentIncome.gold) parts.push(`<img src="/static/icons/resources/gold.png" class="income-icon">+${currentIncome.gold}`);
+        if (currentIncome.wood) parts.push(`<img src="/static/icons/resources/wood.png" class="income-icon">+${currentIncome.wood}`);
+        if (currentIncome.stone) parts.push(`<img src="/static/icons/resources/stone.png" class="income-icon">+${currentIncome.stone}`);
         if (currentIncome.food) {
-            if (currentIncome.food > 0) parts.push(`<img src="/static/images/resources/food.png" class="income-icon">+${currentIncome.food}`);
-            else if (currentIncome.food < 0) parts.push(`<img src="/static/images/resources/food.png" class="income-icon">${currentIncome.food}`);
+            if (currentIncome.food > 0) parts.push(`<img src="/static/icons/resources/food.png" class="income-icon">+${currentIncome.food}`);
+            else if (currentIncome.food < 0) parts.push(`<img src="/static/icons/resources/food.png" class="income-icon">${currentIncome.food}`);
         }
-        if (currentIncome.iron) parts.push(`<img src="/static/images/resources/iron.png" class="income-icon">+${currentIncome.iron}`);
-        if (currentIncome.coal) parts.push(`<img src="/static/images/resources/coal.png" class="income-icon">+${currentIncome.coal}`);
-        if (currentIncome.leather) parts.push(`<img src="/static/images/resources/leather.png" class="income-icon">+${currentIncome.leather}`);
-        if (currentIncome.horses) parts.push(`<img src="/static/images/resources/horses.png" class="income-icon">+${currentIncome.horses}`);
-        if (currentIncome.populationGrowth) parts.push(`<img src="/static/images/resources/population.png" class="income-icon">+${currentIncome.populationGrowth}`);
+        if (currentIncome.iron) parts.push(`<img src="/static/icons/resources/iron.png" class="income-icon">+${currentIncome.iron}`);
+        if (currentIncome.coal) parts.push(`<img src="/static/icons/resources/coal.png" class="income-icon">+${currentIncome.coal}`);
+        if (currentIncome.leather) parts.push(`<img src="/static/icons/resources/leather.png" class="income-icon">+${currentIncome.leather}`);
+        if (currentIncome.horses) parts.push(`<img src="/static/icons/resources/horses.png" class="income-icon">+${currentIncome.horses}`);
+        if (currentIncome.populationGrowth) parts.push(`<img src="/static/icons/resources/population.png" class="income-icon">+${currentIncome.populationGrowth}`);
         
         if (parts.length > 0) {
             incomeHtml = `<div class="building-income">${parts.slice(0, 2).join(' ')}</div>`;
