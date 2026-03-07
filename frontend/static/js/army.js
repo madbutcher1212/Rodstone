@@ -3,11 +3,22 @@
 // Загрузить статус армии
 async function loadArmyStatus() {
     try {
+        const initData = window.Telegram?.WebApp?.initData || '';
+        
         const response = await fetch(`${API_URL}/api/army/status`, {
-            method: 'GET',
+            method: 'POST',
             headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ initData: initData })
         });
+        
+        if (!response.ok) {
+            const text = await response.text();
+            console.error('❌ Ошибка сервера:', text);
+            return;
+        }
+        
         const data = await response.json();
+        console.log('📦 Статус армии:', data);
         
         if (data.success) {
             document.getElementById('armyFreeWorkers').textContent = data.workers_free;
@@ -20,26 +31,39 @@ async function loadArmyStatus() {
             // Показываем прогресс тренировки
             if (militia.in_training > 0 && militia.training_end) {
                 showTrainingProgress('militia', militia.training_end);
+            } else {
+                document.getElementById('militiaProgress').style.display = 'none';
             }
         }
     } catch (error) {
-        console.error('Ошибка загрузки армии:', error);
+        console.error('❌ Ошибка загрузки армии:', error);
     }
 }
 
 // Тренировка ополчения
 async function trainMilitia(count) {
     try {
+        const initData = window.Telegram?.WebApp?.initData || '';
+        
         const response = await fetch(`${API_URL}/api/army/train`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                initData: window.Telegram?.WebApp?.initData || '',
+                initData: initData,
                 troop_type: 'militia',
                 count: count
             })
         });
+        
+        if (!response.ok) {
+            const text = await response.text();
+            console.error('❌ Ошибка сервера:', text);
+            showToast('❌ Ошибка сервера');
+            return;
+        }
+        
         const data = await response.json();
+        console.log('📦 Тренировка:', data);
         
         if (data.success) {
             showToast(`✅ Тренировка ${count} ополченцев началась`);
@@ -50,7 +74,7 @@ async function trainMilitia(count) {
             showToast(`❌ ${data.error || 'Ошибка'}`);
         }
     } catch (error) {
-        console.error('Ошибка тренировки:', error);
+        console.error('❌ Ошибка тренировки:', error);
         showToast('❌ Ошибка соединения');
     }
 }
@@ -60,6 +84,8 @@ function showTrainingProgress(troopType, endTime) {
     const progressDiv = document.getElementById(`${troopType}Progress`);
     const progressFill = document.getElementById(`${troopType}ProgressFill`);
     const timeDisplay = document.getElementById(`${troopType}Time`);
+    
+    if (!progressDiv || !progressFill || !timeDisplay) return;
     
     progressDiv.style.display = 'block';
     
@@ -83,11 +109,3 @@ function showTrainingProgress(troopType, endTime) {
     
     requestAnimationFrame(updateProgress);
 }
-
-// Добавить в main.js при загрузке
-document.addEventListener('DOMContentLoaded', () => {
-    // ... существующий код ...
-    
-    // Загружаем статус армии при переключении на вкладку
-    document.querySelector('[data-tab="army"]').addEventListener('click', loadArmyStatus);
-});
