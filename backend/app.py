@@ -3,6 +3,7 @@ from flask_cors import CORS
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import os
+import sys
 
 # Импорт blueprint'ов
 from blueprints.auth import auth_bp
@@ -10,11 +11,14 @@ from blueprints.actions import actions_bp
 from blueprints.clans import clans_bp
 from blueprints.admin import admin_bp
 
+# Импорт army blueprint (ВНЕ функции)
+from blueprints.army import army_bp
+
 # Импорт инициализации Supabase
 from models.player import init_supabase
 
-# Импорт SocketIO - импортируем ТОЛЬКО функции, не сам socketio
-from socket_manager import init_socketio, register_socket_handlers
+# Импорт SocketIO
+from socket_manager import socketio, register_socket_handlers, init_socketio
 
 def create_app():
     template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../frontend/templates'))
@@ -45,8 +49,7 @@ def create_app():
     app.register_blueprint(actions_bp, url_prefix='/api')
     app.register_blueprint(clans_bp, url_prefix='/api/clan')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
-      from blueprints.army import army_bp
-    app.register_blueprint(army_bp, url_prefix='/api/army')
+    app.register_blueprint(army_bp, url_prefix='/api/army')  # ← регистрация здесь
 
     # Инициализация SocketIO
     init_socketio(app)
@@ -58,14 +61,8 @@ def create_app():
 
     return app
 
-# Создаём приложение
 app = create_app()
-# Запускаем фоновую проверку таймеров
-from timer_checker import start_timer_checker
-start_timer_checker()
 
-# Этот блок выполняется только при прямом запуске (не через start.py)
 if __name__ == '__main__':
-    from socket_manager import socketio
     port = int(os.environ.get('PORT', 5000))
     socketio.run(app, host='0.0.0.0', port=port, debug=True)
