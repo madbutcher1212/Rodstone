@@ -86,7 +86,6 @@ function generateBuildingCardHTML(id) {
     // Статус здания
     if (isLocked) {
         statusClass = 'locked';
-        // Замок и текст требования
         const reqLevel = config.requiredTownHall ? config.requiredTownHall[0] : 1;
         lockHtml = `
             <div class="building-lock">
@@ -111,18 +110,19 @@ function generateBuildingCardHTML(id) {
     if (!isLocked && level > 0 && config.income) {
         const currentIncome = getBuildingIncome(id, level);
         let parts = [];
-        if (currentIncome.gold) parts.push(`<img src="/static/icons/gold.png" class="income-icon">+${currentIncome.gold}`);
-        if (currentIncome.wood) parts.push(`<img src="/static/icons/wood.png" class="income-icon">+${currentIncome.wood}`);
-        if (currentIncome.stone) parts.push(`<img src="/static/icons/stone.png" class="income-icon">+${currentIncome.stone}`);
+        
+        if (currentIncome.gold) parts.push(`<img src="/static/images/resources/gold.png" class="income-icon">+${currentIncome.gold}`);
+        if (currentIncome.wood) parts.push(`<img src="/static/images/resources/wood.png" class="income-icon">+${currentIncome.wood}`);
+        if (currentIncome.stone) parts.push(`<img src="/static/images/resources/stone.png" class="income-icon">+${currentIncome.stone}`);
         if (currentIncome.food) {
-            if (currentIncome.food > 0) parts.push(`<img src="/static/icons/food.png" class="income-icon">+${currentIncome.food}`);
-            else if (currentIncome.food < 0) parts.push(`<img src="/static/icons/food.png" class="income-icon">${currentIncome.food}`);
+            if (currentIncome.food > 0) parts.push(`<img src="/static/images/resources/food.png" class="income-icon">+${currentIncome.food}`);
+            else if (currentIncome.food < 0) parts.push(`<img src="/static/images/resources/food.png" class="income-icon">${currentIncome.food}`);
         }
-        if (currentIncome.iron) parts.push(`<img src="/static/icons/iron.png" class="income-icon">+${currentIncome.iron}`);
-        if (currentIncome.coal) parts.push(`<img src="/static/icons/coal.png" class="income-icon">+${currentIncome.coal}`);
-        if (currentIncome.leather) parts.push(`<img src="/static/icons/leather.png" class="income-icon">+${currentIncome.leather}`);
-        if (currentIncome.horses) parts.push(`<img src="/static/icons/horses.png" class="income-icon">+${currentIncome.horses}`);
-        if (currentIncome.populationGrowth) parts.push(`👥+${currentIncome.populationGrowth}`);
+        if (currentIncome.iron) parts.push(`<img src="/static/images/resources/iron.png" class="income-icon">+${currentIncome.iron}`);
+        if (currentIncome.coal) parts.push(`<img src="/static/images/resources/coal.png" class="income-icon">+${currentIncome.coal}`);
+        if (currentIncome.leather) parts.push(`<img src="/static/images/resources/leather.png" class="income-icon">+${currentIncome.leather}`);
+        if (currentIncome.horses) parts.push(`<img src="/static/images/resources/horses.png" class="income-icon">+${currentIncome.horses}`);
+        if (currentIncome.populationGrowth) parts.push(`<img src="/static/images/resources/population.png" class="income-icon">+${currentIncome.populationGrowth}`);
         
         if (parts.length > 0) {
             incomeHtml = `<div class="building-income">${parts.slice(0, 2).join(' ')}</div>`;
@@ -132,7 +132,7 @@ function generateBuildingCardHTML(id) {
     // Бонус для жилого района (только если не заблокировано)
     if (!isLocked && id === 'house' && level > 0 && config.population_bonus) {
         const totalBonus = config.population_bonus.slice(0, level).reduce((a, b) => a + b, 0);
-        bonusHtml = `<div class="building-bonus">👥+${totalBonus}</div>`;
+        bonusHtml = `<div class="building-bonus"><img src="/static/images/resources/population.png" class="income-icon">+${totalBonus}</div>`;
     }
     
     // Кнопка улучшения (только если не заблокировано)
@@ -198,25 +198,25 @@ function showUpgradeModal(buildingId) {
             <div class="upgrade-content">
                 <div class="upgrade-income">
                     <div class="income-label">Прибыль на ${nextLevel} уровне:</div>
-                    <div class="income-value"><img src="/static/icons/gold.png" class="income-icon"> +${nextIncome}/ч</div>
+                    <div class="income-value"><img src="/static/images/resources/gold.png" class="income-icon"> +${nextIncome}/ч</div>
                 </div>
                 
                 <div class="upgrade-cost">
                     <div class="cost-label">Стоимость улучшения:</div>
                     <div class="cost-resources">
                         <div class="cost-item ${userData.gold >= cost.gold ? 'enough' : 'not-enough'}">
-                            <img src="/static/icons/gold.png" class="cost-icon-img">
+                            <img src="/static/images/resources/gold.png" class="cost-icon-img">
                             <span class="cost-amount">${cost.gold}</span>
                         </div>
                         ${cost.wood > 0 ? `
                         <div class="cost-item ${userData.wood >= cost.wood ? 'enough' : 'not-enough'}">
-                            <img src="/static/icons/wood.png" class="cost-icon-img">
+                            <img src="/static/images/resources/wood.png" class="cost-icon-img">
                             <span class="cost-amount">${cost.wood}</span>
                         </div>
                         ` : ''}
                         ${cost.stone > 0 ? `
                         <div class="cost-item ${userData.stone >= cost.stone ? 'enough' : 'not-enough'}">
-                            <img src="/static/icons/stone.png" class="cost-icon-img">
+                            <img src="/static/images/resources/stone.png" class="cost-icon-img">
                             <span class="cost-amount">${cost.stone}</span>
                         </div>
                         ` : ''}
@@ -282,18 +282,18 @@ function showUpgradeModal(buildingId) {
     
     // Формируем строку с доходом (с иконками)
     let incomeParts = [];
-    if (nextIncome.gold) incomeParts.push(`<img src="/static/icons/gold.png" class="income-icon">+${nextIncome.gold}`);
-    if (nextIncome.wood) incomeParts.push(`<img src="/static/icons/wood.png" class="income-icon">+${nextIncome.wood}`);
-    if (nextIncome.stone) incomeParts.push(`<img src="/static/icons/stone.png" class="income-icon">+${nextIncome.stone}`);
+    if (nextIncome.gold) incomeParts.push(`<img src="/static/images/resources/gold.png" class="income-icon">+${nextIncome.gold}`);
+    if (nextIncome.wood) incomeParts.push(`<img src="/static/images/resources/wood.png" class="income-icon">+${nextIncome.wood}`);
+    if (nextIncome.stone) incomeParts.push(`<img src="/static/images/resources/stone.png" class="income-icon">+${nextIncome.stone}`);
     if (nextIncome.food) {
-        if (nextIncome.food > 0) incomeParts.push(`<img src="/static/icons/food.png" class="income-icon">+${nextIncome.food}`);
-        else if (nextIncome.food < 0) incomeParts.push(`<img src="/static/icons/food.png" class="income-icon">${nextIncome.food}`);
+        if (nextIncome.food > 0) incomeParts.push(`<img src="/static/images/resources/food.png" class="income-icon">+${nextIncome.food}`);
+        else if (nextIncome.food < 0) incomeParts.push(`<img src="/static/images/resources/food.png" class="income-icon">${nextIncome.food}`);
     }
-    if (nextIncome.iron) incomeParts.push(`<img src="/static/icons/iron.png" class="income-icon">+${nextIncome.iron}`);
-    if (nextIncome.coal) incomeParts.push(`<img src="/static/icons/coal.png" class="income-icon">+${nextIncome.coal}`);
-    if (nextIncome.leather) incomeParts.push(`<img src="/static/icons/leather.png" class="income-icon">+${nextIncome.leather}`);
-    if (nextIncome.horses) incomeParts.push(`<img src="/static/icons/horses.png" class="income-icon">+${nextIncome.horses}`);
-    if (nextIncome.populationGrowth) incomeParts.push(`👥+${nextIncome.populationGrowth}`);
+    if (nextIncome.iron) incomeParts.push(`<img src="/static/images/resources/iron.png" class="income-icon">+${nextIncome.iron}`);
+    if (nextIncome.coal) incomeParts.push(`<img src="/static/images/resources/coal.png" class="income-icon">+${nextIncome.coal}`);
+    if (nextIncome.leather) incomeParts.push(`<img src="/static/images/resources/leather.png" class="income-icon">+${nextIncome.leather}`);
+    if (nextIncome.horses) incomeParts.push(`<img src="/static/images/resources/horses.png" class="income-icon">+${nextIncome.horses}`);
+    if (nextIncome.populationGrowth) incomeParts.push(`<img src="/static/images/resources/population.png" class="income-icon">+${nextIncome.populationGrowth}`);
     
     const incomeText = incomeParts.length > 0 ? incomeParts.join(' ') : 'нет дохода';
     
@@ -301,7 +301,7 @@ function showUpgradeModal(buildingId) {
     let incomeDisplay = '';
     if (buildingId === 'house' && config.population_bonus) {
         const nextBonus = config.population_bonus[level];
-        incomeDisplay = `<div class="income-value">👥 +${nextBonus} лимит</div>`;
+        incomeDisplay = `<div class="income-value"><img src="/static/images/resources/population.png" class="income-icon"> +${nextBonus} лимит</div>`;
     } else {
         incomeDisplay = `<div class="income-value">${incomeText}/ч</div>`;
     }
@@ -324,42 +324,42 @@ function showUpgradeModal(buildingId) {
                 <div class="cost-label">Стоимость:</div>
                 <div class="cost-resources">
                     <div class="cost-item ${userData.gold >= cost.gold ? 'enough' : 'not-enough'}">
-                        <img src="/static/icons/gold.png" class="cost-icon-img">
+                        <img src="/static/images/resources/gold.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.gold}</span>
                     </div>
                     ${cost.wood > 0 ? `
                     <div class="cost-item ${userData.wood >= cost.wood ? 'enough' : 'not-enough'}">
-                        <img src="/static/icons/wood.png" class="cost-icon-img">
+                        <img src="/static/images/resources/wood.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.wood}</span>
                     </div>
                     ` : ''}
                     ${cost.stone > 0 ? `
                     <div class="cost-item ${userData.stone >= cost.stone ? 'enough' : 'not-enough'}">
-                        <img src="/static/icons/stone.png" class="cost-icon-img">
+                        <img src="/static/images/resources/stone.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.stone}</span>
                     </div>
                     ` : ''}
                     ${cost.iron > 0 ? `
                     <div class="cost-item ${userData.iron >= cost.iron ? 'enough' : 'not-enough'}">
-                        <img src="/static/icons/iron.png" class="cost-icon-img">
+                        <img src="/static/images/resources/iron.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.iron}</span>
                     </div>
                     ` : ''}
                     ${cost.coal > 0 ? `
                     <div class="cost-item ${userData.coal >= cost.coal ? 'enough' : 'not-enough'}">
-                        <img src="/static/icons/coal.png" class="cost-icon-img">
+                        <img src="/static/images/resources/coal.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.coal}</span>
                     </div>
                     ` : ''}
                     ${cost.leather > 0 ? `
                     <div class="cost-item ${userData.leather >= cost.leather ? 'enough' : 'not-enough'}">
-                        <img src="/static/icons/leather.png" class="cost-icon-img">
+                        <img src="/static/images/resources/leather.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.leather}</span>
                     </div>
                     ` : ''}
                     ${cost.horses > 0 ? `
                     <div class="cost-item ${userData.horses >= cost.horses ? 'enough' : 'not-enough'}">
-                        <img src="/static/icons/horses.png" class="cost-icon-img">
+                        <img src="/static/images/resources/horses.png" class="cost-icon-img">
                         <span class="cost-amount">${cost.horses}</span>
                     </div>
                     ` : ''}
@@ -424,7 +424,7 @@ async function upgradeTownHallConfirm() {
 // Обновление отображения ратуши
 function updateTownHallDisplay() {
     const income = TOWN_HALL_INCOME[userData.townHallLevel] || 0;
-    document.getElementById('townHallIncome').innerHTML = `+${income} <img src="/static/icons/gold.png" class="income-icon">/ч`;
+    document.getElementById('townHallIncome').innerHTML = `+${income} <img src="/static/images/resources/gold.png" class="income-icon">/ч`;
     
     // Скрываем элемент с текстом "Уровень X/5"
     const levelElement = document.getElementById('townHallLevel');
@@ -479,43 +479,43 @@ function updateCityUI() {
     
     // 1. ПРОИЗВОДСТВО (8 зданий)
     let productionHtml = '';
-    productionHtml += generateBuildingCardHTML('hunting_lodge');    // Хижина охотника
-    productionHtml += generateBuildingCardHTML('lumber');           // Лагерь лесорубов
-    productionHtml += generateBuildingCardHTML('quarry');           // Каменоломня
-    productionHtml += generateBuildingCardHTML('fishing_wharf');    // Рыбацкая пристань
-    productionHtml += generateBuildingCardHTML('charcoal_kiln');    // Жаровня
-    productionHtml += generateBuildingCardHTML('farm');             // Ферма
-    productionHtml += generateBuildingCardHTML('mines');            // Шахты
-    productionHtml += generateBuildingCardHTML('ranch');            // Скотный двор
+    productionHtml += generateBuildingCardHTML('hunting_lodge');
+    productionHtml += generateBuildingCardHTML('lumber');
+    productionHtml += generateBuildingCardHTML('quarry');
+    productionHtml += generateBuildingCardHTML('fishing_wharf');
+    productionHtml += generateBuildingCardHTML('charcoal_kiln');
+    productionHtml += generateBuildingCardHTML('farm');
+    productionHtml += generateBuildingCardHTML('mines');
+    productionHtml += generateBuildingCardHTML('ranch');
     document.getElementById('productionBuildings').innerHTML = productionHtml;
     
-    // 2. СОЦИАЛЬНЫЕ (6 зданий) - новый порядок
+    // 2. СОЦИАЛЬНЫЕ (6 зданий)
     let socialHtml = '';
-    socialHtml += generateBuildingCardHTML('house');        // Жилой район
-    socialHtml += generateBuildingCardHTML('tavern');       // Корчма
-    socialHtml += generateBuildingCardHTML('chapel');       // Часовня
-    socialHtml += generateBuildingCardHTML('bath');         // Купели
-    socialHtml += generateBuildingCardHTML('infirmary');    // Лазарет
-    socialHtml += generateBuildingCardHTML('almshouse');    // Богадельня
+    socialHtml += generateBuildingCardHTML('house');
+    socialHtml += generateBuildingCardHTML('tavern');
+    socialHtml += generateBuildingCardHTML('chapel');
+    socialHtml += generateBuildingCardHTML('bath');
+    socialHtml += generateBuildingCardHTML('infirmary');
+    socialHtml += generateBuildingCardHTML('almshouse');
     document.getElementById('socialBuildings').innerHTML = socialHtml;
     
-    // 3. ЭКОНОМИЧЕСКИЕ (4 здания) - новый порядок
+    // 3. ЭКОНОМИЧЕСКИЕ (4 здания)
     let economicHtml = '';
-    economicHtml += generateBuildingCardHTML('market');              // Рынок
-    economicHtml += generateBuildingCardHTML('pottery');             // Гончарная мастерская
-    economicHtml += generateBuildingCardHTML('weaving_workshop');    // Ткацкая мастерская
-    economicHtml += generateBuildingCardHTML('guilds');              // Гильдии
+    economicHtml += generateBuildingCardHTML('market');
+    economicHtml += generateBuildingCardHTML('pottery');
+    economicHtml += generateBuildingCardHTML('weaving_workshop');
+    economicHtml += generateBuildingCardHTML('guilds');
     document.getElementById('economicBuildings').innerHTML = economicHtml;
     
     // 4. ВОЕННЫЕ (7 зданий)
     let militaryHtml = '';
-    militaryHtml += generateBuildingCardHTML('armorer');        // Бронник
-    militaryHtml += generateBuildingCardHTML('weaponsmith');    // Оружейник
-    militaryHtml += generateBuildingCardHTML('foal_farm');      // Жеребятник
-    militaryHtml += generateBuildingCardHTML('barracks');       // Казармы
-    militaryHtml += generateBuildingCardHTML('shooting_range'); // Стрельбище
-    militaryHtml += generateBuildingCardHTML('stables');        // Конюшни
-    militaryHtml += generateBuildingCardHTML('military_academy');// Военное училище 
+    militaryHtml += generateBuildingCardHTML('armorer');
+    militaryHtml += generateBuildingCardHTML('weaponsmith');
+    militaryHtml += generateBuildingCardHTML('foal_farm');
+    militaryHtml += generateBuildingCardHTML('barracks');
+    militaryHtml += generateBuildingCardHTML('shooting_range');
+    militaryHtml += generateBuildingCardHTML('stables');
+    militaryHtml += generateBuildingCardHTML('military_academy');
     document.getElementById('militaryBuildings').innerHTML = militaryHtml;
 }
 
