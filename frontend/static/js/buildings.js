@@ -156,9 +156,11 @@ function generateBuildingCardHTML(id) {
     // Для заблокированных зданий убираем onclick
     const clickHandler = isLocked ? '' : `onclick="showUpgradeModal('${id}')"`;
     
-    return `
+  return `
 <div class="building-card ${statusClass}" ${clickHandler}>
-    <div class="building-icon">${config.icon}</div>
+    <div class="building-icon">
+        <img src="/static/icons/buildings/${id}.png" class="building-icon-img" alt="${config.name}">
+    </div>
     <div class="building-name-container">
         <div class="building-name">${config.name}</div>
     </div>
