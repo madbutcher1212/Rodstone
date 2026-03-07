@@ -32,11 +32,12 @@ def calculate_resources_for_period(player_data, start_time, end_time):
         print(f"⚠️ Слишком большой период: {hours_passed:.0f} часов, обрезаем до 720")
         hours_passed = 720
     
-    if hours_passed < 0.0167:  # меньше минуты
-        return player_data
-    
+    # Начисляем ТОЛЬКО за полные часы
     full_hours = int(hours_passed)
-    remaining_minutes = (hours_passed - full_hours) * 60
+    
+    if full_hours == 0:
+        # Не прошло ни одного полного часа - ничего не начисляем
+        return player_data
     
     # ПОЛНЫЕ ЧАСЫ - с прогрессией
     for hour in range(full_hours):
@@ -80,39 +81,6 @@ def calculate_resources_for_period(player_data, start_time, end_time):
         if hour % 24 == 0:
             print(f"⏰ День {(hour//24)+1}: население={current_pop}, еда={current_food:.0f}")
     
-    # ОСТАТОК МИНУТ - пропорционально (без роста населения)
-    if remaining_minutes > 1:  # больше минуты
-        inc, _ = calculate_hourly_income_and_growth(
-            buildings, 
-            town_hall_level,
-            current_pop,      # население не меняется за минуты
-            population_max,
-            current_food
-        )
-        
-        minute_multiplier = remaining_minutes / 60
-        
-        # Обновляем ВСЕ ресурсы пропорционально с проверкой
-        if 'gold' in inc:
-            current_gold += int(inc['gold'] * minute_multiplier)
-        if 'wood' in inc:
-            current_wood += int(inc['wood'] * minute_multiplier)
-        if 'food' in inc:
-            current_food += inc['food'] * minute_multiplier
-        if 'stone' in inc:
-            current_stone += int(inc['stone'] * minute_multiplier)
-        if 'iron' in inc:
-            current_iron += int(inc['iron'] * minute_multiplier)
-        if 'coal' in inc:
-            current_coal += int(inc['coal'] * minute_multiplier)
-        if 'leather' in inc:
-            current_leather += int(inc['leather'] * minute_multiplier)
-        if 'horses' in inc:
-            current_horses += int(inc['horses'] * minute_multiplier)
-        
-        if current_food < 0:
-            current_food = 0
-    
     # Возвращаем обновленные данные (ВСЕ ресурсы)
     return {
         'gold': int(current_gold),
@@ -143,17 +111,20 @@ def update_player_resources(player, current_time=None):
         last_calc = current_time
         player['last_calculated'] = current_time
     
-    # Если прошло меньше минуты - ничего не делаем
+    # Если прошло меньше часа - ничего не делаем
     time_diff = current_time - last_calc
-    if time_diff < 60 * 1000:  # 1 минута
+    if time_diff < 60 * 60 * 1000:  # 1 час
         return player
     
-    # Рассчитываем ресурсы за прошедшее время
+    # Рассчитываем ресурсы за прошедшее время (только полные часы)
     new_resources = calculate_resources_for_period(player, last_calc, current_time)
     
     # Обновляем player (ВСЕ ресурсы)
     for key, value in new_resources.items():
         player[key] = value
-    player['last_calculated'] = current_time
+    
+    # Обновляем last_calculated, но сдвигаем только на полные часы
+    full_hours = int((current_time - last_calc) / (60 * 60 * 1000))
+    player['last_calculated'] = last_calc + (full_hours * 60 * 60 * 1000)
     
     return player
