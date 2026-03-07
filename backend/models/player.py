@@ -165,3 +165,48 @@ class Player:
         except Exception as e:
             print(f"❌ Atomic update error: {e}")
             return None
+                @staticmethod
+    def get_troops(player_id):
+        """Получить войска игрока"""
+        supabase = get_supabase()
+        result = supabase.table("troops") \
+            .select("*") \
+            .eq("player_id", player_id) \
+            .execute()
+        return result.data if result.data else []
+
+    @staticmethod
+    def update_troops(player_id, troop_type, count, in_training=0, training_end=None):
+        """Обновить количество войск"""
+        supabase = get_supabase()
+        
+        # Проверяем, есть ли уже такая запись
+        existing = supabase.table("troops") \
+            .select("*") \
+            .eq("player_id", player_id) \
+            .eq("troop_type", troop_type) \
+            .execute()
+        
+        if existing.data:
+            # Обновляем существующую
+            update_data = {
+                "count": count,
+                "in_training": in_training,
+                "training_end": training_end
+            }
+            supabase.table("troops") \
+                .update(update_data) \
+                .eq("id", existing.data[0]['id']) \
+                .execute()
+        else:
+            # Создаем новую
+            insert_data = {
+                "player_id": player_id,
+                "troop_type": troop_type,
+                "count": count,
+                "in_training": in_training,
+                "training_end": training_end
+            }
+            supabase.table("troops") \
+                .insert(insert_data) \
+                .execute()
