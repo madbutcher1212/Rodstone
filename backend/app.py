@@ -45,6 +45,8 @@ def create_app():
     app.register_blueprint(actions_bp, url_prefix='/api')
     app.register_blueprint(clans_bp, url_prefix='/api/clan')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
+      from blueprints.army import army_bp
+    app.register_blueprint(army_bp, url_prefix='/api/army')
 
     # Инициализация SocketIO
     init_socketio(app)
