@@ -558,16 +558,26 @@ def calculate_hourly_income_and_growth(buildings, town_hall_level, current_popul
 
     food_prod = income["food"]
     food_needed = current_population
-    food_balance_change = food_prod - food_needed
+    
+    # Проверяем, хватит ли еды с учетом запасов
+    total_available = current_food + food_prod
     
     pop_growth = 0
-    if food_balance_change >= 0:
+    
+    if total_available >= food_needed:
+        # Еды хватает - население может расти
         potential = 3
         available_space = max_population - current_population
         pop_growth = min(potential, available_space)
-    
-    income["food"] = food_balance_change
-    
+        
+        # Сколько еды останется после потребления
+        food_left = total_available - food_needed
+        income["food"] = food_left - current_food  # изменение запасов
+    else:
+        # Еды не хватает - роста нет
+        pop_growth = 0
+        income["food"] = -current_food  # вся еда съедена, запасы = 0
+
     return income, pop_growth
 
 def get_workers_needed(building_id, level):
