@@ -72,8 +72,8 @@ class Player:
             'town_hall_level': 1,
             'population_current': 10,
             'population_max': 10,
-            'workers_used': 0,  # занятые жители
-            'workers_free': 10,  # свободные жители (равны населению в начале)
+            'workers_used': 0,
+            'workers_free': 10,
             'buildings': json.dumps(initial_buildings),
             'last_collection': now
         }
@@ -165,7 +165,9 @@ class Player:
         except Exception as e:
             print(f"❌ Atomic update error: {e}")
             return None
-                @staticmethod
+
+    # ===== НОВЫЕ МЕТОДЫ ДЛЯ ВОЙСК =====
+    @staticmethod
     def get_troops(player_id):
         """Получить войска игрока"""
         supabase = get_supabase()
