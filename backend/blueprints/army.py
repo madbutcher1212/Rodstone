@@ -21,19 +21,18 @@ def require_telegram(f):
     wrapper.__name__ = f.__name__
     return wrapper
 
-@army_bp.route('/train', methods=['POST'])
+@army_bp.route('/train_militia', methods=['POST'])
 @require_telegram
-def train_troops(telegram_user):
-    """Тренировка войск"""
+def train_militia(telegram_user):
+    """Тренировка ополчения из свободных жителей"""
     data = request.get_json()
-    troop_type = data.get('troop_type', 'militia')
     count = data.get('count', 1)
     
-    if count not in [1, 5, 10]:
+    if count < 1 or count > 5:
         return jsonify({'success': False, 'error': 'Invalid count'}), 400
     
     telegram_id = str(telegram_user['id'])
-    print(f"⚔️ Тренировка {count} {troop_type} для {telegram_id}")
+    print(f"⚔️ Тренировка {count} ополченцев для {telegram_id}")
     
     player = Player.find_by_telegram_id(telegram_id)
     if not player:
@@ -89,6 +88,110 @@ def train_troops(telegram_user):
         'in_training': in_training
     })
 
+@army_bp.route('/train_unit', methods=['POST'])
+@require_telegram
+def train_unit(telegram_user):
+    """Тренировка юнитов из ополченцев"""
+    data = request.get_json()
+    unit_type = data.get('unit_type')  # 'archer', 'infantry', 'spearmen', 'cavalry'
+    count = data.get('count', 1)
+    
+    if count < 1 or count > 5:
+        return jsonify({'success': False, 'error': 'Invalid count'}), 400
+    
+    if unit_type not in ['archer', 'infantry', 'spearmen', 'cavalry']:
+        return jsonify({'success': False, 'error': 'Invalid unit type'}), 400
+    
+    telegram_id = str(telegram_user['id'])
+    print(f"⚔️ Тренировка {count} {unit_type} для {telegram_id}")
+    
+    player = Player.find_by_telegram_id(telegram_id)
+    if not player:
+        return jsonify({'success': False, 'error': 'Player not found'}), 404
+    
+    # Обновляем ресурсы перед действием
+    current_time = int(time.time() * 1000)
+    player = update_player_resources(player, current_time)
+    
+    player_id = player['id']
+    
+    # Получаем текущие войска
+    troops = Player.get_troops(player_id)
+    militia = next((t for t in troops if t['troop_type'] == 'militia'), None)
+    militia_count = militia['count'] if militia else 0
+    
+    # Проверка: хватает ли ополченцев
+    if militia_count < count:
+        return jsonify({
+            'success': False, 
+            'error': f'Нужно {count} ополченцев, есть {militia_count}'
+        }), 400
+    
+    # Проверка: хватает ли еды (временно 1 еды за юнита)
+    if player['food'] < count:
+        return jsonify({
+            'success': False, 
+            'error': f'Нужно {count} еды, есть {player["food"]}'
+        }), 400
+    
+    # Время тренировки: 10 секунд для теста
+    training_time = 10 * 1000
+    end_time = current_time + training_time
+    
+    # Обновляем запись о войсках
+    unit = next((t for t in troops if t['troop_type'] == unit_type), None)
+    current_count = unit['count'] if unit else 0
+    
+    # Создаем словарь для обновления
+    update_data = {
+        'count': current_count,
+        f'{unit_type}_training': count,
+        f'{unit_type}_end': end_time
+    }
+    
+    if unit:
+        # Обновляем существующую запись
+        supabase = Player.get_supabase()
+        supabase.table("troops") \
+            .update(update_data) \
+            .eq("id", unit['id']) \
+            .execute()
+    else:
+        # Создаем новую запись
+        insert_data = {
+            'player_id': player_id,
+            'troop_type': unit_type,
+            'count': 0,
+            f'{unit_type}_training': count,
+            f'{unit_type}_end': end_time
+        }
+        supabase = Player.get_supabase()
+        supabase.table("troops") \
+            .insert(insert_data) \
+            .execute()
+    
+    # Списываем ресурсы
+    new_food = player['food'] - count
+    new_militia_count = militia_count - count
+    
+    Player.update_troops(
+        player_id,
+        'militia',
+        new_militia_count,
+        in_training=militia['in_training'] if militia else 0,
+        training_end=militia['training_end'] if militia else None
+    )
+    
+    Player.update(player_id, food=new_food)
+    
+    return jsonify({
+        'success': True,
+        'message': f'Тренировка {count} {unit_type} началась',
+        'end_time': end_time,
+        'militia_count': new_militia_count,
+        'food': new_food
+    })
+
 @army_bp.route('/status', methods=['POST'])
 @require_telegram
 def army_status(telegram_user):
@@ -106,26 +209,30 @@ def army_status(telegram_user):
     
     troops = Player.get_troops(player['id'])
     
-    # Проверяем завершенные тренировки
+    # Формируем ответ
+    result = {
+        'militia': {'count': 0, 'in_training': 0},
+        'archer': {'count': 0, 'in_training': 0},
+        'infantry': {'count': 0, 'in_training': 0},
+        'spearmen': {'count': 0, 'in_training': 0},
+        'cavalry': {'count': 0, 'in_training': 0}
+    }
+    
     for troop in troops:
-        if troop.get('training_end') and troop['training_end'] <= current_time and troop['in_training'] > 0:
-            # Тренировка завершена
-            new_count = troop['count'] + troop['in_training']
-            Player.update_troops(
-                player['id'],
-                troop['troop_type'],
-                new_count,
-                in_training=0,
-                training_end=None
-            )
-            troop['count'] = new_count
-            troop['in_training'] = 0
-            troop['training_end'] = None
-            print(f"✅ Тренировка {troop['troop_type']} завершена")
+        troop_type = troop['troop_type']
+        if troop_type == 'militia':
+            result['militia']['count'] = troop.get('count', 0)
+            result['militia']['in_training'] = troop.get('in_training', 0)
+            result['militia']['training_end'] = troop.get('training_end')
+        else:
+            # Для других юнитов
+            result[troop_type]['count'] = troop.get('count', 0)
+            result[troop_type]['in_training'] = troop.get(f'{troop_type}_training', 0)
+            result[troop_type]['training_end'] = troop.get(f'{troop_type}_end')
     
     return jsonify({
         'success': True,
-        'troops': troops,
+        'troops': result,
         'workers_free': player.get('workers_free', 0),
-        'workers_used': player.get('workers_used', 0)
+        'food': player.get('food', 0)
     })
