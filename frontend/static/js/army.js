@@ -267,3 +267,25 @@ document.addEventListener('DOMContentLoaded', () => {
         armyTab.addEventListener('click', loadArmyStatus);
     }
 });
+// Показать точное значение военного ресурса
+function showCraftValue(resource) {
+    const values = {
+        falchion: userData.falchion || 0,
+        wooden_shield: userData.wooden_shield || 0,
+        gambeson: userData.gambeson || 0,
+        spear: userData.spear || 0,
+        bow: userData.bow || 0,
+        warhorse: userData.warhorse || 0,
+        spangenhelm: userData.spangenhelm || 0
+    };
+    const names = {
+        falchion: 'Фальшион',
+        wooden_shield: 'Деревянный щит',
+        gambeson: 'Стёганка',
+        spear: 'Копьё',
+        bow: 'Лук',
+        warhorse: 'Боевой конь',
+        spangenhelm: 'Шлем (Спангенхельм)'
+    };
+    showToast(`${names[resource]}: ${values[resource]}`);
+}
