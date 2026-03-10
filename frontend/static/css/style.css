@@ -1361,4 +1361,57 @@ body {
         width: 16px;
         height: 16px;
     }
+    /* Слайдер для тренировки */
+.slider-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+    padding: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 12px;
+}
+
+.train-slider {
+    flex: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    background: linear-gradient(90deg, #4CAF50, #ffd700);
+    border-radius: 3px;
+    outline: none;
+}
+
+.train-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    border: 2px solid #ffd700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.slider-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffd700;
+    min-width: 30px;
+    text-align: center;
+    cursor: pointer;
+    padding: 5px;
+    background: rgba(0,0,0,0.2);
+    border-radius: 8px;
+}
+
+.manual-input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ffd700;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-size: 14px;
+}
 }
