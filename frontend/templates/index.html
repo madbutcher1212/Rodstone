@@ -214,28 +214,179 @@
 <!-- Армия -->
 <div id="tabArmy" class="tab-pane hidden">
     <div class="army-section">
-        <div class="troop-header">
-            <span class="troop-icon">⚔️</span>
-            <span class="troop-name">Ополчение: <span id="militiaCount">0</span></span>
-        </div>
         
-        <!-- Контролы тренировки (видимы когда не в тренировке) -->
-        <div id="trainingControls">
-            <div class="slider-container">
-                <input type="range" id="trainRange" min="0" max="5" value="0" class="train-slider">
-                <div class="slider-value" id="trainCount">0</div>
+        <!-- Ресурсы -->
+        <div class="army-resources">
+            <div class="resource-badge">
+                <img src="/static/icons/resources/worker-free.png" class="resource-icon"> 
+                <span id="workersFree">0</span>
             </div>
-            <input type="number" id="trainInput" class="manual-input" placeholder="Введите число" min="0" max="5" style="display: none;">
-            <button class="train-btn" onclick="trainMilitia()">🔨 Обучить ополчение</button>
-        </div>
-        
-        <!-- Прогресс тренировки (видим только во время тренировки) -->
-        <div id="militiaProgress" class="training-progress" style="display: none;">
-            <div class="progress-bar">
-                <div class="progress-fill" id="militiaProgressFill"></div>
+            <div class="resource-badge">
+                <img src="/static/icons/resources/food.png" class="resource-icon"> 
+                <span id="foodAmount">0</span>
             </div>
-            <div class="progress-time" id="militiaTime"></div>
         </div>
+
+        <!-- Ополчение -->
+        <div class="troop-card">
+            <div class="troop-header">
+                <span class="troop-icon">⚔️</span>
+                <span class="troop-name">Ополчение: <span id="militiaCount">0</span></span>
+            </div>
+            
+            <div class="requirement-badge">
+                <img src="/static/icons/resources/worker-free.png" class="resource-icon"> 1 свободный житель
+            </div>
+            
+            <div id="militiaControls">
+                <div class="slider-container">
+                    <input type="range" id="militiaRange" min="0" max="5" value="0" class="train-slider">
+                    <div class="slider-value" id="militiaValue">0</div>
+                </div>
+                <input type="number" id="militiaInput" class="manual-input" placeholder="0-5" min="0" max="5" style="display: none;">
+                <button class="train-btn" onclick="trainMilitia()">🔨 Обучить ополчение</button>
+            </div>
+            
+            <div id="militiaProgress" class="training-progress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="militiaProgressFill"></div>
+                </div>
+                <div class="progress-time" id="militiaTime"></div>
+            </div>
+        </div>
+
+        <!-- Лучники -->
+        <div class="troop-card">
+            <div class="troop-header">
+                <span class="troop-icon">🏹</span>
+                <span class="troop-name">Лучники: <span id="archerCount">0</span></span>
+            </div>
+            
+            <div class="requirements">
+                <div class="requirement-badge">
+                    <img src="/static/icons/resources/worker-busy.png" class="resource-icon"> 1 ополченец
+                </div>
+                <div class="requirement-badge">
+                    <img src="/static/icons/resources/food.png" class="resource-icon"> 1 пища
+                </div>
+            </div>
+            
+            <div id="archerControls">
+                <div class="slider-container">
+                    <input type="range" id="archerRange" min="0" max="5" value="0" class="train-slider">
+                    <div class="slider-value" id="archerValue">0</div>
+                </div>
+                <input type="number" id="archerInput" class="manual-input" placeholder="0-5" min="0" max="5" style="display: none;">
+                <button class="train-btn" onclick="trainUnit('archer', 'лучников')">🔨 Обучить лучников</button>
+            </div>
+            
+            <div id="archerProgress" class="training-progress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="archerProgressFill"></div>
+                </div>
+                <div class="progress-time" id="archerTime"></div>
+            </div>
+        </div>
+
+        <!-- Пехотинцы -->
+        <div class="troop-card">
+            <div class="troop-header">
+                <span class="troop-icon">🛡️</span>
+                <span class="troop-name">Пехотинцы: <span id="infantryCount">0</span></span>
+            </div>
+            
+            <div class="requirements">
+                <div class="requirement-badge">
+                    <img src="/static/icons/resources/worker-busy.png" class="resource-icon"> 1 ополченец
+                </div>
+                <div class="requirement-badge">
+                    <img src="/static/icons/resources/food.png" class="resource-icon"> 1 пища
+                </div>
+            </div>
+            
+            <div id="infantryControls">
+                <div class="slider-container">
+                    <input type="range" id="infantryRange" min="0" max="5" value="0" class="train-slider">
+                    <div class="slider-value" id="infantryValue">0</div>
+                </div>
+                <input type="number" id="infantryInput" class="manual-input" placeholder="0-5" min="0" max="5" style="display: none;">
+                <button class="train-btn" onclick="trainUnit('infantry', 'пехотинцев')">🔨 Обучить пехотинцев</button>
+            </div>
+            
+            <div id="infantryProgress" class="training-progress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="infantryProgressFill"></div>
+                </div>
+                <div class="progress-time" id="infantryTime"></div>
+            </div>
+        </div>
+
+        <!-- Копейщики -->
+        <div class="troop-card">
+            <div class="troop-header">
+                <span class="troop-icon">🔱</span>
+                <span class="troop-name">Копейщики: <span id="spearmenCount">0</span></span>
+            </div>
+            
+            <div class="requirements">
+                <div class="requirement-badge">
+                    <img src="/static/icons/resources/worker-busy.png" class="resource-icon"> 1 ополченец
+                </div>
+                <div class="requirement-badge">
+                    <img src="/static/icons/resources/food.png" class="resource-icon"> 1 пища
+                </div>
+            </div>
+            
+            <div id="spearmenControls">
+                <div class="slider-container">
+                    <input type="range" id="spearmenRange" min="0" max="5" value="0" class="train-slider">
+                    <div class="slider-value" id="spearmenValue">0</div>
+                </div>
+                <input type="number" id="spearmenInput" class="manual-input" placeholder="0-5" min="0" max="5" style="display: none;">
+                <button class="train-btn" onclick="trainUnit('spearmen', 'копейщиков')">🔨 Обучить копейщиков</button>
+            </div>
+            
+            <div id="spearmenProgress" class="training-progress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="spearmenProgressFill"></div>
+                </div>
+                <div class="progress-time" id="spearmenTime"></div>
+            </div>
+        </div>
+
+        <!-- Всадники -->
+        <div class="troop-card">
+            <div class="troop-header">
+                <span class="troop-icon">🐎</span>
+                <span class="troop-name">Всадники: <span id="cavalryCount">0</span></span>
+            </div>
+            
+            <div class="requirements">
+                <div class="requirement-badge">
+                    <img src="/static/icons/resources/worker-busy.png" class="resource-icon"> 1 ополченец
+                </div>
+                <div class="requirement-badge">
+                    <img src="/static/icons/resources/food.png" class="resource-icon"> 1 пища
+                </div>
+            </div>
+            
+            <div id="cavalryControls">
+                <div class="slider-container">
+                    <input type="range" id="cavalryRange" min="0" max="5" value="0" class="train-slider">
+                    <div class="slider-value" id="cavalryValue">0</div>
+                </div>
+                <input type="number" id="cavalryInput" class="manual-input" placeholder="0-5" min="0" max="5" style="display: none;">
+                <button class="train-btn" onclick="trainUnit('cavalry', 'всадников')">🔨 Обучить всадников</button>
+            </div>
+            
+            <div id="cavalryProgress" class="training-progress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="cavalryProgressFill"></div>
+                </div>
+                <div class="progress-time" id="cavalryTime"></div>
+            </div>
+        </div>
+
     </div>
 </div>
                 
