@@ -1496,13 +1496,13 @@ body {
     backdrop-filter: blur(3px);
     border-radius: 8px;
     padding: 6px 3px;
-    min-width: 62px;
+    min-width: 44px;
     cursor: pointer;
     border: 1px solid rgba(255, 215, 0, 0.2);
     gap: 1px;
     transition: all 0.2s ease;
     flex: 1 0 44px;
-    max-width: 68px;
+    max-width: 48px;
 }
 
 .craft-resource-item:hover {
