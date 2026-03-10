@@ -895,6 +895,57 @@ body {
     color: white;
     font-size: 14px;
 }
+/* Ресурсы в армии */
+.army-resources {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: rgba(0,0,0,0.05);
+    border-radius: 16px;
+}
+
+.resource-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.resource-badge img {
+    width: 20px;
+    height: 20px;
+}
+
+/* Требования */
+.requirements {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.requirement-badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    background: rgba(255,215,0,0.1);
+    border: 1px solid #ffd700;
+    border-radius: 16px;
+    font-size: 11px;
+    color: #ffd700;
+}
+
+.requirement-badge img {
+    width: 16px;
+    height: 16px;
+}
 
 /* Иконки */
 .income-icon {
