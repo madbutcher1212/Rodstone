@@ -211,55 +211,30 @@
 </div>
 
                 
-            <!-- Армия -->
+<!-- Армия -->
 <div id="tabArmy" class="tab-pane hidden">
     <div class="army-section">
-        <h3>⚔️ Армия</h3>
-        
-        <!-- Информация о жителях -->
-        <div class="workers-info">
-            <div class="worker-stat">
-                <img src="/static/icons/resources/worker-free.png" class="worker-icon">
-                <span>Свободно: <span id="armyFreeWorkers">0</span></span>
-            </div>
-            <div class="worker-stat">
-                <img src="/static/icons/resources/worker-busy.png" class="worker-icon">
-                <span>Занято: <span id="armyBusyWorkers">0</span></span>
-            </div>
+        <div class="troop-header">
+            <span class="troop-icon">⚔️</span>
+            <span class="troop-name">Ополчение: <span id="militiaCount">0</span></span>
         </div>
         
-        <!-- Ополчение -->
-        <div class="troop-card">
-            <div class="troop-header">
-                <span class="troop-icon">⚔️</span>
-                <span class="troop-name">Ополчение</span>
+        <!-- Контролы тренировки (видимы когда не в тренировке) -->
+        <div id="trainingControls">
+            <div class="slider-container">
+                <input type="range" id="trainRange" min="0" max="5" value="0" class="train-slider">
+                <div class="slider-value" id="trainCount">0</div>
             </div>
-            
-            <div class="troop-stats">
-                <div class="troop-stat">
-                    <span>В наличии:</span>
-                    <span class="troop-count" id="militiaCount">0</span>
-                </div>
-                <div class="troop-stat">
-                    <span>В тренировке:</span>
-                    <span class="troop-training" id="militiaTraining">0</span>
-                </div>
+            <input type="number" id="trainInput" class="manual-input" placeholder="Введите число" min="0" max="5" style="display: none;">
+            <button class="train-btn" onclick="trainMilitia()">🔨 Обучить ополчение</button>
+        </div>
+        
+        <!-- Прогресс тренировки (видим только во время тренировки) -->
+        <div id="militiaProgress" class="training-progress" style="display: none;">
+            <div class="progress-bar">
+                <div class="progress-fill" id="militiaProgressFill"></div>
             </div>
-            
-            <!-- Прогресс тренировки -->
-            <div class="training-progress" id="militiaProgress" style="display: none;">
-                <div class="progress-bar">
-                    <div class="progress-fill" id="militiaProgressFill"></div>
-                </div>
-                <div class="progress-time" id="militiaTime"></div>
-            </div>
-            
-            <!-- Кнопки тренировки -->
-            <div class="train-controls">
-                <button class="train-btn" onclick="trainMilitia(1)">➕ 1</button>
-                <button class="train-btn" onclick="trainMilitia(5)">➕ 5</button>
-                <button class="train-btn" onclick="trainMilitia(10)">➕ 10</button>
-            </div>
+            <div class="progress-time" id="militiaTime"></div>
         </div>
     </div>
 </div>
