@@ -285,7 +285,7 @@ function showCraftValue(resource) {
         spear: 'Копьё',
         bow: 'Лук',
         warhorse: 'Боевой конь',
-        spangenhelm: 'Шлем (Спангенхельм)'
+        spangenhelm: 'Шлем'
     };
     showToast(`${names[resource]}: ${values[resource]}`);
 }
