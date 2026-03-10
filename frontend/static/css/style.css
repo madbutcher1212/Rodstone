@@ -1465,5 +1465,62 @@ body {
         width: 16px;
         height: 16px;
     }
+/* ===== БАР ВОЕННЫХ РЕСУРСОВ ===== */
+.craft-resources-container {
+    background: linear-gradient(135deg, #2a2a40 0%, #1e1e2f 100%);
+    padding: 6px 4px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    border: 1px solid #ffd700;
+    width: 100%;
+}
 
+.craft-resources-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2px;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.craft-resource-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(3px);
+    border-radius: 8px;
+    padding: 4px 2px;
+    min-width: 44px;
+    cursor: pointer;
+    border: 1px solid rgba(255, 215, 0, 0.2);
+    gap: 1px;
+    transition: all 0.2s ease;
+    flex: 1 0 44px;
+    max-width: 48px;
+}
+
+.craft-resource-item:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #ffd700;
+    transform: translateY(-1px);
+}
+
+.craft-resource-item .resource-icon-img {
+    width: 18px;
+    height: 18px;
+    margin-bottom: 2px;
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+}
+
+.craft-resource-item .resource-value {
+    font-size: 11px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    margin: 0;
+    line-height: 1.2;
+}
 }
