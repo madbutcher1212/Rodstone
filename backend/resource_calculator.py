@@ -19,6 +19,7 @@ def calculate_resources_for_period(player_data, start_time, end_time):
     current_coal = player_data.get('coal', 0)
     current_leather = player_data.get('leather', 0)
     current_horses = player_data.get('horses', 0)
+    current_fabric = player_data.get('fabric', 0)  # НОВЫЙ РЕСУРС
     
     # Сохраняем текущее количество занятых жителей
     workers_used = player_data.get('workers_used', 0)
@@ -51,6 +52,7 @@ def calculate_resources_for_period(player_data, start_time, end_time):
             'food': int(current_food),
             'leather': int(current_leather),
             'horses': int(current_horses),
+            'fabric': int(current_fabric),  # НОВЫЙ РЕСУРС
             'population_current': int(current_pop),
             'workers_free': int(workers_free)
         }
@@ -82,6 +84,8 @@ def calculate_resources_for_period(player_data, start_time, end_time):
             current_leather += inc['leather']
         if 'horses' in inc:
             current_horses += inc['horses']
+        if 'fabric' in inc:  # НОВЫЙ РЕСУРС
+            current_fabric += inc['fabric']
         
         # Еда не может быть ниже 0
         if current_food < 0:
@@ -109,6 +113,7 @@ def calculate_resources_for_period(player_data, start_time, end_time):
         'food': int(current_food),
         'leather': int(current_leather),
         'horses': int(current_horses),
+        'fabric': int(current_fabric),  # НОВЫЙ РЕСУРС
         'population_current': int(current_pop),
         'workers_free': int(workers_free)
     }
@@ -162,6 +167,7 @@ def update_player_resources(player, current_time=None):
         food=player['food'],
         leather=player['leather'],
         horses=player['horses'],
+        fabric=player.get('fabric', 0),  # НОВЫЙ РЕСУРС
         population_current=player['population_current'],
         workers_free=player['workers_free'],
         last_calculated=player['last_calculated']
