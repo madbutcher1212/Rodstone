@@ -303,7 +303,7 @@ body {
     backdrop-filter: blur(3px);
     border-radius: 8px;
     padding: 4px 2px;
-    min-width: 44px;
+    min-width: 38px;
     cursor: pointer;
     border: 1px solid rgba(255, 215, 0, 0.2);
     gap: 1px;
@@ -338,7 +338,7 @@ body {
 
 /* Доход в час */
 .city-resource-item .resource-income-small {
-    font-size: 6px;
+    font-size: 8px;
     font-weight: bold;
     color: #4CAF50;
     background: rgba(0,0,0,0.3);
