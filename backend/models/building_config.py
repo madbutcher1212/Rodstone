@@ -1,6 +1,5 @@
 # Конфигурация всех зданий в игре
 BUILDINGS_CONFIG = {
-    # ===== СУЩЕСТВУЮЩИЕ ЗДАНИЯ =====
     "house": {
         "name": "Жилой район",
         "icon": "🏘️",
@@ -129,7 +128,6 @@ BUILDINGS_CONFIG = {
         "requiredTownHall": [2, 3, 4, 5, 5]
     },
 
-    # ===== НОВЫЕ ПРОИЗВОДСТВЕННЫЕ =====
     "hunting_lodge": {
         "name": "Хижина охотника",
         "icon": "🏹",
@@ -240,8 +238,52 @@ BUILDINGS_CONFIG = {
         ],
         "requiredTownHall": [2, 3, 4, 5, 5]
     },
+    
+"vineyard": {
+    "name": "Виноградник",
+    "icon": "🍇",
+    "section": "production",
+    "max_level": 5,
+    "workers_needed": [1, 2, 2, 3, 3],
+    "base_cost": {"gold": 200, "wood": 150, "stone": 50},
+    "upgrade_costs": [
+        {"gold": 400, "wood": 250, "stone": 100},
+        {"gold": 900, "wood": 500, "stone": 250},
+        {"gold": 2000, "wood": 1200, "stone": 600},
+        {"gold": 5000, "wood": 3000, "stone": 1500}
+    ],
+    "income": [
+        {"food": 25, "gold": 10},
+        {"food": 45, "gold": 20},
+        {"food": 70, "gold": 35},
+        {"food": 100, "gold": 55},
+        {"food": 140, "gold": 80}
+    ],
+    "requiredTownHall": [5, 5, 5, 5, 5]
+},
 
-    # ===== ВОЕННЫЕ =====
+"linen_workshop": {
+    "name": "Льняная мастерская",
+    "icon": "🧵",
+    "section": "production",
+    "max_level": 5,
+    "workers_needed": [1, 2, 2, 3, 3],
+    "base_cost": {"gold": 100, "wood": 120, "stone": 30},
+    "upgrade_costs": [
+        {"gold": 200, "wood": 200, "stone": 60},
+        {"gold": 500, "wood": 450, "stone": 150},
+        {"gold": 1200, "wood": 1000, "stone": 400},
+        {"gold": 3000, "wood": 2500, "stone": 1000}
+    ],
+    "income": [
+        {"fabric": 5, "gold": 3},
+        {"fabric": 10, "gold": 6},
+        {"fabric": 18, "gold": 12},
+        {"fabric": 30, "gold": 20},
+        {"fabric": 50, "gold": 35}
+    ],
+    "requiredTownHall": [3, 4, 5, 5, 5]
+},
     "armorer": {
         "name": "Бронник",
         "icon": "🛡️",
@@ -277,7 +319,7 @@ BUILDINGS_CONFIG = {
     "foal_farm": {
         "name": "Жеребятник",
         "icon": "🐎",
-        "section": "military",
+        "section": "production",
         "max_level": 5,
         "workers_needed": [1, 2, 2, 3, 3],
         "base_cost": {"gold": 150, "wood": 200, "stone": 50},
@@ -296,6 +338,30 @@ BUILDINGS_CONFIG = {
         ],
         "requiredTownHall": [4, 5, 5, 5, 5]
     },
+"manor": {
+    "name": "Поместье",
+    "icon": "🏰",
+    "section": "social",
+    "max_level": 5,
+    "workers_needed": [0, 0, 0, 0, 0],
+    "base_cost": {"gold": 500, "wood": 300, "stone": 200},
+    "upgrade_costs": [
+        {"gold": 1000, "wood": 500, "stone": 300},
+        {"gold": 2000, "wood": 1000, "stone": 600},
+        {"gold": 4000, "wood": 2000, "stone": 1200},
+        {"gold": 8000, "wood": 4000, "stone": 2500}
+    ],
+    "population_bonus": [100, 180, 280, 400, 550],  # Согласно нашему балансу
+    "income": [
+        {"gold": 5},
+        {"gold": 10},
+        {"gold": 18},
+        {"gold": 30},
+        {"gold": 50}
+    ],
+    "requiredTownHall": [5, 6, 7, 8, 9]
+},
+    
     "barracks": {
         "name": "Казармы",
         "icon": "🏛️",
