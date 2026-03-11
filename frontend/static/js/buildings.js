@@ -479,27 +479,31 @@ function updateCityUI() {
     updateResourcesDisplay();
     updateTownHallDisplay();
     
-    // 1. ПРОИЗВОДСТВО (8 зданий)
-    let productionHtml = '';
-    productionHtml += generateBuildingCardHTML('hunting_lodge');
-    productionHtml += generateBuildingCardHTML('lumber');
-    productionHtml += generateBuildingCardHTML('quarry');
-    productionHtml += generateBuildingCardHTML('fishing_wharf');
-    productionHtml += generateBuildingCardHTML('charcoal_kiln');
-    productionHtml += generateBuildingCardHTML('farm');
-    productionHtml += generateBuildingCardHTML('mines');
-    productionHtml += generateBuildingCardHTML('ranch');
-    document.getElementById('productionBuildings').innerHTML = productionHtml;
-    
-    // 2. СОЦИАЛЬНЫЕ (6 зданий)
-    let socialHtml = '';
-    socialHtml += generateBuildingCardHTML('house');
-    socialHtml += generateBuildingCardHTML('tavern');
-    socialHtml += generateBuildingCardHTML('chapel');
-    socialHtml += generateBuildingCardHTML('bath');
-    socialHtml += generateBuildingCardHTML('infirmary');
-    socialHtml += generateBuildingCardHTML('almshouse');
-    document.getElementById('socialBuildings').innerHTML = socialHtml;
+// 1. ПРОИЗВОДСТВО (все производственные здания)
+let productionHtml = '';
+productionHtml += generateBuildingCardHTML('hunting_lodge');    // Хижина охотника
+productionHtml += generateBuildingCardHTML('lumber');           // Лагерь лесорубов
+productionHtml += generateBuildingCardHTML('quarry');           // Каменоломня
+productionHtml += generateBuildingCardHTML('fishing_wharf');    // Рыбацкая пристань
+productionHtml += generateBuildingCardHTML('charcoal_kiln');    // Жаровня
+productionHtml += generateBuildingCardHTML('farm');             // Ферма
+productionHtml += generateBuildingCardHTML('mines');            // Шахты
+productionHtml += generateBuildingCardHTML('ranch');            // Скотный двор
+productionHtml += generateBuildingCardHTML('vineyard');         // Виноградник 
+productionHtml += generateBuildingCardHTML('linen_workshop');   // Льняная мастерская 
+productionHtml += generateBuildingCardHTML('foal_farm');        // Жеребятник 
+document.getElementById('productionBuildings').innerHTML = productionHtml;
+
+// 2. СОЦИАЛЬНЫЕ
+let socialHtml = '';
+socialHtml += generateBuildingCardHTML('house');        // Хижины
+socialHtml += generateBuildingCardHTML('tavern');       // Корчма
+socialHtml += generateBuildingCardHTML('chapel');       // Часовня
+socialHtml += generateBuildingCardHTML('bath');         // Купели
+socialHtml += generateBuildingCardHTML('infirmary');    // Лазарет
+socialHtml += generateBuildingCardHTML('almshouse');    // Богадельня
+socialHtml += generateBuildingCardHTML('manor');        // Поместье
+document.getElementById('socialBuildings').innerHTML = socialHtml;
     
     // 3. ЭКОНОМИЧЕСКИЕ (4 здания)
     let economicHtml = '';
@@ -513,7 +517,6 @@ function updateCityUI() {
     let militaryHtml = '';
     militaryHtml += generateBuildingCardHTML('armorer');
     militaryHtml += generateBuildingCardHTML('weaponsmith');
-    militaryHtml += generateBuildingCardHTML('foal_farm');
     militaryHtml += generateBuildingCardHTML('barracks');
     militaryHtml += generateBuildingCardHTML('shooting_range');
     militaryHtml += generateBuildingCardHTML('stables');
