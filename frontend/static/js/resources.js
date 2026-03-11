@@ -16,6 +16,7 @@ function showExactValue(resource) {
         food: userData.food,
         leather: userData.leather || 0,
         horses: userData.horses || 0,
+        fabric: userData.fabric || 0,
         ore: userData.ore || 0,
         rodstone: userData.rodstone || 0,
         population: `${userData.population_current}/${userData.population_max}`
@@ -29,6 +30,7 @@ function showExactValue(resource) {
         food: 'Еда',
         leather: 'Шкуры',
         horses: 'Лошади',
+        fabric: 'Ткань',
         ore: 'Руда',
         rodstone: 'Родстоун',
         population: 'Население'
@@ -46,6 +48,7 @@ function calculateHourlyIncome() {
         coal: 0,
         leather: 0,
         horses: 0,
+        fabric: 0,
         ore: 0,
         rodstone: 0,
         populationGrowth: 0
@@ -64,6 +67,7 @@ function calculateHourlyIncome() {
             income.coal += inc.coal || 0;
             income.leather += inc.leather || 0;
             income.horses += inc.horses || 0;
+            income.fabric += inc.fabric || 0;
             income.populationGrowth += inc.populationGrowth || 0;
         }
     });
@@ -92,7 +96,10 @@ function updateResourcesDisplay() {
         populationDisplay.textContent = `${userData.population_current}/${userData.population_max}`;
     }
 
-    // Ресурсы в городе (строительные: дерево, камень, железо, уголь)
+    // Ресурсы в городе (еда, дерево, камень, железо, уголь, шкуры, ткань, лошади)
+    const foodDisplay = document.getElementById('foodDisplay');
+    if (foodDisplay) foodDisplay.textContent = formatNumber(userData.food);
+    
     const woodDisplay = document.getElementById('woodDisplay');
     if (woodDisplay) woodDisplay.textContent = formatNumber(userData.wood);
     
@@ -105,17 +112,28 @@ function updateResourcesDisplay() {
     const coalDisplay = document.getElementById('coalDisplay');
     if (coalDisplay) coalDisplay.textContent = formatNumber(userData.coal || 0);
     
-    // Ресурсы в городе (жизни: еда, шкуры, лошади)
-    const foodDisplay = document.getElementById('foodDisplay');
-    if (foodDisplay) foodDisplay.textContent = formatNumber(userData.food);
-    
     const leatherDisplay = document.getElementById('leatherDisplay');
     if (leatherDisplay) leatherDisplay.textContent = formatNumber(userData.leather || 0);
+    
+    const fabricDisplay = document.getElementById('fabricDisplay');
+    if (fabricDisplay) fabricDisplay.textContent = formatNumber(userData.fabric || 0);
     
     const horsesDisplay = document.getElementById('horsesDisplay');
     if (horsesDisplay) horsesDisplay.textContent = formatNumber(userData.horses || 0);
 
     // Доходы в городе
+    const foodProd = income.food;
+    const foodCons = userData.population_current;
+    const foodBal = foodProd - foodCons;
+    
+    const foodIncome2 = document.getElementById('foodIncome2');
+    if (foodIncome2) {
+        foodIncome2.textContent = 
+            foodBal > 0 ? `+${formatNumber(foodBal)}` : 
+            foodBal < 0 ? `${formatNumber(foodBal)}` : '0';
+        foodIncome2.className = foodBal < 0 ? 'resource-income-negative' : 'resource-income-small';
+    }
+    
     const woodIncome2 = document.getElementById('woodIncome2');
     if (woodIncome2) {
         woodIncome2.textContent = `+${formatNumber(income.wood)}`;
@@ -140,22 +158,17 @@ function updateResourcesDisplay() {
         coalIncome2.className = 'resource-income-small';
     }
     
-    const foodProd = income.food;
-    const foodCons = userData.population_current;
-    const foodBal = foodProd - foodCons;
-    
-    const foodIncome2 = document.getElementById('foodIncome2');
-    if (foodIncome2) {
-        foodIncome2.textContent = 
-            foodBal > 0 ? `+${formatNumber(foodBal)}` : 
-            foodBal < 0 ? `${formatNumber(foodBal)}` : '0';
-        foodIncome2.className = foodBal < 0 ? 'resource-income-negative' : 'resource-income-small';
-    }
-    
     const leatherIncome2 = document.getElementById('leatherIncome2');
     if (leatherIncome2) {
         leatherIncome2.textContent = `+${formatNumber(income.leather)}`;
         leatherIncome2.className = 'resource-income-small';
+    }
+    
+    
+    const fabricIncome2 = document.getElementById('fabricIncome2');
+    if (fabricIncome2) {
+        fabricIncome2.textContent = `+${formatNumber(income.fabric)}`;
+        fabricIncome2.className = 'resource-income-small';
     }
     
     const horsesIncome2 = document.getElementById('horsesIncome2');
