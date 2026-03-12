@@ -1,5 +1,5 @@
-/* Подключение шрифтов */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap');
+/* ПОДКЛЮЧЕНИЕ ШРИФТОВ - ВСТАВИТЬ В САМОЕ НАЧАЛО */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;600&family=Montserrat:wght@400;600;700;800&display=swap');
 
 * {
     margin: 0;
@@ -15,25 +15,34 @@ body {
     justify-content: center;
 }
 
-/* Заголовки - средневековый стиль */
+/* ЗАГОЛОВКИ - средневековый стиль */
 h1, h2, h3, .section-title, .building-name, .town-hall-name {
     font-family: 'Cinzel', serif;
     text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     letter-spacing: 0.5px;
 }
 
-/* Цифры ресурсов - жирные, четкие */
-.resource-value, .building-level, .troop-count {
-    font-family: 'Cinzel', serif;
+/* ЦИФРЫ - максимально читаемые */
+.resource-value, .building-level, .troop-count,
+#goldBar, #woodBar, #stoneBar, #foodBar, #rodstoneBar,
+#populationDisplay, #freePopulation, #workersPopulation,
+#falchionDisplay, #woodenShieldDisplay, #gambesonDisplay,
+#spearDisplay, #bowDisplay, #warhorseDisplay, #spangenhelmDisplay,
+#fabricDisplay {
+    font-family: 'Montserrat', sans-serif;
     font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.3px;
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-/* Мелкий текст - читаемый */
-.building-income, .resource-income-small, .requirement-text {
-    font-family: 'Cormorant Garamond', serif;
+/* МЕЛКИЕ ЦИФРЫ (доходы) */
+.resource-income-small, .building-income, .troop-training,
+#foodIncome2, #woodIncome2, #stoneIncome2, #ironIncome2,
+#coalIncome2, #leatherIncome2, #fabricIncome2, #horsesIncome2 {
+    font-family: 'Montserrat', sans-serif;
     font-weight: 600;
-    letter-spacing: 0.3px;
+    font-size: 10px;
 }
 
 body {
