@@ -15,7 +15,6 @@ function showExactValue(resource) {
         coal: userData.coal || 0,
         food: userData.food,
         leather: userData.leather || 0,
-        horses: userData.horses || 0,
         fabric: userData.fabric || 0,
         ore: userData.ore || 0,
         rodstone: userData.rodstone || 0,
@@ -29,7 +28,6 @@ function showExactValue(resource) {
         coal: 'Уголь',
         food: 'Еда',
         leather: 'Шкуры',
-        horses: 'Лошади',
         fabric: 'Ткань',
         ore: 'Руда',
         rodstone: 'Родстоун',
@@ -117,9 +115,6 @@ function updateResourcesDisplay() {
     
     const fabricDisplay = document.getElementById('fabricDisplay');
     if (fabricDisplay) fabricDisplay.textContent = formatNumber(userData.fabric || 0);
-    
-    const horsesDisplay = document.getElementById('horsesDisplay');
-    if (horsesDisplay) horsesDisplay.textContent = formatNumber(userData.horses || 0);
 
     // Доходы в городе
     const foodProd = income.food;
@@ -169,12 +164,6 @@ function updateResourcesDisplay() {
     if (fabricIncome2) {
         fabricIncome2.textContent = `+${formatNumber(income.fabric)}`;
         fabricIncome2.className = 'resource-income-small';
-    }
-    
-    const horsesIncome2 = document.getElementById('horsesIncome2');
-    if (horsesIncome2) {
-        horsesIncome2.textContent = `+${formatNumber(income.horses)}`;
-        horsesIncome2.className = 'resource-income-small';
     }
 
     // Рост населения
