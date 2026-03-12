@@ -1,8 +1,39 @@
+/* Подключение шрифтов */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Cormorant+Garamond:wght@400;600&display=swap');
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    font-family: 'Cormorant Garamond', serif;
+    background: linear-gradient(135deg, #1e1e2f 0%, #2a2a40 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+}
+
+/* Заголовки - средневековый стиль */
+h1, h2, h3, .section-title, .building-name, .town-hall-name {
+    font-family: 'Cinzel', serif;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    letter-spacing: 0.5px;
+}
+
+/* Цифры ресурсов - жирные, четкие */
+.resource-value, .building-level, .troop-count {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Мелкий текст - читаемый */
+.building-income, .resource-income-small, .requirement-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    letter-spacing: 0.3px;
 }
 
 body {
