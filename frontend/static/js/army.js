@@ -275,7 +275,7 @@ function showCraftValue(resource) {
         gambeson: userData.gambeson || 0,
         spear: userData.spear || 0,
         bow: userData.bow || 0,
-        warhorse: userData.warhorse || 0,
+        saddle: userData.saddle || 0,
         spangenhelm: userData.spangenhelm || 0
     };
     const names = {
@@ -284,7 +284,7 @@ function showCraftValue(resource) {
         gambeson: 'Стёганка',
         spear: 'Копьё',
         bow: 'Лук',
-        warhorse: 'Боевой конь',
+        saddle: 'Седло',
         spangenhelm: 'Шлем'
     };
     showToast(`${names[resource]}: ${values[resource]}`);
