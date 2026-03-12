@@ -276,6 +276,7 @@ function showCraftValue(resource) {
         spear: userData.spear || 0,
         bow: userData.bow || 0,
         saddle: userData.saddle || 0,
+        horses: userData.horses || 0,
         spangenhelm: userData.spangenhelm || 0
     };
     const names = {
@@ -285,6 +286,7 @@ function showCraftValue(resource) {
         spear: 'Копьё',
         bow: 'Лук',
         saddle: 'Седло',
+        horses: 'Лошади',
         spangenhelm: 'Шлем'
     };
     showToast(`${names[resource]}: ${values[resource]}`);
