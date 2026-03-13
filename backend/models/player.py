@@ -167,7 +167,7 @@ class Player:
             print(f"❌ Atomic update error: {e}")
             return None
 
-    # ===== НОВЫЕ МЕТОДЫ ДЛЯ ВОЙСК =====
+    # ===== МЕТОДЫ ДЛЯ ВОЙСК =====
     @staticmethod
     def get_troops(player_id):
         """Получить войска игрока"""
@@ -211,5 +211,52 @@ class Player:
                 "training_end": training_end
             }
             supabase.table("troops") \
+                .insert(insert_data) \
+                .execute()
+
+    # ===== НОВЫЕ МЕТОДЫ ДЛЯ КРАФТА =====
+    @staticmethod
+    def get_crafting(player_id):
+        """Получить очередь крафта игрока"""
+        supabase = get_supabase()
+        result = supabase.table("crafting") \
+            .select("*") \
+            .eq("player_id", player_id) \
+            .execute()
+        return result.data if result.data else []
+
+    @staticmethod
+    def update_crafting(player_id, item_type, count, in_progress=0, progress_end=None):
+        """Обновить/создать запись крафта"""
+        supabase = get_supabase()
+        
+        # Проверяем, есть ли уже такая запись
+        existing = supabase.table("crafting") \
+            .select("*") \
+            .eq("player_id", player_id) \
+            .eq("item_type", item_type) \
+            .execute()
+        
+        if existing.data:
+            # Обновляем существующую
+            update_data = {
+                "count": count,
+                "in_progress": in_progress,
+                "progress_end": progress_end
+            }
+            supabase.table("crafting") \
+                .update(update_data) \
+                .eq("id", existing.data[0]['id']) \
+                .execute()
+        else:
+            # Создаем новую
+            insert_data = {
+                "player_id": player_id,
+                "item_type": item_type,
+                "count": count,
+                "in_progress": in_progress,
+                "progress_end": progress_end
+            }
+            supabase.table("crafting") \
                 .insert(insert_data) \
                 .execute()
