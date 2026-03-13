@@ -1,7 +1,7 @@
 # Конфигурация всех зданий в игре
 BUILDINGS_CONFIG = {
     "house": {
-        "name": "Жилой район",
+        "name": "Жилые Хижины",
         "icon": "🏘️",
         "section": "social",
         "max_level": 5,
@@ -285,7 +285,7 @@ BUILDINGS_CONFIG = {
     "requiredTownHall": [3, 4, 5, 5, 5]
 },
     "armorer": {
-        "name": "Бронник",
+        "name": "Мастерская бронника",
         "icon": "🛡️",
         "section": "military",
         "max_level": 5,
@@ -301,7 +301,7 @@ BUILDINGS_CONFIG = {
         "requiredTownHall": [4, 5, 5, 5, 5]
     },
     "weaponsmith": {
-        "name": "Оружейник",
+        "name": "Мастерская оружейника",
         "icon": "⚔️",
         "section": "military",
         "max_level": 5,
