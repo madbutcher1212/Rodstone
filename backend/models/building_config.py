@@ -524,7 +524,12 @@ BUILDINGS_CONFIG = {
     "max_level": 5,
     "workers_needed": [1, 2, 2, 3, 3],
     "base_cost": {"gold": 100, "wood": 120, "stone": 30},
-    "upgrade_costs": [...],
+    "upgrade_costs": [
+    {"gold": 200, "wood": 200, "stone": 60},
+    {"gold": 500, "wood": 450, "stone": 150},
+    {"gold": 1200, "wood": 1000, "stone": 400},
+    {"gold": 3000, "wood": 2500, "stone": 1000}
+],
     "income": [
         {"bows": 2},
         {"bows": 5},
@@ -541,7 +546,12 @@ BUILDINGS_CONFIG = {
     "max_level": 5,
     "workers_needed": [1, 2, 2, 3, 3],
     "base_cost": {"gold": 100, "wood": 130, "stone": 40},
-    "upgrade_costs": [...],
+    "upgrade_costs": [
+    {"gold": 200, "wood": 200, "stone": 60},
+    {"gold": 500, "wood": 450, "stone": 150},
+    {"gold": 1200, "wood": 1000, "stone": 400},
+    {"gold": 3000, "wood": 2500, "stone": 1000}
+],
     "income": [
         {"shields": 2},
         {"shields": 5},
@@ -558,7 +568,12 @@ BUILDINGS_CONFIG = {
     "max_level": 5,
     "workers_needed": [1, 2, 2, 3, 3],
     "base_cost": {"gold": 120, "wood": 100, "stone": 50},
-    "upgrade_costs": [...],
+    "upgrade_costs": [
+    {"gold": 200, "wood": 200, "stone": 60},
+    {"gold": 500, "wood": 450, "stone": 150},
+    {"gold": 1200, "wood": 1000, "stone": 400},
+    {"gold": 3000, "wood": 2500, "stone": 1000}
+],
     "income": [
         {"saddles": 2},
         {"saddles": 4},
