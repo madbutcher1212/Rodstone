@@ -263,7 +263,7 @@ BUILDINGS_CONFIG = {
 },
 
 "linen_workshop": {
-    "name": "Льняная мастерская",
+    "name": "Льняная ферма",
     "icon": "🧵",
     "section": "production",
     "max_level": 5,
@@ -495,7 +495,7 @@ BUILDINGS_CONFIG = {
         "requiredTownHall": [4, 5, 5, 5, 5]
     },
     "weaving_workshop": {
-        "name": "Ткацкая мастерская",
+        "name": "Мастерская ткача",
         "icon": "🧵",
         "section": "economic",
         "max_level": 5,
