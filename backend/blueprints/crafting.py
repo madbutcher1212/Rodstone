@@ -10,7 +10,7 @@ crafting_bp = Blueprint('crafting', __name__)
 
 # Рецепты крафта
 CRAFT_RECIPES = {
-    'gambesons': {  # Стёганка
+    'gambeson': {  # Стёганка
         'fabric': 5,
         'leather': 1,
         'time': 60  # 60 секунд (1 минута)
@@ -174,7 +174,7 @@ def collect_crafted(telegram_user):
     if not item or item['count'] == 0:
         return jsonify({'success': False, 'error': 'No items to collect'}), 400
     
-    # Получаем текущее количество предметов (используем правильное название колонки gambesons)
+    # Получаем текущее количество предметов (колонка gambesons)
     current_count = player.get('gambesons', 0)
     
     # Добавляем новые предметы
