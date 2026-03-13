@@ -10,6 +10,19 @@ let userData = {
     wood: 50,
     food: 50,
     stone: 0,
+    iron: 0,
+    coal: 0,
+    leather: 0,
+    horses: 0,
+    fabric: 0,
+    // ВОЕННЫЕ РЕСУРСЫ
+    falchion: 0,
+    wooden_shield: 0,
+    gambeson: 0,
+    spear: 0,
+    bow: 0,
+    saddle: 0,
+    spangenhelm: 0,
     level: 1,
     townHallLevel: 1,
     population_current: 10,
@@ -76,14 +89,19 @@ async function login() {
             userData.game_login = result.user?.game_login || '';
             userData.avatar = result.user?.avatar || 'male_free';
             userData.owned_avatars = result.user?.owned_avatars || ['male_free', 'female_free'];
+            
+            // Основные ресурсы
             userData.gold = result.user?.gold || 100;
             userData.wood = result.user?.wood || 50;
             userData.food = result.user?.food || 50;
             userData.stone = result.user?.stone || 0;
+            userData.iron = result.user?.iron || 0;
             userData.coal = result.user?.coal || 0;
             userData.leather = result.user?.leather || 0;
             userData.horses = result.user?.horses || 0;
             userData.fabric = result.user?.fabric || 0;
+            
+            //  ВОЕННЫЕ РЕСУРСЫ 
             userData.falchion = result.user?.falchion || 0;
             userData.wooden_shield = result.user?.wooden_shield || 0;
             userData.gambeson = result.user?.gambeson || 0;
@@ -91,6 +109,7 @@ async function login() {
             userData.bow = result.user?.bow || 0;
             userData.saddle = result.user?.saddle || 0;
             userData.spangenhelm = result.user?.spangenhelm || 0;
+            
             userData.level = result.user?.level || 1;
             userData.townHallLevel = result.user?.townHallLevel || 1;
             userData.population_current = result.user?.population_current || 10;
@@ -110,6 +129,31 @@ async function login() {
             updateUserInfo();
             updateAvatar();
             updateCityUI();
+            
+            // ОТОБРАЖЕНИЕ ВОЕННЫХ РЕСУРСОВ
+            const gambesonEl = document.getElementById('gambesonDisplay');
+            if (gambesonEl) gambesonEl.textContent = userData.gambeson;
+            
+            const falchionEl = document.getElementById('falchionDisplay');
+            if (falchionEl) falchionEl.textContent = userData.falchion;
+            
+            const woodenShieldEl = document.getElementById('woodenShieldDisplay');
+            if (woodenShieldEl) woodenShieldEl.textContent = userData.wooden_shield;
+            
+            const spearEl = document.getElementById('spearDisplay');
+            if (spearEl) spearEl.textContent = userData.spear;
+            
+            const bowEl = document.getElementById('bowDisplay');
+            if (bowEl) bowEl.textContent = userData.bow;
+            
+            const saddleEl = document.getElementById('saddleDisplay');
+            if (saddleEl) saddleEl.textContent = userData.saddle;
+            
+            const spangenhelmEl = document.getElementById('spangenhelmDisplay');
+            if (spangenhelmEl) spangenhelmEl.textContent = userData.spangenhelm;
+            
+            const horsesEl = document.getElementById('horsesDisplay');
+            if (horsesEl) horsesEl.textContent = userData.horses;
             
             // Инициализируем WebSocket с telegram_id
             if (typeof initSocket === 'function' && userData.id) {
@@ -208,6 +252,33 @@ function switchTab(tab) {
             name.textContent = AVATARS[userData.avatar].name;
         }
     }
+    
+    // ПРИ ПЕРЕКЛЮЧЕНИИ НА ВКЛАДКУ АРМИИ ОБНОВЛЯЕМ РЕСУРСЫ
+    if (tab === 'army') {
+        const gambesonEl = document.getElementById('gambesonDisplay');
+        if (gambesonEl) gambesonEl.textContent = userData.gambeson;
+        
+        const falchionEl = document.getElementById('falchionDisplay');
+        if (falchionEl) falchionEl.textContent = userData.falchion;
+        
+        const woodenShieldEl = document.getElementById('woodenShieldDisplay');
+        if (woodenShieldEl) woodenShieldEl.textContent = userData.wooden_shield;
+        
+        const spearEl = document.getElementById('spearDisplay');
+        if (spearEl) spearEl.textContent = userData.spear;
+        
+        const bowEl = document.getElementById('bowDisplay');
+        if (bowEl) bowEl.textContent = userData.bow;
+        
+        const saddleEl = document.getElementById('saddleDisplay');
+        if (saddleEl) saddleEl.textContent = userData.saddle;
+        
+        const spangenhelmEl = document.getElementById('spangenhelmDisplay');
+        if (spangenhelmEl) spangenhelmEl.textContent = userData.spangenhelm;
+        
+        const horsesEl = document.getElementById('horsesDisplay');
+        if (horsesEl) horsesEl.textContent = userData.horses;
+    }
 }
 
 async function showTopClans() {
@@ -294,8 +365,6 @@ document.addEventListener('DOMContentLoaded', () => {
         await checkAutoCollection();
     }, 10000);
 
-    // Проверка таймеров и обновление шкал (раз в 3 секунды) - УДАЛЕН
-    
     switchTab('city');
 });
 
