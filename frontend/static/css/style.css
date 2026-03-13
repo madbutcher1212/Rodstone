@@ -1566,3 +1566,188 @@ body {
     margin: 0;
     line-height: 1.2;
 }
+/* ===== КРАФТ ===== */
+.crafting-modal {
+    max-width: 350px;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.3);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.close-btn:hover {
+    background: rgba(0,0,0,0.5);
+}
+
+.crafting-header {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    padding: 20px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.crafting-icon {
+    font-size: 32px;
+}
+
+.crafting-title {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.crafting-content {
+    padding: 20px;
+}
+
+.crafting-item {
+    background: #f5f5f5;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.item-icon {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.item-name {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.item-recipe {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.recipe-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.recipe-icon {
+    width: 20px;
+    height: 20px;
+}
+
+.recipe-amount {
+    font-weight: bold;
+    color: #333;
+}
+
+.recipe-time {
+    font-size: 14px;
+    color: #666;
+}
+
+.crafting-controls {
+    margin: 20px 0;
+}
+
+.craft-slider {
+    flex: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    background: linear-gradient(90deg, #4CAF50, #ffd700);
+    border-radius: 3px;
+    outline: none;
+}
+
+.craft-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    border: 2px solid #ffd700;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.craft-btn {
+    width: 100%;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: all 0.2s;
+}
+
+.craft-btn:hover {
+    background: #45a049;
+    transform: scale(1.02);
+}
+
+.crafting-progress {
+    margin: 20px 0;
+}
+
+.crafting-inventory {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+.crafting-inventory h4 {
+    margin-bottom: 10px;
+    color: #333;
+    font-size: 14px;
+}
+
+.inventory-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: #f5f5f5;
+    border-radius: 10px;
+}
+
+.collect-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.collect-btn:hover {
+    background: #45a049;
+}
