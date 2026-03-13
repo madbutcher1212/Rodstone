@@ -179,6 +179,18 @@ function generateBuildingCardHTML(id) {
 // Показать модальное окно улучшения
 function showUpgradeModal(buildingId) {
     console.log('🔨 Открытие модалки для:', buildingId);
+        // ЕСЛИ ЭТО ТКАЦКАЯ МАСТЕРСКАЯ - ОТКРЫВАЕМ КРАФТ
+    if (buildingId === 'weaving_workshop') {
+        console.log('🧵 Открываем окно крафта для ткацкой мастерской');
+        closeUpgradeModal(); // закрываем стандартное окно улучшения
+        if (typeof openCrafting === 'function') {
+            openCrafting('weaving_workshop');
+        } else {
+            console.error('❌ Функция openCrafting не найдена!');
+            showToast('❌ Ошибка: система крафта не загружена');
+        }
+        return;
+    }
     
     // Для ратуши
     if (buildingId === 'townhall') {
