@@ -516,8 +516,60 @@ BUILDINGS_CONFIG = {
         ],
         "requiredTownHall": [3, 4, 5, 5, 5]
     },
+    # ===== МАСТЕРСКИЕ  =====
+"bow_workshop": {
+    "name": "Мастерская лукодела",
+    "icon": "🏹",
+    "section": "workshop",
+    "max_level": 5,
+    "workers_needed": [1, 2, 2, 3, 3],
+    "base_cost": {"gold": 100, "wood": 120, "stone": 30},
+    "upgrade_costs": [...],
+    "income": [
+        {"bows": 2},
+        {"bows": 5},
+        {"bows": 10},
+        {"bows": 18},
+        {"bows": 30}
+    ],
+    "requiredTownHall": [3, 4, 5, 5, 5]
+},
+"shield_workshop": {
+    "name": "Мастерская щитника",
+    "icon": "🛡️",
+    "section": "workshop",
+    "max_level": 5,
+    "workers_needed": [1, 2, 2, 3, 3],
+    "base_cost": {"gold": 100, "wood": 130, "stone": 40},
+    "upgrade_costs": [...],
+    "income": [
+        {"shields": 2},
+        {"shields": 5},
+        {"shields": 10},
+        {"shields": 18},
+        {"shields": 30}
+    ],
+    "requiredTownHall": [3, 4, 5, 5, 5]
+},
+"saddle_workshop": {
+    "name": "Мастерская седельника",
+    "icon": "🪑",
+    "section": "workshop",
+    "max_level": 5,
+    "workers_needed": [1, 2, 2, 3, 3],
+    "base_cost": {"gold": 120, "wood": 100, "stone": 50},
+    "upgrade_costs": [...],
+    "income": [
+        {"saddles": 2},
+        {"saddles": 4},
+        {"saddles": 8},
+        {"saddles": 15},
+        {"saddles": 25}
+    ],
+    "requiredTownHall": [4, 5, 5, 5, 5]
+}
 
-    # ===== СОЦИАЛЬНЫЕ (НОВЫЕ) =====
+    # ===== СОЦИАЛЬНЫЕ =====
     "chapel": {
         "name": "Часовня",
         "icon": "⛪️",
