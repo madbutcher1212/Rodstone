@@ -10,7 +10,7 @@ crafting_bp = Blueprint('crafting', __name__)
 
 # Рецепты крафта
 CRAFT_RECIPES = {
-    'gambeson': {  # Стёганка
+    'gambesons': {  # Стёганка
         'fabric': 5,
         'leather': 1,
         'time': 60  # 60 секунд (1 минута)
