@@ -16,6 +16,7 @@ function showExactValue(resource) {
         food: userData.food,
         leather: userData.leather || 0,
         fabric: userData.fabric || 0,
+        horses: userData.horses || 0,
         ore: userData.ore || 0,
         rodstone: userData.rodstone || 0,
         population: `${userData.population_current}/${userData.population_max}`
@@ -29,6 +30,7 @@ function showExactValue(resource) {
         food: 'Еда',
         leather: 'Шкуры',
         fabric: 'Ткань',
+        horses: 'Лошади',
         ore: 'Руда',
         rodstone: 'Родстоун',
         population: 'Население'
@@ -116,6 +118,9 @@ function updateResourcesDisplay() {
     const fabricDisplay = document.getElementById('fabricDisplay');
     if (fabricDisplay) fabricDisplay.textContent = formatNumber(userData.fabric || 0);
 
+    const horsesDisplay = document.getElementById('horsesDisplay');
+    if (horsesDisplay) horsesDisplay.textContent = formatNumber(userData.horses || 0);
+
     // Доходы в городе
     const foodProd = income.food;
     const foodCons = userData.population_current;
@@ -165,7 +170,11 @@ function updateResourcesDisplay() {
         fabricIncome2.textContent = `+${formatNumber(income.fabric)}`;
         fabricIncome2.className = 'resource-income-small';
     }
-
+    const horsesIncome2 = document.getElementById('horsesIncome2');
+    if (horsesIncome2) 
+        horsesIncome2.textContent = `+${formatNumber(income.horses)}`;
+        horsesIncome2.className = 'resource-income-small';
+    }
     // Рост населения
     const canGrow = userData.food > 0 || income.food >= userData.population_current;
     const totalGrowth = canGrow ? 3 + income.populationGrowth : 0;
