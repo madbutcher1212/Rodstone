@@ -567,7 +567,7 @@ BUILDINGS_CONFIG = {
         {"saddles": 25}
     ],
     "requiredTownHall": [4, 5, 5, 5, 5]
-}
+},
 
     # ===== СОЦИАЛЬНЫЕ =====
     "chapel": {
