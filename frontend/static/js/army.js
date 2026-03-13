@@ -281,7 +281,7 @@ function showCraftValue(resource) {
     const values = {
         falchion: userData.falchion || 0,
         wooden_shield: userData.wooden_shield || 0,
-        gambesons: userData.gambesons || 0,
+        gambeson: userData.gambeson || 0,
         spear: userData.spear || 0,
         bow: userData.bow || 0,
         saddle: userData.saddle || 0,
@@ -291,7 +291,7 @@ function showCraftValue(resource) {
     const names = {
         falchion: 'Фальшион',
         wooden_shield: 'Деревянный щит',
-        gambesons: 'Стёганка',
+        gambeson: 'Стёганка',
         spear: 'Копьё',
         bow: 'Лук',
         saddle: 'Седло',
