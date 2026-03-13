@@ -10,10 +10,8 @@ from blueprints.auth import auth_bp
 from blueprints.actions import actions_bp
 from blueprints.clans import clans_bp
 from blueprints.admin import admin_bp
-
-# Импорт army blueprint (ВНЕ функции)
 from blueprints.army import army_bp
-
+from blueprints.crafting import crafting_bp
 # Импорт инициализации Supabase
 from models.player import init_supabase
 
@@ -49,7 +47,8 @@ def create_app():
     app.register_blueprint(actions_bp, url_prefix='/api')
     app.register_blueprint(clans_bp, url_prefix='/api/clan')
     app.register_blueprint(admin_bp, url_prefix='/api/admin')
-    app.register_blueprint(army_bp, url_prefix='/api/army')  # ← регистрация здесь
+    app.register_blueprint(army_bp, url_prefix='/api/army')  
+    app.register_blueprint(crafting_bp, url_prefix='/api/crafting')
 
     # Инициализация SocketIO
     init_socketio(app)
