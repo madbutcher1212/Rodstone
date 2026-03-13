@@ -80,6 +80,17 @@ async function login() {
             userData.wood = result.user?.wood || 50;
             userData.food = result.user?.food || 50;
             userData.stone = result.user?.stone || 0;
+            userData.coal = result.user?.coal || 0;
+            userData.leather = result.user?.leather || 0;
+            userData.horses = result.user?.horses || 0;
+            userData.fabric = result.user?.fabric || 0;
+            userData.falchion = result.user?.falchion || 0;
+            userData.wooden_shield = result.user?.wooden_shield || 0;
+            userData.gambeson = result.user?.gambeson || 0;
+            userData.spear = result.user?.spear || 0;
+            userData.bow = result.user?.bow || 0;
+            userData.saddle = result.user?.saddle || 0;
+            userData.spangenhelm = result.user?.spangenhelm || 0;
             userData.level = result.user?.level || 1;
             userData.townHallLevel = result.user?.townHallLevel || 1;
             userData.population_current = result.user?.population_current || 10;
