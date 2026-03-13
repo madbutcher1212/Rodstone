@@ -174,14 +174,14 @@ def collect_crafted(telegram_user):
     if not item or item['count'] == 0:
         return jsonify({'success': False, 'error': 'No items to collect'}), 400
     
-    # Получаем текущее количество предметов (колонка gambesons)
-    current_count = player.get('gambesons', 0)
+    # Получаем текущее количество предметов (колонка gambeson)
+    current_count = player.get('gambeson', 0)
     
     # Добавляем новые предметы
     new_count = current_count + item['count']
     
     # Обновляем ресурсы игрока
-    Player.update(player['id'], gambesons=new_count)
+    Player.update(player['id'], gambeson=new_count)
     
     # Обнуляем счетчик в таблице крафта
     Player.update_crafting(
@@ -192,7 +192,7 @@ def collect_crafted(telegram_user):
         progress_end=item['progress_end']
     )
     
-    print(f"📦 Игрок {telegram_id} забрал {item['count']} {item_type}, теперь всего gambesons: {new_count}")
+    print(f"📦 Игрок {telegram_id} забрал {item['count']} {item_type}, теперь всего gambeson: {new_count}")
     
     return jsonify({
         'success': True,
