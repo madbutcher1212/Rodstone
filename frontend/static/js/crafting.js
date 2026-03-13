@@ -129,16 +129,25 @@ async function loadCraftingStatus() {
         const data = await response.json();
         
         if (data.success) {
-            // Обновляем отображение ресурсов
-            document.getElementById('fabricCost').parentElement.innerHTML = 
-                `<img src="/static/icons/resources/fabric.png" class="recipe-icon"> ${data.resources.fabric}/5`;
-            document.getElementById('leatherCost').parentElement.innerHTML = 
-                `<img src="/static/icons/resources/leather.png" class="recipe-icon"> ${data.resources.leather}/1`;
+            // Обновляем отображение ресурсов - с проверкой на существование элементов
+            const fabricCostEl = document.getElementById('fabricCost');
+            const leatherCostEl = document.getElementById('leatherCost');
+            
+            if (fabricCostEl) {
+                fabricCostEl.parentElement.innerHTML = 
+                    `<img src="/static/icons/resources/fabric.png" class="recipe-icon"> ${data.resources.fabric}/5`;
+            }
+            
+            if (leatherCostEl) {
+                leatherCostEl.parentElement.innerHTML = 
+                    `<img src="/static/icons/resources/leather.png" class="recipe-icon"> ${data.resources.leather}/1`;
+            }
             
             // Обновляем инвентарь
             const gambeson = data.crafting.find(c => c.item_type === 'gambeson');
-            if (gambeson) {
-                document.getElementById('gambesonCount').textContent = gambeson.count || 0;
+            const gambesonCountEl = document.getElementById('gambesonCount');
+            if (gambesonCountEl && gambeson) {
+                gambesonCountEl.textContent = gambeson.count || 0;
                 
                 if (gambeson.in_progress > 0 && gambeson.progress_end) {
                     craftingInProgress = true;
