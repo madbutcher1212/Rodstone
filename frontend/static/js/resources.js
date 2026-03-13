@@ -171,7 +171,7 @@ function updateResourcesDisplay() {
         fabricIncome2.className = 'resource-income-small';
     }
     const horsesIncome2 = document.getElementById('horsesIncome2');
-    if (horsesIncome2) 
+    if (horsesIncome2) {
         horsesIncome2.textContent = `+${formatNumber(income.horses)}`;
         horsesIncome2.className = 'resource-income-small';
     }
