@@ -30,15 +30,24 @@ async function loadArmyStatus() {
         
         if (data.success) {
             // Обновляем все юниты
-            updateUnitDisplay('militia', data.troops.militia);
-            updateUnitDisplay('archer', data.troops.archer);
-            updateUnitDisplay('infantry', data.troops.infantry);
-            updateUnitDisplay('spearmen', data.troops.spearmen);
-            updateUnitDisplay('cavalry', data.troops.cavalry);
+            const militiaCount = document.getElementById('militiaCount');
+            if (militiaCount) militiaCount.textContent = data.troops.militia.count || 0;
             
-            // Обновляем ресурсы
-            document.getElementById('workersFree').textContent = data.workers_free;
-            document.getElementById('foodAmount').textContent = data.food;
+            const archerCount = document.getElementById('archerCount');
+            if (archerCount) archerCount.textContent = data.troops.archer.count || 0;
+            
+            const infantryCount = document.getElementById('infantryCount');
+            if (infantryCount) infantryCount.textContent = data.troops.infantry.count || 0;
+            
+            const spearmenCount = document.getElementById('spearmenCount');
+            if (spearmenCount) spearmenCount.textContent = data.troops.spearmen.count || 0;
+            
+            const cavalryCount = document.getElementById('cavalryCount');
+            if (cavalryCount) cavalryCount.textContent = data.troops.cavalry.count || 0;
+            
+            // Обновляем ресурсы (этих ID нет в HTML, поэтому просто логируем)
+            console.log('👷 Свободные жители:', data.workers_free);
+            console.log('🌾 Еда:', data.food);
         }
     } catch (error) {
         console.error('❌ Ошибка загрузки армии:', error);
