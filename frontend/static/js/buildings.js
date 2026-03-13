@@ -509,14 +509,20 @@ document.getElementById('socialBuildings').innerHTML = socialHtml;
     let economicHtml = '';
     economicHtml += generateBuildingCardHTML('market');
     economicHtml += generateBuildingCardHTML('pottery');
-    economicHtml += generateBuildingCardHTML('weaving_workshop');
     economicHtml += generateBuildingCardHTML('guilds');
     document.getElementById('economicBuildings').innerHTML = economicHtml;
+    // 3. МАСТЕРСКИЕ (6 зданий)
+let workshopHtml = '';
+workshopHtml += generateBuildingCardHTML('weaving_workshop');  // Мастерская ткача
+workshopHtml += generateBuildingCardHTML('armorer');           // Мастерская бронника
+workshopHtml += generateBuildingCardHTML('weaponsmith');       // Мастерская оружейника
+workshopHtml += generateBuildingCardHTML('bow_workshop');      // Мастерская лукодела
+workshopHtml += generateBuildingCardHTML('shield_workshop');   // Мастерская щитника
+workshopHtml += generateBuildingCardHTML('saddle_workshop');   // Мастерская седельника
+document.getElementById('workshopBuildings').innerHTML = workshopHtml;
     
     // 4. ВОЕННЫЕ (7 зданий)
     let militaryHtml = '';
-    militaryHtml += generateBuildingCardHTML('armorer');
-    militaryHtml += generateBuildingCardHTML('weaponsmith');
     militaryHtml += generateBuildingCardHTML('barracks');
     militaryHtml += generateBuildingCardHTML('shooting_range');
     militaryHtml += generateBuildingCardHTML('stables');
