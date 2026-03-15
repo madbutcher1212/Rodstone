@@ -297,8 +297,8 @@ BUILDINGS_CONFIG = {
             {"gold": 3500, "wood": 1500, "stone": 1000, "iron": 200},
             {"gold": 10000, "wood": 5000, "stone": 3000, "iron": 500}
         ],
-        "income": [],
-        "requiredTownHall": [4, 5, 5, 5, 5]
+"income": [{}, {}, {}, {}, {}],  # НЕТ ДОХОДА
+    "requiredTownHall": [3, 4, 5, 5, 5]
     },
     "weaponsmith": {
         "name": "Мастерская оружейника",
@@ -313,8 +313,8 @@ BUILDINGS_CONFIG = {
             {"gold": 3500, "wood": 1500, "stone": 1000, "iron": 200},
             {"gold": 10000, "wood": 5000, "stone": 3000, "iron": 500}
         ],
-        "income": [],
-        "requiredTownHall": [4, 5, 5, 5, 5]
+ "income": [{}, {}, {}, {}, {}],  # НЕТ ДОХОДА
+    "requiredTownHall": [3, 4, 5, 5, 5]
     },
     "foal_farm": {
         "name": "Жеребятник",
@@ -507,14 +507,8 @@ BUILDINGS_CONFIG = {
             {"gold": 1500, "wood": 1200, "stone": 200},
             {"gold": 4500, "wood": 3500, "stone": 800}
         ],
-        "income": [
-            {"leather": 2, "gold": 2},
-            {"leather": 5, "gold": 5},
-            {"leather": 12, "gold": 12},
-            {"leather": 25, "gold": 25},
-            {"leather": 50, "gold": 50}
-        ],
-        "requiredTownHall": [3, 4, 5, 5, 5]
+      "income": [{}, {}, {}, {}, {}],  # НЕТ ДОХОДА
+    "requiredTownHall": [3, 4, 5, 5, 5]
     },
     # ===== МАСТЕРСКИЕ  =====
 "bow_workshop": {
@@ -530,13 +524,7 @@ BUILDINGS_CONFIG = {
     {"gold": 1200, "wood": 1000, "stone": 400},
     {"gold": 3000, "wood": 2500, "stone": 1000}
 ],
-    "income": [
-        {"bows": 2},
-        {"bows": 5},
-        {"bows": 10},
-        {"bows": 18},
-        {"bows": 30}
-    ],
+"income": [{}, {}, {}, {}, {}],  # НЕТ ДОХОДА
     "requiredTownHall": [3, 4, 5, 5, 5]
 },
 "shield_workshop": {
@@ -552,13 +540,7 @@ BUILDINGS_CONFIG = {
     {"gold": 1200, "wood": 1000, "stone": 400},
     {"gold": 3000, "wood": 2500, "stone": 1000}
 ],
-    "income": [
-        {"shields": 2},
-        {"shields": 5},
-        {"shields": 10},
-        {"shields": 18},
-        {"shields": 30}
-    ],
+"income": [{}, {}, {}, {}, {}],  # НЕТ ДОХОДА
     "requiredTownHall": [3, 4, 5, 5, 5]
 },
 "saddle_workshop": {
@@ -574,14 +556,8 @@ BUILDINGS_CONFIG = {
     {"gold": 1200, "wood": 1000, "stone": 400},
     {"gold": 3000, "wood": 2500, "stone": 1000}
 ],
-    "income": [
-        {"saddles": 2},
-        {"saddles": 4},
-        {"saddles": 8},
-        {"saddles": 15},
-        {"saddles": 25}
-    ],
-    "requiredTownHall": [4, 5, 5, 5, 5]
+"income": [{}, {}, {}, {}, {}],  # НЕТ ДОХОДА
+    "requiredTownHall": [3, 4, 5, 5, 5]
 },
 
     # ===== СОЦИАЛЬНЫЕ =====
