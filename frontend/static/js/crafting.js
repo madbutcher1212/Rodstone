@@ -2,13 +2,28 @@
 
 let craftingInProgress = false;
 let craftingEndTime = null;
+let currentCraftingItem = null;
 
 // Открыть окно крафта для здания
 function openCrafting(buildingType) {
     console.log(`🔨 Открытие крафта для ${buildingType}`);
+    currentCraftingItem = null;
     
     if (buildingType === 'weaving_workshop') {
         showGambesonCrafting();
+    } else if (buildingType === 'armorer') {
+        showArmorerCrafting();
+    } else if (buildingType === 'weaponsmith') {
+        showWeaponsmithCrafting();
+    } else if (buildingType === 'bow_workshop') {
+        showBowCrafting();
+    } else if (buildingType === 'shield_workshop') {
+        showShieldCrafting();
+    } else if (buildingType === 'saddle_workshop') {
+        showSaddleCrafting();
+    } else {
+        console.log(`❌ Неизвестный тип мастерской: ${buildingType}`);
+        showToast('🚧 Крафт для этого здания в разработке');
     }
 }
 
@@ -76,6 +91,417 @@ function showGambesonCrafting() {
     setupCraftingControls();
 }
 
+// Показать окно крафта шлема (мастерская бронника)
+function showArmorerCrafting() {
+    const modal = document.getElementById('craftingModal');
+    const content = document.getElementById('craftingContent');
+    
+    // Загружаем текущие ресурсы
+    loadCraftingStatus();
+    
+    content.innerHTML = `
+        <div class="crafting-header">
+            <span class="crafting-icon">🛡️</span>
+            <span class="crafting-title">Мастерская бронника</span>
+        </div>
+        
+        <div class="crafting-item">
+            <div class="item-icon">⛑️</div>
+            <div class="item-name">Шлем (Spangenhelm)</div>
+            
+            <div class="item-recipe">
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/iron.png" class="recipe-icon">
+                    <span class="recipe-amount" id="ironCost">4</span>
+                </div>
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/fabric.png" class="recipe-icon">
+                    <span class="recipe-amount" id="fabricCost">1</span>
+                </div>
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/coal.png" class="recipe-icon">
+                    <span class="recipe-amount" id="coalCost">10</span>
+                </div>
+                <div class="recipe-item">
+                    <span class="recipe-time">🕒 1 мин</span>
+                </div>
+            </div>
+            
+            <div class="crafting-controls">
+                <div class="slider-container">
+                    <input type="range" id="craftRange" min="1" max="5" value="1" class="craft-slider">
+                    <div class="slider-value" id="craftCount">1</div>
+                </div>
+                <input type="number" id="craftInput" class="manual-input" placeholder="1-5" min="1" max="5" style="display: none;">
+                <button class="craft-btn" onclick="startCrafting('spangenhelm')">🔨 Начать крафт</button>
+            </div>
+            
+            <div class="crafting-progress" id="craftProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="craftProgressFill"></div>
+                </div>
+                <div class="progress-time" id="craftTime"></div>
+            </div>
+            
+            <div class="crafting-inventory" id="craftInventory">
+                <h4>Готовые предметы:</h4>
+                <div class="inventory-item">
+                    <span>⛑️ Шлем: <span id="spangenhelmCount">0</span></span>
+                    <button class="collect-btn" onclick="collectCrafted('spangenhelm')" id="collectSpangenhelmBtn" style="display: none;">📦 Забрать</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('craftingOverlay').style.display = 'flex';
+    setupCraftingControls();
+}
+
+// Показать окно крафта для оружейника (фальшион и копье)
+function showWeaponsmithCrafting() {
+    const modal = document.getElementById('craftingModal');
+    const content = document.getElementById('craftingContent');
+    
+    // Загружаем текущие ресурсы
+    loadCraftingStatus();
+    
+    content.innerHTML = `
+        <div class="crafting-header">
+            <span class="crafting-icon">⚔️</span>
+            <span class="crafting-title">Мастерская оружейника</span>
+        </div>
+        
+        <div style="display: flex; gap: 10px; margin-bottom: 20px; padding: 0 20px;">
+            <button class="craft-tab-btn" onclick="showWeaponsmithTab('falchion')" style="flex:1; padding:10px; background:#4CAF50; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Фальшион</button>
+            <button class="craft-tab-btn" onclick="showWeaponsmithTab('spear')" style="flex:1; padding:10px; background:#666; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Копьё</button>
+        </div>
+        
+        <div id="weaponsmithContent">
+            ${getFalchionHTML()}
+        </div>
+    `;
+    
+    document.getElementById('craftingOverlay').style.display = 'flex';
+    setupCraftingControls();
+}
+
+// Переключение между вкладками оружейника
+function showWeaponsmithTab(itemType) {
+    const content = document.getElementById('weaponsmithContent');
+    if (!content) return;
+    
+    // Обновляем стили кнопок
+    const buttons = document.querySelectorAll('.craft-tab-btn');
+    buttons.forEach(btn => {
+        btn.style.background = '#666';
+    });
+    
+    if (itemType === 'falchion') {
+        content.innerHTML = getFalchionHTML();
+        event.target.style.background = '#4CAF50';
+    } else {
+        content.innerHTML = getSpearHTML();
+        event.target.style.background = '#4CAF50';
+    }
+    
+    setupCraftingControls();
+    loadCraftingStatus();
+}
+
+// HTML для фальшиона
+function getFalchionHTML() {
+    return `
+        <div class="crafting-item">
+            <div class="item-icon">⚔️</div>
+            <div class="item-name">Фальшион</div>
+            
+            <div class="item-recipe">
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/iron.png" class="recipe-icon">
+                    <span class="recipe-amount" id="ironCost">10</span>
+                </div>
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/wood.png" class="recipe-icon">
+                    <span class="recipe-amount" id="woodCost">2</span>
+                </div>
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/coal.png" class="recipe-icon">
+                    <span class="recipe-amount" id="coalCost">10</span>
+                </div>
+                <div class="recipe-item">
+                    <span class="recipe-time">🕒 1 мин</span>
+                </div>
+            </div>
+            
+            <div class="crafting-controls">
+                <div class="slider-container">
+                    <input type="range" id="craftRange" min="1" max="5" value="1" class="craft-slider">
+                    <div class="slider-value" id="craftCount">1</div>
+                </div>
+                <input type="number" id="craftInput" class="manual-input" placeholder="1-5" min="1" max="5" style="display: none;">
+                <button class="craft-btn" onclick="startCrafting('falchion')">🔨 Начать крафт</button>
+            </div>
+            
+            <div class="crafting-progress" id="craftProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="craftProgressFill"></div>
+                </div>
+                <div class="progress-time" id="craftTime"></div>
+            </div>
+            
+            <div class="crafting-inventory" id="craftInventory">
+                <h4>Готовые предметы:</h4>
+                <div class="inventory-item">
+                    <span>⚔️ Фальшион: <span id="falchionCount">0</span></span>
+                    <button class="collect-btn" onclick="collectCrafted('falchion')" id="collectFalchionBtn" style="display: none;">📦 Забрать</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// HTML для копья
+function getSpearHTML() {
+    return `
+        <div class="crafting-item">
+            <div class="item-icon">🔱</div>
+            <div class="item-name">Копьё</div>
+            
+            <div class="item-recipe">
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/iron.png" class="recipe-icon">
+                    <span class="recipe-amount" id="ironCost">3</span>
+                </div>
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/wood.png" class="recipe-icon">
+                    <span class="recipe-amount" id="woodCost">10</span>
+                </div>
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/coal.png" class="recipe-icon">
+                    <span class="recipe-amount" id="coalCost">6</span>
+                </div>
+                <div class="recipe-item">
+                    <span class="recipe-time">🕒 1 мин</span>
+                </div>
+            </div>
+            
+            <div class="crafting-controls">
+                <div class="slider-container">
+                    <input type="range" id="craftRange" min="1" max="5" value="1" class="craft-slider">
+                    <div class="slider-value" id="craftCount">1</div>
+                </div>
+                <input type="number" id="craftInput" class="manual-input" placeholder="1-5" min="1" max="5" style="display: none;">
+                <button class="craft-btn" onclick="startCrafting('spear')">🔨 Начать крафт</button>
+            </div>
+            
+            <div class="crafting-progress" id="craftProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="craftProgressFill"></div>
+                </div>
+                <div class="progress-time" id="craftTime"></div>
+            </div>
+            
+            <div class="crafting-inventory" id="craftInventory">
+                <h4>Готовые предметы:</h4>
+                <div class="inventory-item">
+                    <span>🔱 Копьё: <span id="spearCount">0</span></span>
+                    <button class="collect-btn" onclick="collectCrafted('spear')" id="collectSpearBtn" style="display: none;">📦 Забрать</button>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Показать окно крафта лука (мастерская лукодела)
+function showBowCrafting() {
+    const modal = document.getElementById('craftingModal');
+    const content = document.getElementById('craftingContent');
+    
+    // Загружаем текущие ресурсы
+    loadCraftingStatus();
+    
+    content.innerHTML = `
+        <div class="crafting-header">
+            <span class="crafting-icon">🏹</span>
+            <span class="crafting-title">Мастерская лукодела</span>
+        </div>
+        
+        <div class="crafting-item">
+            <div class="item-icon">🏹</div>
+            <div class="item-name">Лук</div>
+            
+            <div class="item-recipe">
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/wood.png" class="recipe-icon">
+                    <span class="recipe-amount" id="woodCost">12</span>
+                </div>
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/leather.png" class="recipe-icon">
+                    <span class="recipe-amount" id="leatherCost">2</span>
+                </div>
+                <div class="recipe-item">
+                    <span class="recipe-time">🕒 1 мин</span>
+                </div>
+            </div>
+            
+            <div class="crafting-controls">
+                <div class="slider-container">
+                    <input type="range" id="craftRange" min="1" max="5" value="1" class="craft-slider">
+                    <div class="slider-value" id="craftCount">1</div>
+                </div>
+                <input type="number" id="craftInput" class="manual-input" placeholder="1-5" min="1" max="5" style="display: none;">
+                <button class="craft-btn" onclick="startCrafting('bow')">🔨 Начать крафт</button>
+            </div>
+            
+            <div class="crafting-progress" id="craftProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="craftProgressFill"></div>
+                </div>
+                <div class="progress-time" id="craftTime"></div>
+            </div>
+            
+            <div class="crafting-inventory" id="craftInventory">
+                <h4>Готовые предметы:</h4>
+                <div class="inventory-item">
+                    <span>🏹 Лук: <span id="bowCount">0</span></span>
+                    <button class="collect-btn" onclick="collectCrafted('bow')" id="collectBowBtn" style="display: none;">📦 Забрать</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('craftingOverlay').style.display = 'flex';
+    setupCraftingControls();
+}
+
+// Показать окно крафта щита (мастерская щитника)
+function showShieldCrafting() {
+    const modal = document.getElementById('craftingModal');
+    const content = document.getElementById('craftingContent');
+    
+    // Загружаем текущие ресурсы
+    loadCraftingStatus();
+    
+    content.innerHTML = `
+        <div class="crafting-header">
+            <span class="crafting-icon">🛡️</span>
+            <span class="crafting-title">Мастерская щитника</span>
+        </div>
+        
+        <div class="crafting-item">
+            <div class="item-icon">🛡️</div>
+            <div class="item-name">Деревянный щит</div>
+            
+            <div class="item-recipe">
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/wood.png" class="recipe-icon">
+                    <span class="recipe-amount" id="woodCost">15</span>
+                </div>
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/leather.png" class="recipe-icon">
+                    <span class="recipe-amount" id="leatherCost">2</span>
+                </div>
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/iron.png" class="recipe-icon">
+                    <span class="recipe-amount" id="ironCost">2</span>
+                </div>
+                <div class="recipe-item">
+                    <span class="recipe-time">🕒 1 мин</span>
+                </div>
+            </div>
+            
+            <div class="crafting-controls">
+                <div class="slider-container">
+                    <input type="range" id="craftRange" min="1" max="5" value="1" class="craft-slider">
+                    <div class="slider-value" id="craftCount">1</div>
+                </div>
+                <input type="number" id="craftInput" class="manual-input" placeholder="1-5" min="1" max="5" style="display: none;">
+                <button class="craft-btn" onclick="startCrafting('wooden_shield')">🔨 Начать крафт</button>
+            </div>
+            
+            <div class="crafting-progress" id="craftProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="craftProgressFill"></div>
+                </div>
+                <div class="progress-time" id="craftTime"></div>
+            </div>
+            
+            <div class="crafting-inventory" id="craftInventory">
+                <h4>Готовые предметы:</h4>
+                <div class="inventory-item">
+                    <span>🛡️ Щит: <span id="woodenShieldCount">0</span></span>
+                    <button class="collect-btn" onclick="collectCrafted('wooden_shield')" id="collectWoodenShieldBtn" style="display: none;">📦 Забрать</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('craftingOverlay').style.display = 'flex';
+    setupCraftingControls();
+}
+
+// Показать окно крафта седла (мастерская седельника)
+function showSaddleCrafting() {
+    const modal = document.getElementById('craftingModal');
+    const content = document.getElementById('craftingContent');
+    
+    // Загружаем текущие ресурсы
+    loadCraftingStatus();
+    
+    content.innerHTML = `
+        <div class="crafting-header">
+            <span class="crafting-icon">🪑</span>
+            <span class="crafting-title">Мастерская седельника</span>
+        </div>
+        
+        <div class="crafting-item">
+            <div class="item-icon">🪑</div>
+            <div class="item-name">Седло</div>
+            
+            <div class="item-recipe">
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/leather.png" class="recipe-icon">
+                    <span class="recipe-amount" id="leatherCost">8</span>
+                </div>
+                <div class="recipe-item">
+                    <img src="/static/icons/resources/iron.png" class="recipe-icon">
+                    <span class="recipe-amount" id="ironCost">2</span>
+                </div>
+                <div class="recipe-item">
+                    <span class="recipe-time">🕒 1 мин</span>
+                </div>
+            </div>
+            
+            <div class="crafting-controls">
+                <div class="slider-container">
+                    <input type="range" id="craftRange" min="1" max="5" value="1" class="craft-slider">
+                    <div class="slider-value" id="craftCount">1</div>
+                </div>
+                <input type="number" id="craftInput" class="manual-input" placeholder="1-5" min="1" max="5" style="display: none;">
+                <button class="craft-btn" onclick="startCrafting('saddle')">🔨 Начать крафт</button>
+            </div>
+            
+            <div class="crafting-progress" id="craftProgress" style="display: none;">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="craftProgressFill"></div>
+                </div>
+                <div class="progress-time" id="craftTime"></div>
+            </div>
+            
+            <div class="crafting-inventory" id="craftInventory">
+                <h4>Готовые предметы:</h4>
+                <div class="inventory-item">
+                    <span>🪑 Седло: <span id="saddleCount">0</span></span>
+                    <button class="collect-btn" onclick="collectCrafted('saddle')" id="collectSaddleBtn" style="display: none;">📦 Забрать</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('craftingOverlay').style.display = 'flex';
+    setupCraftingControls();
+}
+
 // Настройка контролов крафта
 function setupCraftingControls() {
     const rangeInput = document.getElementById('craftRange');
@@ -129,45 +555,80 @@ async function loadCraftingStatus() {
         const data = await response.json();
         
         if (data.success) {
-            // Обновляем отображение ресурсов - с проверкой на существование элементов
+            // Обновляем отображение ресурсов
             const fabricCostEl = document.getElementById('fabricCost');
-            const leatherCostEl = document.getElementById('leatherCost');
-            
             if (fabricCostEl) {
                 fabricCostEl.parentElement.innerHTML = 
                     `<img src="/static/icons/resources/fabric.png" class="recipe-icon"> ${data.resources.fabric}/5`;
             }
             
+            const leatherCostEl = document.getElementById('leatherCost');
             if (leatherCostEl) {
                 leatherCostEl.parentElement.innerHTML = 
                     `<img src="/static/icons/resources/leather.png" class="recipe-icon"> ${data.resources.leather}/1`;
             }
             
-            // Обновляем инвентарь
-            const gambeson = data.crafting.find(c => c.item_type === 'gambeson');
-            const gambesonCountEl = document.getElementById('gambesonCount');
-            if (gambesonCountEl && gambeson) {
-                gambesonCountEl.textContent = gambeson.count || 0;
-                
-                if (gambeson.in_progress > 0 && gambeson.progress_end) {
-                    craftingInProgress = true;
-                    craftingEndTime = gambeson.progress_end;
-                    showCraftingProgress('gambeson', gambeson.progress_end);
-                    hideCraftingControls();
-                } else {
-                    craftingInProgress = false;
-                    showCraftingControls();
-                }
-                
-                // Показываем кнопку сбора если есть предметы
-                const collectBtn = document.getElementById('collectGambesonBtn');
-                if (collectBtn) {
-                    collectBtn.style.display = gambeson.count > 0 ? 'inline-block' : 'none';
-                }
+            const ironCostEl = document.getElementById('ironCost');
+            if (ironCostEl) {
+                ironCostEl.parentElement.innerHTML = 
+                    `<img src="/static/icons/resources/iron.png" class="recipe-icon"> ${data.resources.iron}`;
+            }
+            
+            const coalCostEl = document.getElementById('coalCost');
+            if (coalCostEl) {
+                coalCostEl.parentElement.innerHTML = 
+                    `<img src="/static/icons/resources/coal.png" class="recipe-icon"> ${data.resources.coal}`;
+            }
+            
+            const woodCostEl = document.getElementById('woodCost');
+            if (woodCostEl) {
+                woodCostEl.parentElement.innerHTML = 
+                    `<img src="/static/icons/resources/wood.png" class="recipe-icon"> ${data.resources.wood}`;
+            }
+            
+            // Обновляем инвентарь для всех предметов
+            updateInventoryDisplay(data.crafting);
+            
+            // Проверяем активный крафт
+            const activeCraft = data.crafting.find(c => c.in_progress > 0);
+            if (activeCraft) {
+                craftingInProgress = true;
+                craftingEndTime = activeCraft.progress_end;
+                showCraftingProgress(activeCraft.item_type, activeCraft.progress_end);
+                hideCraftingControls();
+            } else {
+                craftingInProgress = false;
+                showCraftingControls();
             }
         }
     } catch (error) {
         console.error('❌ Ошибка загрузки крафта:', error);
+    }
+}
+
+// Обновить отображение инвентаря
+function updateInventoryDisplay(crafting) {
+    const items = {
+        'gambeson': 'gambesonCount',
+        'spangenhelm': 'spangenhelmCount',
+        'falchion': 'falchionCount',
+        'spear': 'spearCount',
+        'bow': 'bowCount',
+        'wooden_shield': 'woodenShieldCount',
+        'saddle': 'saddleCount'
+    };
+    
+    for (const [itemType, elementId] of Object.entries(items)) {
+        const item = crafting.find(c => c.item_type === itemType);
+        const countEl = document.getElementById(elementId);
+        if (countEl) {
+            countEl.textContent = item?.count || 0;
+        }
+        
+        const collectBtn = document.getElementById(`collect${itemType.charAt(0).toUpperCase() + itemType.slice(1)}Btn`);
+        if (collectBtn) {
+            collectBtn.style.display = (item?.count > 0) ? 'inline-block' : 'none';
+        }
     }
 }
 
@@ -196,7 +657,7 @@ async function startCrafting(itemType) {
         const data = await response.json();
         
         if (data.success) {
-            showToast(`✅ Крафт ${count} стеганок начался`);
+            showToast(`✅ Крафт ${count} предметов начался`);
             craftingInProgress = true;
             craftingEndTime = data.end_time;
             showCraftingProgress(itemType, data.end_time);
@@ -276,7 +737,29 @@ async function collectCrafted(itemType) {
         const data = await response.json();
         
         if (data.success) {
-            showToast(`📦 Получено: ${data.count} стеганок`);
+            showToast(`📦 Получено: ${data.count} предметов`);
+            
+            // Обновляем userData
+            if (!userData[itemType]) userData[itemType] = 0;
+            userData[itemType] += data.count;
+            
+            // Обновляем отображение
+            const displayMap = {
+                'gambeson': 'gambesonDisplay',
+                'spangenhelm': 'spangenhelmDisplay',
+                'falchion': 'falchionDisplay',
+                'spear': 'spearDisplay',
+                'bow': 'bowDisplay',
+                'wooden_shield': 'woodenShieldDisplay',
+                'saddle': 'saddleDisplay'
+            };
+            
+            const displayId = displayMap[itemType];
+            if (displayId) {
+                const el = document.getElementById(displayId);
+                if (el) el.textContent = userData[itemType];
+            }
+            
             loadCraftingStatus();
         } else {
             showToast(`❌ ${data.error || 'Ошибка'}`);
