@@ -179,12 +179,20 @@ function generateBuildingCardHTML(id) {
 // Показать модальное окно улучшения
 function showUpgradeModal(buildingId) {
     console.log('🔨 Открытие модалки для:', buildingId);
-        // ЕСЛИ ЭТО ТКАЦКАЯ МАСТЕРСКАЯ - ОТКРЫВАЕМ КРАФТ
-    if (buildingId === 'weaving_workshop') {
-        console.log('🧵 Открываем окно крафта для ткацкой мастерской');
+    
+    // 👇 РАСШИРЕННОЕ УСЛОВИЕ ДЛЯ ВСЕХ МАСТЕРСКИХ
+    // ЕСЛИ ЭТО МАСТЕРСКАЯ - ОТКРЫВАЕМ КРАФТ
+    if (buildingId === 'weaving_workshop' || 
+        buildingId === 'armorer' || 
+        buildingId === 'weaponsmith' || 
+        buildingId === 'bow_workshop' || 
+        buildingId === 'shield_workshop' || 
+        buildingId === 'saddle_workshop') {
+        
+        console.log(`🔨 Открываем окно крафта для ${buildingId}`);
         closeUpgradeModal(); // закрываем стандартное окно улучшения
         if (typeof openCrafting === 'function') {
-            openCrafting('weaving_workshop');
+            openCrafting(buildingId);
         } else {
             console.error('❌ Функция openCrafting не найдена!');
             showToast('❌ Ошибка: система крафта не загружена');
