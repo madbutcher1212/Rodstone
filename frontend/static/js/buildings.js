@@ -180,15 +180,18 @@ function generateBuildingCardHTML(id) {
 function showUpgradeModal(buildingId) {
     console.log('🔨 Открытие модалки для:', buildingId);
     
-    // 👇 РАСШИРЕННОЕ УСЛОВИЕ ДЛЯ ВСЕХ МАСТЕРСКИХ
-    // ЕСЛИ ЭТО МАСТЕРСКАЯ - ОТКРЫВАЕМ КРАФТ
-    if (buildingId === 'weaving_workshop' || 
-        buildingId === 'armorer' || 
-        buildingId === 'weaponsmith' || 
-        buildingId === 'bow_workshop' || 
-        buildingId === 'shield_workshop' || 
-        buildingId === 'saddle_workshop') {
-        
+    // Получаем уровень здания
+    const level = getBuildingLevel(buildingId);
+    
+    // ЕСЛИ ЭТО МАСТЕРСКАЯ И ОНА УЖЕ ПОСТРОЕНА - ОТКРЫВАЕМ КРАФТ
+    const isWorkshop = buildingId === 'weaving_workshop' || 
+                       buildingId === 'armorer' || 
+                       buildingId === 'weaponsmith' || 
+                       buildingId === 'bow_workshop' || 
+                       buildingId === 'shield_workshop' || 
+                       buildingId === 'saddle_workshop';
+    
+    if (isWorkshop && level > 0) {
         console.log(`🔨 Открываем окно крафта для ${buildingId}`);
         closeUpgradeModal(); // закрываем стандартное окно улучшения
         if (typeof openCrafting === 'function') {
@@ -263,20 +266,20 @@ function showUpgradeModal(buildingId) {
         return;
     }
     
-    // Для обычных зданий
+    // Для обычных зданий (включая мастерские, которые еще не построены)
     const config = window.BUILDINGS_CONFIG?.[buildingId];
     if (!config) {
         console.error('❌ Конфиг не найден для здания:', buildingId);
         return;
     }
     
-    const level = getBuildingLevel(buildingId);
-    const nextLevel = level + 1;
-    const nextIncome = config.income?.[level] || {};
-    const cost = level === 0 ? config.base_cost : (config.upgrade_costs?.[level - 1] || { gold: 0, wood: 0, stone: 0 });
+    const currentLevel = getBuildingLevel(buildingId);
+    const nextLevel = currentLevel + 1;
+    const nextIncome = config.income?.[currentLevel] || {};
+    const cost = currentLevel === 0 ? config.base_cost : (config.upgrade_costs?.[currentLevel - 1] || { gold: 0, wood: 0, stone: 0 });
 
     // Проверка требования к ратуше
-    const requiredTownHall = config.requiredTownHall?.[level] || 1;
+    const requiredTownHall = config.requiredTownHall?.[currentLevel] || 1;
     const townHallEnough = userData.townHallLevel >= requiredTownHall;
     
     // Формируем строку с требованием ратуши
@@ -322,7 +325,7 @@ function showUpgradeModal(buildingId) {
     // Для жилого района показываем бонус к лимиту вместо дохода
     let incomeDisplay = '';
     if (buildingId === 'house' && config.population_bonus) {
-        const nextBonus = config.population_bonus[level];
+        const nextBonus = config.population_bonus[currentLevel];
         incomeDisplay = `<div class="income-value"><img src="/static/icons/resources/population.png" class="income-icon"> +${nextBonus} лимит</div>`;
     } else {
         incomeDisplay = `<div class="income-value">${incomeText}/ч</div>`;
@@ -331,7 +334,7 @@ function showUpgradeModal(buildingId) {
     const modal = document.getElementById('upgradeModal');
     modal.innerHTML = `
         <div class="upgrade-header">
-            <div class="upgrade-title">${level === 0 ? '🔨 Построить' : '🔨 Улучшить'} ${config.name} до ${nextLevel} уровня</div>
+            <div class="upgrade-title">${currentLevel === 0 ? '🔨 Построить' : '🔨 Улучшить'} ${config.name} до ${nextLevel} уровня</div>
         </div>
         
         <div class="upgrade-content">
@@ -392,7 +395,7 @@ function showUpgradeModal(buildingId) {
                 <button class="btn-upgrade ${canUpgrade ? 'available' : 'unavailable'}" 
                         onclick="confirmUpgrade('${buildingId}')"
                         ${!canUpgrade ? 'disabled' : ''}>
-                    ${level === 0 ? '🔨 Построить' : '🔨 Улучшить'}
+                    ${currentLevel === 0 ? '🔨 Построить' : '🔨 Улучшить'}
                 </button>
                 <button class="btn-cancel" onclick="closeUpgradeModal()">
                     Отмена
