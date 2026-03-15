@@ -10,10 +10,44 @@ crafting_bp = Blueprint('crafting', __name__)
 
 # Рецепты крафта
 CRAFT_RECIPES = {
-    'gambeson': {  # Стёганка
+    'gambeson': {  # Стёганка (ткацкая мастерская)
         'fabric': 5,
         'leather': 1,
         'time': 60  # 60 секунд (1 минута)
+    },
+    'spangenhelm': {  # Шлем (мастерская бронника)
+        'iron': 4,
+        'fabric': 1,
+        'coal': 10,
+        'time': 60
+    },
+    'falchion': {  # Фальшион (мастерская оружейника)
+        'iron': 10,
+        'wood': 2,
+        'coal': 10,
+        'time': 60
+    },
+    'spear': {  # Копьё (мастерская оружейника)
+        'iron': 3,
+        'wood': 10,
+        'coal': 6,
+        'time': 60
+    },
+    'bow': {  # Лук (мастерская лукодела)
+        'wood': 12,
+        'leather': 2,
+        'time': 60
+    },
+    'wooden_shield': {  # Щит (мастерская щитника)
+        'wood': 15,
+        'leather': 2,
+        'iron': 2,
+        'time': 60
+    },
+    'saddle': {  # Седло (мастерская седельника)
+        'leather': 8,
+        'iron': 2,
+        'time': 60
     }
 }
 
