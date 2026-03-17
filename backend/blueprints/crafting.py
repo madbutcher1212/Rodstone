@@ -182,6 +182,9 @@ def crafting_status(telegram_user):
         'resources': {
             'fabric': player.get('fabric', 0),
             'leather': player.get('leather', 0)
+            'iron': player.get('iron', 0),      
+            'coal': player.get('coal', 0),       
+            'wood': player.get('wood', 0) 
         }
     })
 
