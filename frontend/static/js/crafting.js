@@ -564,23 +564,24 @@ async function loadCraftingStatus() {
         const data = await response.json();
         
         if (data.success) {
-            // Обновляем только цифры ресурсов, не трогая иконки
-            const fabricEl = document.getElementById('fabricCost');
-            if (fabricEl) fabricEl.textContent = data.resources.fabric;
+            // Обновляем отображение ресурсов (просто цифры, без изменения HTML структуры)
+            if (document.getElementById('fabricCost')) {
+                document.getElementById('fabricCost').textContent = data.resources.fabric;
+            }
+            if (document.getElementById('leatherCost')) {
+                document.getElementById('leatherCost').textContent = data.resources.leather;
+            }
+            if (document.getElementById('ironCost')) {
+                document.getElementById('ironCost').textContent = data.resources.iron;
+            }
+            if (document.getElementById('coalCost')) {
+                document.getElementById('coalCost').textContent = data.resources.coal;
+            }
+            if (document.getElementById('woodCost')) {
+                document.getElementById('woodCost').textContent = data.resources.wood;
+            }
             
-            const leatherEl = document.getElementById('leatherCost');
-            if (leatherEl) leatherEl.textContent = data.resources.leather;
-            
-            const ironEl = document.getElementById('ironCost');
-            if (ironEl) ironEl.textContent = data.resources.iron;
-            
-            const coalEl = document.getElementById('coalCost');
-            if (coalEl) coalEl.textContent = data.resources.coal;
-            
-            const woodEl = document.getElementById('woodCost');
-            if (woodEl) woodEl.textContent = data.resources.wood;
-            
-            // Обновляем инвентарь
+            // Обновляем все предметы в инвентаре
             const items = [
                 'gambeson', 'spangenhelm', 'falchion', 
                 'spear', 'bow', 'wooden_shield', 'saddle'
@@ -592,19 +593,15 @@ async function loadCraftingStatus() {
                 if (countEl) {
                     countEl.textContent = item?.count || 0;
                 }
-            });
-            
-            // Показываем/скрываем кнопки сбора
-            items.forEach(itemType => {
-                const item = data.crafting.find(c => c.item_type === itemType);
-                const btnId = `collect${itemType.charAt(0).toUpperCase() + itemType.slice(1)}Btn`;
-                const btn = document.getElementById(btnId);
-                if (btn) {
-                    btn.style.display = (item && item.count > 0) ? 'inline-block' : 'none';
+                
+                // Показываем/скрываем кнопку сбора
+                const collectBtn = document.getElementById(`collect${itemType.charAt(0).toUpperCase() + itemType.slice(1)}Btn`);
+                if (collectBtn) {
+                    collectBtn.style.display = (item && item.count > 0) ? 'inline-block' : 'none';
                 }
             });
             
-            // Проверяем активный крафт
+            // Проверяем активный крафт (любой предмет)
             const activeCraft = data.crafting.find(c => c.in_progress > 0);
             if (activeCraft) {
                 craftingInProgress = true;
@@ -620,7 +617,6 @@ async function loadCraftingStatus() {
         console.error('❌ Ошибка загрузки крафта:', error);
     }
 }
-
 // Вспомогательная функция для обновления текста элемента
 function updateElementText(elementId, value) {
     const element = document.getElementById(elementId);
