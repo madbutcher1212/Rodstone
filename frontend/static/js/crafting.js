@@ -88,8 +88,8 @@ function showGambesonCrafting() {
     `;
     
     document.getElementById('craftingOverlay').style.display = 'flex';
-    setupCraftingControls();
-    setTimeout(() => loadCraftingStatus(), 200);
+setupCraftingControls();
+loadCraftingStatus(); 
 }
 
 // Показать окно крафта шлема (мастерская бронника)
@@ -155,8 +155,8 @@ function showArmorerCrafting() {
     `;
     
     document.getElementById('craftingOverlay').style.display = 'flex';
-    setupCraftingControls();
-    setTimeout(() => loadCraftingStatus(), 200);
+setupCraftingControls();
+loadCraftingStatus(); 
 }
 
 // Показать окно крафта для оружейника (фальшион и копье)
@@ -180,9 +180,9 @@ function showWeaponsmithCrafting() {
         </div>
     `;
     
-    document.getElementById('craftingOverlay').style.display = 'flex';
-    setupCraftingControls();
-    setTimeout(() => loadCraftingStatus(), 200);
+   document.getElementById('craftingOverlay').style.display = 'flex';
+setupCraftingControls();
+loadCraftingStatus(); 
 }
 
 // Переключение между вкладками оружейника
@@ -377,8 +377,8 @@ function showBowCrafting() {
     `;
     
     document.getElementById('craftingOverlay').style.display = 'flex';
-    setupCraftingControls();
-    setTimeout(() => loadCraftingStatus(), 200);
+setupCraftingControls();
+loadCraftingStatus(); 
 }
 
 // Показать окно крафта щита (мастерская щитника)
@@ -444,8 +444,8 @@ function showShieldCrafting() {
     `;
     
     document.getElementById('craftingOverlay').style.display = 'flex';
-    setupCraftingControls();
-    setTimeout(() => loadCraftingStatus(), 200);
+setupCraftingControls();
+loadCraftingStatus(); 
 }
 
 // Показать окно крафта седла (мастерская седельника)
@@ -507,8 +507,8 @@ function showSaddleCrafting() {
     `;
     
     document.getElementById('craftingOverlay').style.display = 'flex';
-    setupCraftingControls();
-    setTimeout(() => loadCraftingStatus(), 200);
+setupCraftingControls();
+loadCraftingStatus(); 
 }
 
 // Настройка контролов крафта
