@@ -34,9 +34,6 @@ function showGambesonCrafting() {
     const modal = document.getElementById('craftingModal');
     const content = document.getElementById('craftingContent');
     
-    // Загружаем текущие ресурсы
-    setTimeout(() => loadCraftingStatus(), 100);
-    
     content.innerHTML = `
         <div class="crafting-header">
             <span class="crafting-icon">🧵</span>
@@ -92,15 +89,13 @@ function showGambesonCrafting() {
     
     document.getElementById('craftingOverlay').style.display = 'flex';
     setupCraftingControls();
+    setTimeout(() => loadCraftingStatus(), 200);
 }
 
 // Показать окно крафта шлема (мастерская бронника)
 function showArmorerCrafting() {
     const modal = document.getElementById('craftingModal');
     const content = document.getElementById('craftingContent');
-    
-    // Загружаем текущие ресурсы
-    setTimeout(() => loadCraftingStatus(), 100);
     
     content.innerHTML = `
         <div class="crafting-header">
@@ -161,15 +156,13 @@ function showArmorerCrafting() {
     
     document.getElementById('craftingOverlay').style.display = 'flex';
     setupCraftingControls();
+    setTimeout(() => loadCraftingStatus(), 200);
 }
 
 // Показать окно крафта для оружейника (фальшион и копье)
 function showWeaponsmithCrafting() {
     const modal = document.getElementById('craftingModal');
     const content = document.getElementById('craftingContent');
-    
-    // Загружаем текущие ресурсы
-    setTimeout(() => loadCraftingStatus(), 100);
     
     content.innerHTML = `
         <div class="crafting-header">
@@ -178,8 +171,8 @@ function showWeaponsmithCrafting() {
         </div>
         
         <div style="display: flex; gap: 10px; margin-bottom: 20px; padding: 0 20px;">
-            <button class="craft-tab-btn" onclick="showWeaponsmithTab('falchion')" style="flex:1; padding:10px; background:#4CAF50; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Фальшион</button>
-            <button class="craft-tab-btn" onclick="showWeaponsmithTab('spear')" style="flex:1; padding:10px; background:#666; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Копьё</button>
+            <button class="craft-tab-btn" onclick="showWeaponsmithTab('falchion', event)" style="flex:1; padding:10px; background:#4CAF50; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Фальшион</button>
+            <button class="craft-tab-btn" onclick="showWeaponsmithTab('spear', event)" style="flex:1; padding:10px; background:#666; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;">Копьё</button>
         </div>
         
         <div id="weaponsmithContent">
@@ -189,10 +182,11 @@ function showWeaponsmithCrafting() {
     
     document.getElementById('craftingOverlay').style.display = 'flex';
     setupCraftingControls();
+    setTimeout(() => loadCraftingStatus(), 200);
 }
 
 // Переключение между вкладками оружейника
-function showWeaponsmithTab(itemType) {
+function showWeaponsmithTab(itemType, event) {
     const content = document.getElementById('weaponsmithContent');
     if (!content) return;
     
@@ -211,7 +205,7 @@ function showWeaponsmithTab(itemType) {
     }
     
     setupCraftingControls();
-    loadCraftingStatus();
+    setTimeout(() => loadCraftingStatus(), 100);
 }
 
 // HTML для фальшиона
@@ -329,9 +323,6 @@ function showBowCrafting() {
     const modal = document.getElementById('craftingModal');
     const content = document.getElementById('craftingContent');
     
-    // Загружаем текущие ресурсы
-    setTimeout(() => loadCraftingStatus(), 100);
-    
     content.innerHTML = `
         <div class="crafting-header">
             <span class="crafting-icon">🏹</span>
@@ -387,15 +378,13 @@ function showBowCrafting() {
     
     document.getElementById('craftingOverlay').style.display = 'flex';
     setupCraftingControls();
+    setTimeout(() => loadCraftingStatus(), 200);
 }
 
 // Показать окно крафта щита (мастерская щитника)
 function showShieldCrafting() {
     const modal = document.getElementById('craftingModal');
     const content = document.getElementById('craftingContent');
-    
-    // Загружаем текущие ресурсы
-    setTimeout(() => loadCraftingStatus(), 100);
     
     content.innerHTML = `
         <div class="crafting-header">
@@ -456,15 +445,13 @@ function showShieldCrafting() {
     
     document.getElementById('craftingOverlay').style.display = 'flex';
     setupCraftingControls();
+    setTimeout(() => loadCraftingStatus(), 200);
 }
 
 // Показать окно крафта седла (мастерская седельника)
 function showSaddleCrafting() {
     const modal = document.getElementById('craftingModal');
     const content = document.getElementById('craftingContent');
-    
-    // Загружаем текущие ресурсы
-    setTimeout(() => loadCraftingStatus(), 100);
     
     content.innerHTML = `
         <div class="crafting-header">
@@ -521,6 +508,7 @@ function showSaddleCrafting() {
     
     document.getElementById('craftingOverlay').style.display = 'flex';
     setupCraftingControls();
+    setTimeout(() => loadCraftingStatus(), 200);
 }
 
 // Настройка контролов крафта
@@ -576,74 +564,33 @@ async function loadCraftingStatus() {
         const data = await response.json();
         
         if (data.success) {
-            // Обновляем отображение ресурсов с проверкой на существование элементов
-            const fabricCostEl = document.getElementById('fabricCost');
-            if (fabricCostEl) {
-                fabricCostEl.textContent = data.resources.fabric;
-            }
-            
-            const leatherCostEl = document.getElementById('leatherCost');
-            if (leatherCostEl) {
-                leatherCostEl.textContent = data.resources.leather;
-            }
-            
-            const ironCostEl = document.getElementById('ironCost');
-            if (ironCostEl) {
-                ironCostEl.textContent = data.resources.iron;
-            }
-            
-            const coalCostEl = document.getElementById('coalCost');
-            if (coalCostEl) {
-                coalCostEl.textContent = data.resources.coal;
-            }
-            
-            const woodCostEl = document.getElementById('woodCost');
-            if (woodCostEl) {
-                woodCostEl.textContent = data.resources.wood;
-            }
+            // Обновляем ресурсы в UI
+            updateElementText('fabricCost', data.resources.fabric);
+            updateElementText('leatherCost', data.resources.leather);
+            updateElementText('ironCost', data.resources.iron);
+            updateElementText('coalCost', data.resources.coal);
+            updateElementText('woodCost', data.resources.wood);
             
             // Обновляем инвентарь
-            const gambeson = data.crafting.find(c => c.item_type === 'gambeson');
-            const gambesonCountEl = document.getElementById('gambesonCount');
-            if (gambesonCountEl && gambeson) {
-                gambesonCountEl.textContent = gambeson.count || 0;
-            }
+            const items = [
+                'gambeson', 'spangenhelm', 'falchion', 
+                'spear', 'bow', 'wooden_shield', 'saddle'
+            ];
             
-            const spangenhelm = data.crafting.find(c => c.item_type === 'spangenhelm');
-            const spangenhelmCountEl = document.getElementById('spangenhelmCount');
-            if (spangenhelmCountEl && spangenhelm) {
-                spangenhelmCountEl.textContent = spangenhelm.count || 0;
-            }
+            items.forEach(itemType => {
+                const item = data.crafting.find(c => c.item_type === itemType);
+                updateElementText(`${itemType}Count`, item?.count || 0);
+            });
             
-            const falchion = data.crafting.find(c => c.item_type === 'falchion');
-            const falchionCountEl = document.getElementById('falchionCount');
-            if (falchionCountEl && falchion) {
-                falchionCountEl.textContent = falchion.count || 0;
-            }
-            
-            const spear = data.crafting.find(c => c.item_type === 'spear');
-            const spearCountEl = document.getElementById('spearCount');
-            if (spearCountEl && spear) {
-                spearCountEl.textContent = spear.count || 0;
-            }
-            
-            const bow = data.crafting.find(c => c.item_type === 'bow');
-            const bowCountEl = document.getElementById('bowCount');
-            if (bowCountEl && bow) {
-                bowCountEl.textContent = bow.count || 0;
-            }
-            
-            const woodenShield = data.crafting.find(c => c.item_type === 'wooden_shield');
-            const woodenShieldCountEl = document.getElementById('woodenShieldCount');
-            if (woodenShieldCountEl && woodenShield) {
-                woodenShieldCountEl.textContent = woodenShield.count || 0;
-            }
-            
-            const saddle = data.crafting.find(c => c.item_type === 'saddle');
-            const saddleCountEl = document.getElementById('saddleCount');
-            if (saddleCountEl && saddle) {
-                saddleCountEl.textContent = saddle.count || 0;
-            }
+            // Показываем/скрываем кнопки сбора
+            items.forEach(itemType => {
+                const item = data.crafting.find(c => c.item_type === itemType);
+                const btnId = `collect${itemType.charAt(0).toUpperCase() + itemType.slice(1)}Btn`;
+                const btn = document.getElementById(btnId);
+                if (btn) {
+                    btn.style.display = (item && item.count > 0) ? 'inline-block' : 'none';
+                }
+            });
             
             // Проверяем активный крафт
             const activeCraft = data.crafting.find(c => c.in_progress > 0);
@@ -652,15 +599,9 @@ async function loadCraftingStatus() {
                 craftingEndTime = activeCraft.progress_end;
                 showCraftingProgress(activeCraft.item_type, activeCraft.progress_end);
                 hideCraftingControls();
-                
-                // Прячем кнопки сбора для активного крафта
-                hideCollectButtons();
             } else {
                 craftingInProgress = false;
                 showCraftingControls();
-                
-                // Показываем кнопки сбора если есть предметы
-                showCollectButtons(data.crafting);
             }
         }
     } catch (error) {
@@ -668,32 +609,12 @@ async function loadCraftingStatus() {
     }
 }
 
-// Показать кнопки сбора для готовых предметов
-function showCollectButtons(crafting) {
-    const items = ['gambeson', 'spangenhelm', 'falchion', 'spear', 'bow', 'wooden_shield', 'saddle'];
-    
-    items.forEach(itemType => {
-        const item = crafting.find(c => c.item_type === itemType);
-        const btnId = `collect${itemType.charAt(0).toUpperCase() + itemType.slice(1)}Btn`;
-        const btn = document.getElementById(btnId);
-        
-        if (btn) {
-            btn.style.display = (item && item.count > 0) ? 'inline-block' : 'none';
-        }
-    });
-}
-
-// Скрыть все кнопки сбора
-function hideCollectButtons() {
-    const items = ['gambeson', 'spangenhelm', 'falchion', 'spear', 'bow', 'wooden_shield', 'saddle'];
-    
-    items.forEach(itemType => {
-        const btnId = `collect${itemType.charAt(0).toUpperCase() + itemType.slice(1)}Btn`;
-        const btn = document.getElementById(btnId);
-        if (btn) {
-            btn.style.display = 'none';
-        }
-    });
+// Вспомогательная функция для обновления текста элемента
+function updateElementText(elementId, value) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.textContent = value;
+    }
 }
 
 // Начать крафт
@@ -751,7 +672,7 @@ function showCraftingProgress(itemType, endTime) {
     const updateProgress = () => {
         const now = Date.now();
         const remaining = Math.max(0, endTime - now);
-        const total = 60 * 1000; // 1 минута в миллисекундах
+        const total = 60 * 1000;
         const percent = ((total - remaining) / total) * 100;
         
         progressFill.style.width = `${percent}%`;
