@@ -36,7 +36,7 @@ function showGambesonCrafting() {
     
     content.innerHTML = `
         <div class="crafting-header">
-            <span class="crafting-icon">🧵</span>
+            <img src="/static/icons/buildings/weaving_workshop.png" class="crafting-icon" style="width: 32px; height: 32px; object-fit: contain;">
             <span class="crafting-title">Ткацкая мастерская</span>
         </div>
         
@@ -101,7 +101,7 @@ function showArmorerCrafting() {
     
     content.innerHTML = `
         <div class="crafting-header">
-            <span class="crafting-icon">🛡️</span>
+            <img src="/static/icons/buildings/armorer.png" class="crafting-icon" style="width: 32px; height: 32px; object-fit: contain;">
             <span class="crafting-title">Мастерская бронника</span>
         </div>
         
@@ -170,7 +170,7 @@ function showWeaponsmithCrafting() {
     
     content.innerHTML = `
         <div class="crafting-header">
-            <span class="crafting-icon">⚔️</span>
+            <img src="/static/icons/buildings/weaponsmith.png" class="crafting-icon" style="width: 32px; height: 32px; object-fit: contain;">
             <span class="crafting-title">Мастерская оружейника</span>
         </div>
         
@@ -331,7 +331,7 @@ function showBowCrafting() {
     
     content.innerHTML = `
         <div class="crafting-header">
-            <span class="crafting-icon">🏹</span>
+            <img src="/static/icons/buildings/bow_workshop.png" class="crafting-icon" style="width: 32px; height: 32px; object-fit: contain;">
             <span class="crafting-title">Мастерская лукодела</span>
         </div>
         
@@ -396,7 +396,7 @@ function showShieldCrafting() {
     
     content.innerHTML = `
         <div class="crafting-header">
-            <span class="crafting-icon">🛡️</span>
+            <img src="/static/icons/buildings/shield_workshop.png" class="crafting-icon" style="width: 32px; height: 32px; object-fit: contain;">
             <span class="crafting-title">Мастерская щитника</span>
         </div>
         
@@ -465,7 +465,7 @@ function showSaddleCrafting() {
     
     content.innerHTML = `
         <div class="crafting-header">
-            <span class="crafting-icon">🪑</span>
+            <img src="/static/icons/buildings/saddle_workshop.png" class="crafting-icon" style="width: 32px; height: 32px; object-fit: contain;">
             <span class="crafting-title">Мастерская седельника</span>
         </div>
         
