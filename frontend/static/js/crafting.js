@@ -564,12 +564,21 @@ async function loadCraftingStatus() {
         const data = await response.json();
         
         if (data.success) {
-            // Обновляем ресурсы в UI
-            updateElementText('fabricCost', data.resources.fabric);
-            updateElementText('leatherCost', data.resources.leather);
-            updateElementText('ironCost', data.resources.iron);
-            updateElementText('coalCost', data.resources.coal);
-            updateElementText('woodCost', data.resources.wood);
+            // Обновляем только цифры ресурсов, не трогая иконки
+            const fabricEl = document.getElementById('fabricCost');
+            if (fabricEl) fabricEl.textContent = data.resources.fabric;
+            
+            const leatherEl = document.getElementById('leatherCost');
+            if (leatherEl) leatherEl.textContent = data.resources.leather;
+            
+            const ironEl = document.getElementById('ironCost');
+            if (ironEl) ironEl.textContent = data.resources.iron;
+            
+            const coalEl = document.getElementById('coalCost');
+            if (coalEl) coalEl.textContent = data.resources.coal;
+            
+            const woodEl = document.getElementById('woodCost');
+            if (woodEl) woodEl.textContent = data.resources.wood;
             
             // Обновляем инвентарь
             const items = [
@@ -579,7 +588,10 @@ async function loadCraftingStatus() {
             
             items.forEach(itemType => {
                 const item = data.crafting.find(c => c.item_type === itemType);
-                updateElementText(`${itemType}Count`, item?.count || 0);
+                const countEl = document.getElementById(`${itemType}Count`);
+                if (countEl) {
+                    countEl.textContent = item?.count || 0;
+                }
             });
             
             // Показываем/скрываем кнопки сбора
