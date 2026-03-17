@@ -87,9 +87,11 @@ function showGambesonCrafting() {
         </div>
     `;
     
-    document.getElementById('craftingOverlay').style.display = 'flex';
-setupCraftingControls();
-loadCraftingStatus(); 
+    // Сначала загружаем данные, потом показываем окно
+    loadCraftingStatus().then(() => {
+        document.getElementById('craftingOverlay').style.display = 'flex';
+        setupCraftingControls();
+    });
 }
 
 // Показать окно крафта шлема (мастерская бронника)
@@ -154,9 +156,11 @@ function showArmorerCrafting() {
         </div>
     `;
     
-    document.getElementById('craftingOverlay').style.display = 'flex';
-setupCraftingControls();
-loadCraftingStatus(); 
+    // Сначала загружаем данные, потом показываем окно
+    loadCraftingStatus().then(() => {
+        document.getElementById('craftingOverlay').style.display = 'flex';
+        setupCraftingControls();
+    });
 }
 
 // Показать окно крафта для оружейника (фальшион и копье)
@@ -180,9 +184,11 @@ function showWeaponsmithCrafting() {
         </div>
     `;
     
-   document.getElementById('craftingOverlay').style.display = 'flex';
-setupCraftingControls();
-loadCraftingStatus(); 
+    // Сначала загружаем данные, потом показываем окно
+    loadCraftingStatus().then(() => {
+        document.getElementById('craftingOverlay').style.display = 'flex';
+        setupCraftingControls();
+    });
 }
 
 // Переключение между вкладками оружейника
@@ -205,7 +211,7 @@ function showWeaponsmithTab(itemType, event) {
     }
     
     setupCraftingControls();
-    setTimeout(() => loadCraftingStatus(), 100);
+    loadCraftingStatus();
 }
 
 // HTML для фальшиона
@@ -376,9 +382,11 @@ function showBowCrafting() {
         </div>
     `;
     
-    document.getElementById('craftingOverlay').style.display = 'flex';
-setupCraftingControls();
-loadCraftingStatus(); 
+    // Сначала загружаем данные, потом показываем окно
+    loadCraftingStatus().then(() => {
+        document.getElementById('craftingOverlay').style.display = 'flex';
+        setupCraftingControls();
+    });
 }
 
 // Показать окно крафта щита (мастерская щитника)
@@ -443,9 +451,11 @@ function showShieldCrafting() {
         </div>
     `;
     
-    document.getElementById('craftingOverlay').style.display = 'flex';
-setupCraftingControls();
-loadCraftingStatus(); 
+    // Сначала загружаем данные, потом показываем окно
+    loadCraftingStatus().then(() => {
+        document.getElementById('craftingOverlay').style.display = 'flex';
+        setupCraftingControls();
+    });
 }
 
 // Показать окно крафта седла (мастерская седельника)
@@ -506,9 +516,11 @@ function showSaddleCrafting() {
         </div>
     `;
     
-    document.getElementById('craftingOverlay').style.display = 'flex';
-setupCraftingControls();
-loadCraftingStatus(); 
+    // Сначала загружаем данные, потом показываем окно
+    loadCraftingStatus().then(() => {
+        document.getElementById('craftingOverlay').style.display = 'flex';
+        setupCraftingControls();
+    });
 }
 
 // Настройка контролов крафта
@@ -552,184 +564,177 @@ function setupCraftingControls() {
 
 // Загрузить статус крафта
 async function loadCraftingStatus() {
-    try {
-        const initData = window.Telegram?.WebApp?.initData || '';
-        
-        const response = await fetch(`${API_URL}/api/crafting/status`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ initData: initData })
-        });
-        
-        const data = await response.json();
-        
-        if (data.success) {
-            // Обновляем отображение ресурсов для ткацкой мастерской
-            const fabricEl = document.getElementById('fabricCost');
-            if (fabricEl) {
-                fabricEl.parentElement.innerHTML = 
-                    `<img src="/static/icons/resources/fabric.png" class="recipe-icon"> ${data.resources.fabric}/5`;
-            }
+    return new Promise(async (resolve) => {
+        try {
+            const initData = window.Telegram?.WebApp?.initData || '';
             
-            const leatherEl = document.getElementById('leatherCost');
-            if (leatherEl) {
-                leatherEl.parentElement.innerHTML = 
-                    `<img src="/static/icons/resources/leather.png" class="recipe-icon"> ${data.resources.leather}/1`;
-            }
+            const response = await fetch(`${API_URL}/api/crafting/status`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ initData: initData })
+            });
             
-            // Для мастерской бронника
-            const ironEl = document.getElementById('ironCost');
-            if (ironEl && document.querySelector('.crafting-header span')?.textContent.includes('бронника')) {
-                ironEl.parentElement.innerHTML = 
-                    `<img src="/static/icons/resources/iron.png" class="recipe-icon"> ${data.resources.iron}/4`;
-                
-                const fabricEl2 = document.getElementById('fabricCost');
-                if (fabricEl2) {
-                    fabricEl2.parentElement.innerHTML = 
-                        `<img src="/static/icons/resources/fabric.png" class="recipe-icon"> ${data.resources.fabric}/1`;
+            const data = await response.json();
+            
+            if (data.success) {
+                // Обновляем отображение ресурсов для ткацкой мастерской
+                const fabricEl = document.getElementById('fabricCost');
+                if (fabricEl) {
+                    fabricEl.parentElement.innerHTML = 
+                        `<img src="/static/icons/resources/fabric.png" class="recipe-icon"> ${data.resources.fabric}/5`;
                 }
                 
-                const coalEl = document.getElementById('coalCost');
-                if (coalEl) {
-                    coalEl.parentElement.innerHTML = 
-                        `<img src="/static/icons/resources/coal.png" class="recipe-icon"> ${data.resources.coal}/10`;
+                const leatherEl = document.getElementById('leatherCost');
+                if (leatherEl) {
+                    leatherEl.parentElement.innerHTML = 
+                        `<img src="/static/icons/resources/leather.png" class="recipe-icon"> ${data.resources.leather}/1`;
                 }
-            }
-            
-            // Для фальшиона
-            if (document.getElementById('falchionCount')) {
+                
+                // Для фальшиона
                 const ironFalchion = document.getElementById('ironCost');
-                if (ironFalchion) {
+                const woodFalchion = document.getElementById('woodCost');
+                const coalFalchion = document.getElementById('coalCost');
+                
+                if (ironFalchion && document.getElementById('falchionCount')) {
                     ironFalchion.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/iron.png" class="recipe-icon"> ${data.resources.iron}/10`;
                 }
                 
-                const woodFalchion = document.getElementById('woodCost');
-                if (woodFalchion) {
+                if (woodFalchion && document.getElementById('falchionCount')) {
                     woodFalchion.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/wood.png" class="recipe-icon"> ${data.resources.wood}/2`;
                 }
                 
-                const coalFalchion = document.getElementById('coalCost');
-                if (coalFalchion) {
+                if (coalFalchion && document.getElementById('falchionCount')) {
                     coalFalchion.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/coal.png" class="recipe-icon"> ${data.resources.coal}/10`;
                 }
-            }
-            
-            // Для копья
-            if (document.getElementById('spearCount')) {
+                
+                // Для копья
                 const ironSpear = document.getElementById('ironCost');
-                if (ironSpear) {
+                const woodSpear = document.getElementById('woodCost');
+                const coalSpear = document.getElementById('coalCost');
+                
+                if (ironSpear && document.getElementById('spearCount')) {
                     ironSpear.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/iron.png" class="recipe-icon"> ${data.resources.iron}/3`;
                 }
                 
-                const woodSpear = document.getElementById('woodCost');
-                if (woodSpear) {
+                if (woodSpear && document.getElementById('spearCount')) {
                     woodSpear.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/wood.png" class="recipe-icon"> ${data.resources.wood}/10`;
                 }
                 
-                const coalSpear = document.getElementById('coalCost');
-                if (coalSpear) {
+                if (coalSpear && document.getElementById('spearCount')) {
                     coalSpear.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/coal.png" class="recipe-icon"> ${data.resources.coal}/6`;
                 }
-            }
-            
-            // Для лука
-            if (document.getElementById('bowCount')) {
+                
+                // Для шлема
+                const ironHelm = document.getElementById('ironCost');
+                const fabricHelm = document.getElementById('fabricCost');
+                const coalHelm = document.getElementById('coalCost');
+                
+                if (ironHelm && document.getElementById('spangenhelmCount')) {
+                    ironHelm.parentElement.innerHTML = 
+                        `<img src="/static/icons/resources/iron.png" class="recipe-icon"> ${data.resources.iron}/4`;
+                }
+                
+                if (fabricHelm && document.getElementById('spangenhelmCount')) {
+                    fabricHelm.parentElement.innerHTML = 
+                        `<img src="/static/icons/resources/fabric.png" class="recipe-icon"> ${data.resources.fabric}/1`;
+                }
+                
+                if (coalHelm && document.getElementById('spangenhelmCount')) {
+                    coalHelm.parentElement.innerHTML = 
+                        `<img src="/static/icons/resources/coal.png" class="recipe-icon"> ${data.resources.coal}/10`;
+                }
+                
+                // Для лука
                 const woodBow = document.getElementById('woodCost');
-                if (woodBow) {
+                const leatherBow = document.getElementById('leatherCost');
+                
+                if (woodBow && document.getElementById('bowCount')) {
                     woodBow.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/wood.png" class="recipe-icon"> ${data.resources.wood}/12`;
                 }
                 
-                const leatherBow = document.getElementById('leatherCost');
-                if (leatherBow) {
+                if (leatherBow && document.getElementById('bowCount')) {
                     leatherBow.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/leather.png" class="recipe-icon"> ${data.resources.leather}/2`;
                 }
-            }
-            
-            // Для щита
-            if (document.getElementById('woodenShieldCount')) {
+                
+                // Для щита
                 const woodShield = document.getElementById('woodCost');
-                if (woodShield) {
+                const leatherShield = document.getElementById('leatherCost');
+                const ironShield = document.getElementById('ironCost');
+                
+                if (woodShield && document.getElementById('woodenShieldCount')) {
                     woodShield.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/wood.png" class="recipe-icon"> ${data.resources.wood}/15`;
                 }
                 
-                const leatherShield = document.getElementById('leatherCost');
-                if (leatherShield) {
+                if (leatherShield && document.getElementById('woodenShieldCount')) {
                     leatherShield.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/leather.png" class="recipe-icon"> ${data.resources.leather}/2`;
                 }
                 
-                const ironShield = document.getElementById('ironCost');
-                if (ironShield) {
+                if (ironShield && document.getElementById('woodenShieldCount')) {
                     ironShield.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/iron.png" class="recipe-icon"> ${data.resources.iron}/2`;
                 }
-            }
-            
-            // Для седла
-            if (document.getElementById('saddleCount')) {
+                
+                // Для седла
                 const leatherSaddle = document.getElementById('leatherCost');
-                if (leatherSaddle) {
+                const ironSaddle = document.getElementById('ironCost');
+                
+                if (leatherSaddle && document.getElementById('saddleCount')) {
                     leatherSaddle.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/leather.png" class="recipe-icon"> ${data.resources.leather}/8`;
                 }
                 
-                const ironSaddle = document.getElementById('ironCost');
-                if (ironSaddle) {
+                if (ironSaddle && document.getElementById('saddleCount')) {
                     ironSaddle.parentElement.innerHTML = 
                         `<img src="/static/icons/resources/iron.png" class="recipe-icon"> ${data.resources.iron}/2`;
                 }
-            }
-            
-            // Обновляем инвентарь
-            const items = [
-                'gambeson', 'spangenhelm', 'falchion', 
-                'spear', 'bow', 'wooden_shield', 'saddle'
-            ];
-            
-            items.forEach(itemType => {
-                const item = data.crafting.find(c => c.item_type === itemType);
-                const countEl = document.getElementById(`${itemType}Count`);
-                if (countEl) {
-                    countEl.textContent = item?.count || 0;
-                }
                 
-                const collectBtn = document.getElementById(`collect${itemType.charAt(0).toUpperCase() + itemType.slice(1)}Btn`);
-                if (collectBtn) {
-                    collectBtn.style.display = (item && item.count > 0) ? 'inline-block' : 'none';
+                // Обновляем инвентарь
+                const items = [
+                    'gambeson', 'spangenhelm', 'falchion', 
+                    'spear', 'bow', 'wooden_shield', 'saddle'
+                ];
+                
+                items.forEach(itemType => {
+                    const item = data.crafting.find(c => c.item_type === itemType);
+                    const countEl = document.getElementById(`${itemType}Count`);
+                    if (countEl) {
+                        countEl.textContent = item?.count || 0;
+                    }
+                    
+                    const collectBtn = document.getElementById(`collect${itemType.charAt(0).toUpperCase() + itemType.slice(1)}Btn`);
+                    if (collectBtn) {
+                        collectBtn.style.display = (item && item.count > 0) ? 'inline-block' : 'none';
+                    }
+                });
+                
+                // Проверяем активный крафт
+                const activeCraft = data.crafting.find(c => c.in_progress > 0);
+                if (activeCraft) {
+                    craftingInProgress = true;
+                    craftingEndTime = activeCraft.progress_end;
+                    showCraftingProgress(activeCraft.item_type, activeCraft.progress_end);
+                    hideCraftingControls();
+                } else {
+                    craftingInProgress = false;
+                    showCraftingControls();
                 }
-            });
-            
-            // Проверяем активный крафт
-            const activeCraft = data.crafting.find(c => c.in_progress > 0);
-            if (activeCraft) {
-                craftingInProgress = true;
-                craftingEndTime = activeCraft.progress_end;
-                showCraftingProgress(activeCraft.item_type, activeCraft.progress_end);
-                hideCraftingControls();
-            } else {
-                craftingInProgress = false;
-                showCraftingControls();
             }
+            resolve();
+        } catch (error) {
+            console.error('❌ Ошибка загрузки крафта:', error);
+            resolve();
         }
-    } catch (error) {
-        console.error('❌ Ошибка загрузки крафта:', error);
-    }
-}
-// Вспомогательная функция для обновления текста элемента
-function updateElementText(elementId, value) {
-    const element = document.getElementById(elementId);
-    if (element) {
-        element.textContent = value;
-    }
+    });
 }
 
 // Начать крафт
@@ -787,7 +792,7 @@ function showCraftingProgress(itemType, endTime) {
     const updateProgress = () => {
         const now = Date.now();
         const remaining = Math.max(0, endTime - now);
-        const total = 60 * 1000;
+        const total = 60 * 1000; // 1 минута в миллисекундах
         const percent = ((total - remaining) / total) * 100;
         
         progressFill.style.width = `${percent}%`;
